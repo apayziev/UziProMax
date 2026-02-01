@@ -20,7 +20,6 @@ export function AppSidebar() {
     { icon: Home, title: t("home"), path: "/" },
     { icon: Users, title: t("patients"), path: "/patients" },
     { icon: Stethoscope, title: t("examinations"), path: "/examinations" },
-    { icon: FileText, title: t("new_examination"), path: "/examinations/new" },
   ]
 
   const items = currentUser?.is_superuser
