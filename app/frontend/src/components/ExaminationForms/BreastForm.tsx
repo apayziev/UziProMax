@@ -1,5 +1,6 @@
 /**
  * Sut bezlari UZI formasi - Молочные железы
+ * DRY: Umumiy tarjimalardan foydalanadi
  */
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,176 +13,128 @@ import {
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
+import { getBreastTranslations, type Language } from "./translations"
 
 interface BreastFormProps {
   data: Record<string, any>
   onChange: (data: Record<string, any>) => void
+  language?: Language
 }
 
-export function BreastForm({ data, onChange }: BreastFormProps) {
+export function BreastForm({ data, onChange, language = "ru" }: BreastFormProps) {
   const updateField = (field: string, value: any) => {
     onChange({ ...data, [field]: value })
   }
+
+  const t = getBreastTranslations(language)
 
   return (
     <div className="space-y-6">
       {/* UMUMIY MA'LUMOTLAR */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Общие данные</h3>
+        <h3 className="text-lg font-semibold mb-4">{t.generalData}</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label>Жалобы</Label>
-            <Select
-              value={data.complaints || ""}
-              onValueChange={(v) => updateField("complaints", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.complaints}</Label>
+            <Select value={data.complaints || ""} onValueChange={(v) => updateField("complaints", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="нет">нет</SelectItem>
-                <SelectItem value="боль">боль</SelectItem>
-                <SelectItem value="уплотнение">уплотнение</SelectItem>
-                <SelectItem value="выделения">выделения</SelectItem>
+                <SelectItem value="нет">{t.none}</SelectItem>
+                <SelectItem value="боль">{t.pain}</SelectItem>
+                <SelectItem value="уплотнение">{t.lump}</SelectItem>
+                <SelectItem value="выделения">{t.discharge}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>День менструального цикла</Label>
-            <Input
-              type="number"
-              placeholder="1-30"
-              value={data.cycle_day || ""}
-              onChange={(e) => updateField("cycle_day", e.target.value)}
-            />
+            <Label>{t.cycleDay}</Label>
+            <Input type="number" placeholder="1-30" value={data.cycle_day || ""} onChange={(e) => updateField("cycle_day", e.target.value)} />
           </div>
         </div>
       </div>
 
       <Separator />
 
-      {/* O'NG SUt BEZI */}
+      {/* O'NG SUT BEZI */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">ПРАВАЯ МОЛОЧНАЯ ЖЕЛЕЗА</h3>
+        <h3 className="text-lg font-semibold mb-4">{t.rightBreast}</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label>Толщина железы (мм)</Label>
-            <Input
-              type="number"
-              value={data.right_thickness || ""}
-              onChange={(e) => updateField("right_thickness", e.target.value)}
-            />
+            <Label>{t.thickness} ({t.mm})</Label>
+            <Input type="number" value={data.right_thickness || ""} onChange={(e) => updateField("right_thickness", e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>Структура</Label>
-            <Select
-              value={data.right_structure || ""}
-              onValueChange={(v) => updateField("right_structure", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.structure}</Label>
+            <Select value={data.right_structure || ""} onValueChange={(v) => updateField("right_structure", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="железистый">железистый тип</SelectItem>
-                <SelectItem value="смешанный">смешанный тип</SelectItem>
-                <SelectItem value="жировой">жировой тип</SelectItem>
+                <SelectItem value="железистый">{t.glandular}</SelectItem>
+                <SelectItem value="смешанный">{t.mixed}</SelectItem>
+                <SelectItem value="жировой">{t.fatty}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Эхогенность</Label>
-            <Select
-              value={data.right_echogenicity || ""}
-              onValueChange={(v) => updateField("right_echogenicity", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.echogenicity}</Label>
+            <Select value={data.right_echogenicity || ""} onValueChange={(v) => updateField("right_echogenicity", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="обычная">обычная</SelectItem>
-                <SelectItem value="повышена">повышена</SelectItem>
-                <SelectItem value="понижена">понижена</SelectItem>
+                <SelectItem value="обычная">{t.normal}</SelectItem>
+                <SelectItem value="повышена">{t.increased}</SelectItem>
+                <SelectItem value="понижена">{t.decreased}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Протоки</Label>
-            <Select
-              value={data.right_ducts || ""}
-              onValueChange={(v) => updateField("right_ducts", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.ducts}</Label>
+            <Select value={data.right_ducts || ""} onValueChange={(v) => updateField("right_ducts", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="не расширены">не расширены</SelectItem>
-                <SelectItem value="расширены">расширены</SelectItem>
+                <SelectItem value="не расширены">{t.notDilated}</SelectItem>
+                <SelectItem value="расширены">{t.dilated}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Образования</Label>
-            <Select
-              value={data.right_lesions || ""}
-              onValueChange={(v) => updateField("right_lesions", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.lesions}</Label>
+            <Select value={data.right_lesions || ""} onValueChange={(v) => updateField("right_lesions", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="нет">нет</SelectItem>
-                <SelectItem value="есть">есть</SelectItem>
+                <SelectItem value="нет">{t.none}</SelectItem>
+                <SelectItem value="есть">{t.yes}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {data.right_lesions === "есть" && (
             <>
               <div className="space-y-2">
-                <Label>Локализация</Label>
-                <Input
-                  placeholder="на ... часах"
-                  value={data.right_lesion_location || ""}
-                  onChange={(e) => updateField("right_lesion_location", e.target.value)}
-                />
+                <Label>{t.localization}</Label>
+                <Input placeholder={t.atOclock} value={data.right_lesion_location || ""} onChange={(e) => updateField("right_lesion_location", e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label>Размер образования (мм)</Label>
-                <Input
-                  placeholder="длина x ширина"
-                  value={data.right_lesion_size || ""}
-                  onChange={(e) => updateField("right_lesion_size", e.target.value)}
-                />
+                <Label>{t.lesionSize} ({t.mm})</Label>
+                <Input placeholder={t.lengthWidth} value={data.right_lesion_size || ""} onChange={(e) => updateField("right_lesion_size", e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label>Характер образования</Label>
-                <Select
-                  value={data.right_lesion_type || ""}
-                  onValueChange={(v) => updateField("right_lesion_type", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Tanlang" />
-                  </SelectTrigger>
+                <Label>{t.lesionType}</Label>
+                <Select value={data.right_lesion_type || ""} onValueChange={(v) => updateField("right_lesion_type", v)}>
+                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="анэхогенное">анэхогенное (киста)</SelectItem>
-                    <SelectItem value="гипоэхогенное">гипоэхогенное</SelectItem>
-                    <SelectItem value="изоэхогенное">изоэхогенное</SelectItem>
-                    <SelectItem value="гиперэхогенное">гиперэхогенное</SelectItem>
+                    <SelectItem value="анэхогенное">{t.anechoicCyst}</SelectItem>
+                    <SelectItem value="гипоэхогенное">{t.hypoechoic}</SelectItem>
+                    <SelectItem value="изоэхогенное">{t.isoechoic}</SelectItem>
+                    <SelectItem value="гиперэхогенное">{t.hyperechoic}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Контуры</Label>
-                <Select
-                  value={data.right_lesion_margins || ""}
-                  onValueChange={(v) => updateField("right_lesion_margins", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Tanlang" />
-                  </SelectTrigger>
+                <Label>{t.contours}</Label>
+                <Select value={data.right_lesion_margins || ""} onValueChange={(v) => updateField("right_lesion_margins", v)}>
+                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ровные">ровные</SelectItem>
-                    <SelectItem value="неровные">неровные</SelectItem>
-                    <SelectItem value="нечеткие">нечеткие</SelectItem>
+                    <SelectItem value="ровные">{t.smoothOnly}</SelectItem>
+                    <SelectItem value="неровные">{t.uneven}</SelectItem>
+                    <SelectItem value="нечеткие">{t.unclear}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -194,126 +147,84 @@ export function BreastForm({ data, onChange }: BreastFormProps) {
 
       {/* CHAP SUT BEZI */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">ЛЕВАЯ МОЛОЧНАЯ ЖЕЛЕЗА</h3>
+        <h3 className="text-lg font-semibold mb-4">{t.leftBreast}</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label>Толщина железы (мм)</Label>
-            <Input
-              type="number"
-              value={data.left_thickness || ""}
-              onChange={(e) => updateField("left_thickness", e.target.value)}
-            />
+            <Label>{t.thickness} ({t.mm})</Label>
+            <Input type="number" value={data.left_thickness || ""} onChange={(e) => updateField("left_thickness", e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>Структура</Label>
-            <Select
-              value={data.left_structure || ""}
-              onValueChange={(v) => updateField("left_structure", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.structure}</Label>
+            <Select value={data.left_structure || ""} onValueChange={(v) => updateField("left_structure", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="железистый">железистый тип</SelectItem>
-                <SelectItem value="смешанный">смешанный тип</SelectItem>
-                <SelectItem value="жировой">жировой тип</SelectItem>
+                <SelectItem value="железистый">{t.glandular}</SelectItem>
+                <SelectItem value="смешанный">{t.mixed}</SelectItem>
+                <SelectItem value="жировой">{t.fatty}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Эхогенность</Label>
-            <Select
-              value={data.left_echogenicity || ""}
-              onValueChange={(v) => updateField("left_echogenicity", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.echogenicity}</Label>
+            <Select value={data.left_echogenicity || ""} onValueChange={(v) => updateField("left_echogenicity", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="обычная">обычная</SelectItem>
-                <SelectItem value="повышена">повышена</SelectItem>
-                <SelectItem value="понижена">понижена</SelectItem>
+                <SelectItem value="обычная">{t.normal}</SelectItem>
+                <SelectItem value="повышена">{t.increased}</SelectItem>
+                <SelectItem value="понижена">{t.decreased}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Протоки</Label>
-            <Select
-              value={data.left_ducts || ""}
-              onValueChange={(v) => updateField("left_ducts", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.ducts}</Label>
+            <Select value={data.left_ducts || ""} onValueChange={(v) => updateField("left_ducts", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="не расширены">не расширены</SelectItem>
-                <SelectItem value="расширены">расширены</SelectItem>
+                <SelectItem value="не расширены">{t.notDilated}</SelectItem>
+                <SelectItem value="расширены">{t.dilated}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Образования</Label>
-            <Select
-              value={data.left_lesions || ""}
-              onValueChange={(v) => updateField("left_lesions", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.lesions}</Label>
+            <Select value={data.left_lesions || ""} onValueChange={(v) => updateField("left_lesions", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="нет">нет</SelectItem>
-                <SelectItem value="есть">есть</SelectItem>
+                <SelectItem value="нет">{t.none}</SelectItem>
+                <SelectItem value="есть">{t.yes}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {data.left_lesions === "есть" && (
             <>
               <div className="space-y-2">
-                <Label>Локализация</Label>
-                <Input
-                  placeholder="на ... часах"
-                  value={data.left_lesion_location || ""}
-                  onChange={(e) => updateField("left_lesion_location", e.target.value)}
-                />
+                <Label>{t.localization}</Label>
+                <Input placeholder={t.atOclock} value={data.left_lesion_location || ""} onChange={(e) => updateField("left_lesion_location", e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label>Размер образования (мм)</Label>
-                <Input
-                  placeholder="длина x ширина"
-                  value={data.left_lesion_size || ""}
-                  onChange={(e) => updateField("left_lesion_size", e.target.value)}
-                />
+                <Label>{t.lesionSize} ({t.mm})</Label>
+                <Input placeholder={t.lengthWidth} value={data.left_lesion_size || ""} onChange={(e) => updateField("left_lesion_size", e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label>Характер образования</Label>
-                <Select
-                  value={data.left_lesion_type || ""}
-                  onValueChange={(v) => updateField("left_lesion_type", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Tanlang" />
-                  </SelectTrigger>
+                <Label>{t.lesionType}</Label>
+                <Select value={data.left_lesion_type || ""} onValueChange={(v) => updateField("left_lesion_type", v)}>
+                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="анэхогенное">анэхогенное (киста)</SelectItem>
-                    <SelectItem value="гипоэхогенное">гипоэхогенное</SelectItem>
-                    <SelectItem value="изоэхогенное">изоэхогенное</SelectItem>
-                    <SelectItem value="гиперэхогенное">гиперэхогенное</SelectItem>
+                    <SelectItem value="анэхогенное">{t.anechoicCyst}</SelectItem>
+                    <SelectItem value="гипоэхогенное">{t.hypoechoic}</SelectItem>
+                    <SelectItem value="изоэхогенное">{t.isoechoic}</SelectItem>
+                    <SelectItem value="гиперэхогенное">{t.hyperechoic}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Контуры</Label>
-                <Select
-                  value={data.left_lesion_margins || ""}
-                  onValueChange={(v) => updateField("left_lesion_margins", v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Tanlang" />
-                  </SelectTrigger>
+                <Label>{t.contours}</Label>
+                <Select value={data.left_lesion_margins || ""} onValueChange={(v) => updateField("left_lesion_margins", v)}>
+                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ровные">ровные</SelectItem>
-                    <SelectItem value="неровные">неровные</SelectItem>
-                    <SelectItem value="нечеткие">нечеткие</SelectItem>
+                    <SelectItem value="ровные">{t.smoothOnly}</SelectItem>
+                    <SelectItem value="неровные">{t.uneven}</SelectItem>
+                    <SelectItem value="нечеткие">{t.unclear}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -326,35 +237,25 @@ export function BreastForm({ data, onChange }: BreastFormProps) {
 
       {/* LIMFA TUGUNLARI */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">РЕГИОНАРНЫЕ ЛИМФОУЗЛЫ</h3>
+        <h3 className="text-lg font-semibold mb-4">{t.regionalLymphNodes}</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label>Подмышечные справа</Label>
-            <Select
-              value={data.right_axillary_ln || ""}
-              onValueChange={(v) => updateField("right_axillary_ln", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.axillaryRight}</Label>
+            <Select value={data.right_axillary_ln || ""} onValueChange={(v) => updateField("right_axillary_ln", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="не увеличены">не увеличены</SelectItem>
-                <SelectItem value="увеличены">увеличены</SelectItem>
+                <SelectItem value="не увеличены">{t.notEnlarged}</SelectItem>
+                <SelectItem value="увеличены">{t.enlarged}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Подмышечные слева</Label>
-            <Select
-              value={data.left_axillary_ln || ""}
-              onValueChange={(v) => updateField("left_axillary_ln", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.axillaryLeft}</Label>
+            <Select value={data.left_axillary_ln || ""} onValueChange={(v) => updateField("left_axillary_ln", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="не увеличены">не увеличены</SelectItem>
-                <SelectItem value="увеличены">увеличены</SelectItem>
+                <SelectItem value="не увеличены">{t.notEnlarged}</SelectItem>
+                <SelectItem value="увеличены">{t.enlarged}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -365,45 +266,35 @@ export function BreastForm({ data, onChange }: BreastFormProps) {
 
       {/* BI-RADS */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">КЛАССИФИКАЦИЯ BI-RADS</h3>
+        <h3 className="text-lg font-semibold mb-4">{t.birads}</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Правая молочная железа</Label>
-            <Select
-              value={data.right_birads || ""}
-              onValueChange={(v) => updateField("right_birads", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.rightBreast}</Label>
+            <Select value={data.right_birads || ""} onValueChange={(v) => updateField("right_birads", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="0">BI-RADS 0 - требуется доп. обследование</SelectItem>
-                <SelectItem value="1">BI-RADS 1 - норма</SelectItem>
-                <SelectItem value="2">BI-RADS 2 - доброкачественные изменения</SelectItem>
-                <SelectItem value="3">BI-RADS 3 - вероятно доброкачественные</SelectItem>
-                <SelectItem value="4">BI-RADS 4 - подозрение на злокачественность</SelectItem>
-                <SelectItem value="5">BI-RADS 5 - высокая вероятность злокачественности</SelectItem>
-                <SelectItem value="6">BI-RADS 6 - подтвержденная злокачественность</SelectItem>
+                <SelectItem value="0">{t.birads0}</SelectItem>
+                <SelectItem value="1">{t.birads1}</SelectItem>
+                <SelectItem value="2">{t.birads2}</SelectItem>
+                <SelectItem value="3">{t.birads3}</SelectItem>
+                <SelectItem value="4">{t.birads4}</SelectItem>
+                <SelectItem value="5">{t.birads5}</SelectItem>
+                <SelectItem value="6">{t.birads6}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Левая молочная железа</Label>
-            <Select
-              value={data.left_birads || ""}
-              onValueChange={(v) => updateField("left_birads", v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Tanlang" />
-              </SelectTrigger>
+            <Label>{t.leftBreast}</Label>
+            <Select value={data.left_birads || ""} onValueChange={(v) => updateField("left_birads", v)}>
+              <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="0">BI-RADS 0 - требуется доп. обследование</SelectItem>
-                <SelectItem value="1">BI-RADS 1 - норма</SelectItem>
-                <SelectItem value="2">BI-RADS 2 - доброкачественные изменения</SelectItem>
-                <SelectItem value="3">BI-RADS 3 - вероятно доброкачественные</SelectItem>
-                <SelectItem value="4">BI-RADS 4 - подозрение на злокачественность</SelectItem>
-                <SelectItem value="5">BI-RADS 5 - высокая вероятность злокачественности</SelectItem>
-                <SelectItem value="6">BI-RADS 6 - подтвержденная злокачественность</SelectItem>
+                <SelectItem value="0">{t.birads0}</SelectItem>
+                <SelectItem value="1">{t.birads1}</SelectItem>
+                <SelectItem value="2">{t.birads2}</SelectItem>
+                <SelectItem value="3">{t.birads3}</SelectItem>
+                <SelectItem value="4">{t.birads4}</SelectItem>
+                <SelectItem value="5">{t.birads5}</SelectItem>
+                <SelectItem value="6">{t.birads6}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -414,14 +305,10 @@ export function BreastForm({ data, onChange }: BreastFormProps) {
 
       {/* QOSHIMCHA */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">Дополнительные сведения</h3>
+        <h3 className="text-lg font-semibold mb-4">{t.additionalInfo}</h3>
         <div className="space-y-2">
-          <Label>Примечание</Label>
-          <Textarea
-            placeholder="Дополнительные наблюдения..."
-            value={data.notes || ""}
-            onChange={(e) => updateField("notes", e.target.value)}
-          />
+          <Label>{t.notes}</Label>
+          <Textarea placeholder={t.additionalObservations} value={data.notes || ""} onChange={(e) => updateField("notes", e.target.value)} />
         </div>
       </div>
     </div>

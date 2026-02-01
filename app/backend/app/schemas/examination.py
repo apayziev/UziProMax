@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class ExaminationBase(BaseModel):
     """Tekshiruv asosiy ma'lumotlari"""
     patient_id: int = Field(..., description="Bemor ID")
-    examination_date: date = Field(..., description="Tekshiruv sanasi")
+    examination_date: date = Field(default_factory=date.today, description="Tekshiruv sanasi")
     template_type: str = Field(..., description="Shablon turi")
     examination_data: dict[str, Any] = Field(default_factory=dict, description="Tekshiruv ma'lumotlari (JSONB)")
     conclusion: str | None = Field(None, description="Xulosa / ЗАКЛЮЧЕНИЕ")

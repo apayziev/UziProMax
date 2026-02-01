@@ -70,7 +70,7 @@ export interface Examination {
 
 export interface ExaminationCreate {
   patient_id: number
-  examination_date: string
+  examination_date?: string  // Optional - defaults to today
   template_type: string
   examination_data?: Record<string, any>
   conclusion?: string | null

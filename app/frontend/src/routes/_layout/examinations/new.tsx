@@ -131,9 +131,6 @@ function NewExaminationPage() {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   const [patientSearchQuery, setPatientSearchQuery] = useState("")
   const [templateType, setTemplateType] = useState<string>("")
-  const [examinationDate, setExaminationDate] = useState(
-    new Date().toISOString().split("T")[0]
-  )
   const [examinationData, setExaminationData] = useState<Record<string, any>>({})
   const [conclusion, setConclusion] = useState("")
   const [recommendations, setRecommendations] = useState("")
@@ -181,6 +178,8 @@ function NewExaminationPage() {
         birth_date: "",
       })
       toast({ title: t("success"), description: t("patient_added") })
+      // Avtomatik keyingi qadamga o'tish
+      setCurrentStep(3)
     },
     onError: (error: Error) => {
       toast({ title: t("error"), description: error.message, variant: "destructive" })
@@ -202,7 +201,6 @@ function NewExaminationPage() {
   const handleSave = (status: "draft" | "completed") => {
     const data: ExaminationCreate = {
       patient_id: selectedPatient!.id,
-      examination_date: examinationDate,
       template_type: templateType,
       examination_data: examinationData,
       conclusion: conclusion || null,
@@ -261,6 +259,7 @@ function NewExaminationPage() {
     const props = {
       data: examinationData,
       onChange: setExaminationData,
+      language: language as "uz" | "ru",
     }
 
     switch (category) {
@@ -552,16 +551,6 @@ function NewExaminationPage() {
                 </div>
               </div>
 
-              <div className="space-y-2 mb-4">
-                <Label>{language === "ru" ? "Дата исследования" : "Tekshiruv sanasi"}</Label>
-                <Input
-                  type="date"
-                  value={examinationDate}
-                  onChange={(e) => setExaminationDate(e.target.value)}
-                  className="w-48"
-                />
-              </div>
-
               {renderMeasurementsForm()}
             </div>
           )}
@@ -602,7 +591,7 @@ function NewExaminationPage() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ru" ? "Дата" : "Sana"}
                   </p>
-                  <p className="font-medium">{examinationDate}</p>
+                  <p className="font-medium">{new Date().toLocaleDateString(language === "ru" ? "ru-RU" : "uz-UZ")}</p>
                 </div>
               </div>
 

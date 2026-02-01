@@ -23,7 +23,8 @@ class CRUDPatient(BaseCRUD[Patient]):
         patient_in: PatientCreate
     ) -> Patient:
         """Yangi bemor yaratish"""
-        patient = Patient(**patient_in.model_dump())
+        # Exclude computed fields that don't exist in the model
+        patient = Patient(**patient_in.model_dump(exclude={"full_name"}))
         db.add(patient)
         await db.commit()
         await db.refresh(patient)
@@ -36,7 +37,7 @@ class CRUDPatient(BaseCRUD[Patient]):
         patient_in: PatientUpdate
     ) -> Patient:
         """Bemor ma'lumotlarini yangilash"""
-        update_data = patient_in.model_dump(exclude_unset=True)
+        update_data = patient_in.model_dump(exclude_unset=True, exclude={"full_name"})
         for field, value in update_data.items():
             setattr(patient, field, value)
         await db.commit()
