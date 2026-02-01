@@ -33,20 +33,22 @@ import { handleError } from "@/utils"
 
 const formSchema = z
   .object({
-    email: z.email({ message: "Invalid email address" }),
-    full_name: z.string().optional(),
+    first_name: z.string().min(2, { message: "Ism kamida 2 ta belgidan iborat bo'lishi kerak" }).max(50),
+    last_name: z.string().min(2, { message: "Familiya kamida 2 ta belgidan iborat bo'lishi kerak" }).max(50),
+    middle_name: z.string().max(50).optional(),
+    phone: z.string().min(9, { message: "Telefon raqami noto'g'ri" }).max(20),
     password: z
       .string()
-      .min(1, { message: "Password is required" })
-      .min(8, { message: "Password must be at least 8 characters" }),
+      .min(1, { message: "Parol kiritilishi shart" })
+      .min(8, { message: "Parol kamida 8 ta belgidan iborat bo'lishi kerak" }),
     confirm_password: z
       .string()
-      .min(1, { message: "Please confirm your password" }),
+      .min(1, { message: "Parolni tasdiqlang" }),
     is_superuser: z.boolean(),
     is_active: z.boolean(),
   })
   .refine((data) => data.password === data.confirm_password, {
-    message: "The passwords don't match",
+    message: "Parollar mos kelmaydi",
     path: ["confirm_password"],
   })
 
@@ -62,8 +64,10 @@ const AddUser = () => {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      email: "",
-      full_name: "",
+      first_name: "",
+      last_name: "",
+      middle_name: "",
+      phone: "",
       password: "",
       confirm_password: "",
       is_superuser: false,
@@ -109,16 +113,16 @@ const AddUser = () => {
             <div className="grid gap-4 py-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="first_name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Email <span className="text-destructive">*</span>
+                      Ism <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Email"
-                        type="email"
+                        placeholder="Ism"
+                        type="text"
                         {...field}
                         required
                       />
@@ -130,12 +134,54 @@ const AddUser = () => {
 
               <FormField
                 control={form.control}
-                name="full_name"
+                name="last_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>
+                      Familiya <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Full name" type="text" {...field} />
+                      <Input
+                        placeholder="Familiya"
+                        type="text"
+                        {...field}
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="middle_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Otasining ismi</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Otasining ismi" type="text" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Telefon <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="+998901234567"
+                        type="tel"
+                        {...field}
+                        required
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

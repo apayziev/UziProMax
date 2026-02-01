@@ -305,10 +305,11 @@ export type UpdatePassword = {
 };
 
 export type UserCreate = {
-    name?: (string | null);
+    first_name: string;
+    last_name: string;
+    middle_name?: (string | null);
     username?: (string | null);
     phone: string;
-    email?: (string | null);
     password: string;
     confirm_password?: (string | null);
     is_superuser?: boolean;
@@ -317,19 +318,21 @@ export type UserCreate = {
 
 export type UserRead = {
     id: string;
-    full_name: string;
+    first_name: string;
+    last_name: string;
+    middle_name?: (string | null);
     username: string;
     phone: string;
-    email?: (string | null);
     profile_image_url: string;
     is_active: boolean;
     is_superuser: boolean;
 };
 
 export type UserUpdate = {
-    name?: (string | null);
+    first_name?: (string | null);
+    last_name?: (string | null);
+    middle_name?: (string | null);
     username?: (string | null);
-    email?: (string | null);
     profile_image_url?: (string | null);
     password?: (string | null);
     confirm_password?: (string | null);

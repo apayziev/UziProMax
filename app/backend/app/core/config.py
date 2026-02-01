@@ -51,9 +51,11 @@ class DatabaseSettings(BaseSettings):
 class FirstUserSettings(BaseSettings):
     """First admin user credentials."""
 
-    ADMIN_NAME: str = "admin"
-    ADMIN_EMAIL: str = "admin@example.com"
+    ADMIN_FIRST_NAME: str = "Admin"
+    ADMIN_LAST_NAME: str = "User"
+    ADMIN_MIDDLE_NAME: str | None = None
     ADMIN_USERNAME: str = "admin"
+    ADMIN_PHONE: str = "+998901234567"
     ADMIN_PASSWORD: str = "!Ch4ng3Th1sP4ssW0rd!"
 
 

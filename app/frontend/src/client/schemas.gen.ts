@@ -1065,19 +1065,33 @@ export const UpdatePasswordSchema = {
 
 export const UserCreateSchema = {
     properties: {
-        name: {
+        first_name: {
+            type: 'string',
+            maxLength: 50,
+            minLength: 2,
+            title: 'First Name',
+            examples: ['Aziz']
+        },
+        last_name: {
+            type: 'string',
+            maxLength: 50,
+            minLength: 2,
+            title: 'Last Name',
+            examples: ['Karimov']
+        },
+        middle_name: {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 30,
+                    maxLength: 50,
                     minLength: 2
                 },
                 {
                     type: 'null'
                 }
             ],
-            title: 'Name',
-            examples: ['User Userson']
+            title: 'Middle Name',
+            examples: ['Toshmatovich']
         },
         username: {
             anyOf: [
@@ -1100,18 +1114,6 @@ export const UserCreateSchema = {
             minLength: 9,
             title: 'Phone',
             examples: ['+998901234567']
-        },
-        email: {
-            anyOf: [
-                {
-                    type: 'string'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Email',
-            examples: ['user@example.com']
         },
         password: {
             type: 'string',
@@ -1142,7 +1144,7 @@ export const UserCreateSchema = {
         }
     },
     type: 'object',
-    required: ['phone', 'password'],
+    required: ['first_name', 'last_name', 'phone', 'password'],
     title: 'UserCreate'
 } as const;
 
@@ -1153,12 +1155,33 @@ export const UserReadSchema = {
             title: 'Id',
             examples: ['1']
         },
-        full_name: {
+        first_name: {
             type: 'string',
-            maxLength: 30,
+            maxLength: 50,
             minLength: 2,
-            title: 'Full Name',
-            examples: ['User Userson']
+            title: 'First Name',
+            examples: ['Aziz']
+        },
+        last_name: {
+            type: 'string',
+            maxLength: 50,
+            minLength: 2,
+            title: 'Last Name',
+            examples: ['Karimov']
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 50,
+                    minLength: 2
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name',
+            examples: ['Toshmatovich']
         },
         username: {
             type: 'string',
@@ -1172,18 +1195,6 @@ export const UserReadSchema = {
             type: 'string',
             title: 'Phone',
             examples: ['+998901234567']
-        },
-        email: {
-            anyOf: [
-                {
-                    type: 'string'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Email',
-            examples: ['user@example.com']
         },
         profile_image_url: {
             type: 'string',
@@ -1199,25 +1210,53 @@ export const UserReadSchema = {
         }
     },
     type: 'object',
-    required: ['id', 'full_name', 'username', 'phone', 'profile_image_url', 'is_active', 'is_superuser'],
+    required: ['id', 'first_name', 'last_name', 'username', 'phone', 'profile_image_url', 'is_active', 'is_superuser'],
     title: 'UserRead'
 } as const;
 
 export const UserUpdateSchema = {
     properties: {
-        name: {
+        first_name: {
             anyOf: [
                 {
                     type: 'string',
-                    maxLength: 30,
+                    maxLength: 50,
                     minLength: 2
                 },
                 {
                     type: 'null'
                 }
             ],
-            title: 'Name',
-            examples: ['User Userberg']
+            title: 'First Name',
+            examples: ['Aziz']
+        },
+        last_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 50,
+                    minLength: 2
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Last Name',
+            examples: ['Karimov']
+        },
+        middle_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 50,
+                    minLength: 2
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Middle Name',
+            examples: ['Toshmatovich']
         },
         username: {
             anyOf: [
@@ -1233,19 +1272,6 @@ export const UserUpdateSchema = {
             ],
             title: 'Username',
             examples: ['userberg']
-        },
-        email: {
-            anyOf: [
-                {
-                    type: 'string',
-                    format: 'email'
-                },
-                {
-                    type: 'null'
-                }
-            ],
-            title: 'Email',
-            examples: ['user.userberg@example.com']
         },
         profile_image_url: {
             anyOf: [

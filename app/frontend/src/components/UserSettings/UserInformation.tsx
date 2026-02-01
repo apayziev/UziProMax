@@ -22,8 +22,9 @@ import { cn } from "@/lib/utils"
 import { handleError } from "@/utils"
 
 const formSchema = z.object({
-  full_name: z.string().max(30).optional(),
-  email: z.email({ message: "Invalid email address" }),
+  first_name: z.string().min(2).max(50),
+  last_name: z.string().min(2).max(50),
+  middle_name: z.string().max(50).optional().nullable(),
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -39,8 +40,9 @@ const UserInformation = () => {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      full_name: currentUser?.full_name ?? undefined,
-      email: currentUser?.email,
+      first_name: currentUser?.first_name ?? "",
+      last_name: currentUser?.last_name ?? "",
+      middle_name: currentUser?.middle_name ?? undefined,
     },
   })
 
@@ -52,7 +54,7 @@ const UserInformation = () => {
     mutationFn: (data: UserUpdate) =>
       UsersService.updateUserMe({ requestBody: data }),
     onSuccess: () => {
-      showSuccessToast("User updated successfully")
+      showSuccessToast("Ma'lumotlar muvaffaqiyatli yangilandi")
       toggleEditMode()
     },
     onError: handleError.bind(showErrorToast),
@@ -65,11 +67,14 @@ const UserInformation = () => {
     const updateData: UserUpdate = {}
 
     // only include fields that have changed
-    if (data.full_name !== currentUser?.full_name) {
-      updateData.name = data.full_name
+    if (data.first_name !== currentUser?.first_name) {
+      updateData.first_name = data.first_name
     }
-    if (data.email !== currentUser?.email) {
-      updateData.email = data.email
+    if (data.last_name !== currentUser?.last_name) {
+      updateData.last_name = data.last_name
+    }
+    if (data.middle_name !== currentUser?.middle_name) {
+      updateData.middle_name = data.middle_name
     }
 
     mutation.mutate(updateData)
@@ -82,7 +87,7 @@ const UserInformation = () => {
 
   return (
     <div className="max-w-md">
-      <h3 className="text-lg font-semibold py-4">User Information</h3>
+      <h3 className="text-lg font-semibold py-4">Foydalanuvchi ma'lumotlari</h3>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -90,11 +95,11 @@ const UserInformation = () => {
         >
           <FormField
             control={form.control}
-            name="full_name"
+            name="first_name"
             render={({ field }) =>
               editMode ? (
                 <FormItem>
-                  <FormLabel>Full name</FormLabel>
+                  <FormLabel>Ism</FormLabel>
                   <FormControl>
                     <Input type="text" {...field} />
                   </FormControl>
@@ -102,7 +107,7 @@ const UserInformation = () => {
                 </FormItem>
               ) : (
                 <FormItem>
-                  <FormLabel>Full name</FormLabel>
+                  <FormLabel>Ism</FormLabel>
                   <p
                     className={cn(
                       "py-2 truncate max-w-sm",
@@ -118,20 +123,55 @@ const UserInformation = () => {
 
           <FormField
             control={form.control}
-            name="email"
+            name="last_name"
             render={({ field }) =>
               editMode ? (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Familiya</FormLabel>
                   <FormControl>
-                    <Input type="email" {...field} />
+                    <Input type="text" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               ) : (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <p className="py-2 truncate max-w-sm">{field.value}</p>
+                  <FormLabel>Familiya</FormLabel>
+                  <p
+                    className={cn(
+                      "py-2 truncate max-w-sm",
+                      !field.value && "text-muted-foreground",
+                    )}
+                  >
+                    {field.value || "N/A"}
+                  </p>
+                </FormItem>
+              )
+            }
+          />
+
+          <FormField
+            control={form.control}
+            name="middle_name"
+            render={({ field }) =>
+              editMode ? (
+                <FormItem>
+                  <FormLabel>Otasining ismi</FormLabel>
+                  <FormControl>
+                    <Input type="text" {...field} value={field.value ?? ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              ) : (
+                <FormItem>
+                  <FormLabel>Otasining ismi</FormLabel>
+                  <p
+                    className={cn(
+                      "py-2 truncate max-w-sm",
+                      !field.value && "text-muted-foreground",
+                    )}
+                  >
+                    {field.value || "N/A"}
+                  </p>
                 </FormItem>
               )
             }

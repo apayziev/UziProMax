@@ -26,21 +26,23 @@ async def write_user(
     db: SessionDep,
 ) -> UserRead:
     """Create a new user with generated username if missing (Superuser only)."""
-    email_exists = await crud_users.exists(db=db, email=user.email)
-    if email_exists:
-        raise DuplicateValueException("Email is already registered")
+    phone_exists = await crud_users.exists(db=db, phone=user.phone)
+    if phone_exists:
+        raise DuplicateValueException("Telefon raqami allaqachon ro'yxatdan o'tgan")
 
     if user.username:
         username_exists = await crud_users.exists(db=db, username=user.username)
         if username_exists:
-            raise DuplicateValueException("Username not available")
+            raise DuplicateValueException("Username mavjud emas")
     else:
-        base_username = user.email.split("@")[0]
-        base_username = re.sub(r"[^a-z0-9]", "", base_username.lower())
-        username = base_username
+        # Generate username from first_name and last_name
+        base_username = f"{user.first_name.lower()}{user.last_name.lower()}"
+        base_username = re.sub(r"[^a-z0-9]", "", base_username)
+        username = base_username[:20]  # Limit to 20 chars
         counter = 1
         while await crud_users.exists(db=db, username=username):
-            username = f"{base_username}{counter}"
+            suffix = str(counter)
+            username = f"{base_username[:20-len(suffix)]}{suffix}"
             counter += 1
         user.username = username
 
@@ -88,13 +90,9 @@ async def update_user_me(
     if db_user is None:
         raise NotFoundException("User not found")
 
-    if values.email is not None and values.email != db_user.email:
-        if await crud_users.exists(db=db, email=values.email):
-            raise DuplicateValueException("Email is already registered")
-
     if values.username is not None and values.username != db_user.username:
         if await crud_users.exists(db=db, username=values.username):
-            raise DuplicateValueException("Username not available")
+            raise DuplicateValueException("Username mavjud emas")
 
     update_data = values.model_dump(exclude_unset=True)
     if not current_user.is_superuser:
@@ -167,13 +165,9 @@ async def patch_user(
     if not current_user.is_superuser and db_user.id != current_user.id:
         raise ForbiddenException()
 
-    if values.email is not None and values.email != db_user.email:
-        if await crud_users.exists(db=db, email=values.email):
-            raise DuplicateValueException("Email is already registered")
-
     if values.username is not None and values.username != db_user.username:
         if await crud_users.exists(db=db, username=values.username):
-            raise DuplicateValueException("Username not available")
+            raise DuplicateValueException("Username mavjud emas")
 
     update_data = values.model_dump(exclude_unset=True)
     if not current_user.is_superuser:

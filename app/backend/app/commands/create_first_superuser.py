@@ -14,20 +14,24 @@ logger = logging.getLogger(__name__)
 
 async def create_first_user(session: AsyncSession) -> None:
     try:
-        name = settings.ADMIN_NAME
-        email = settings.ADMIN_EMAIL
+        first_name = settings.ADMIN_FIRST_NAME
+        last_name = settings.ADMIN_LAST_NAME
+        middle_name = settings.ADMIN_MIDDLE_NAME
         username = settings.ADMIN_USERNAME
+        phone = settings.ADMIN_PHONE
         hashed_password = get_password_hash(settings.ADMIN_PASSWORD)
 
-        query = select(User).filter_by(email=email)
+        query = select(User).filter_by(username=username)
         result = await session.execute(query)
         user = result.scalar_one_or_none()
 
         if user is None:
             user = User(
-                name=name,
-                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                middle_name=middle_name,
                 username=username,
+                phone=phone,
                 hashed_password=hashed_password,
                 is_active=True,
                 is_superuser=True,

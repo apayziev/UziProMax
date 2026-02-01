@@ -82,12 +82,12 @@ class CRUDUser(BaseCRUD[User]):
         Raises
         ------
         Exception
-            If email or username already exists (handle in route layer).
+            If phone or username already exists (handle in route layer).
         """
         hashed_password = get_password_hash(user_create.password)
 
-        user_data = user_create.model_dump(exclude={"password", "name"})
-        db_user = User(**user_data, hashed_password=hashed_password, name=user_create.name)
+        user_data = user_create.model_dump(exclude={"password"})
+        db_user = User(**user_data, hashed_password=hashed_password)
 
         db.add(db_user)
         await db.commit()

@@ -7,17 +7,19 @@ from app.models.user import User
 fake = Faker()
 
 
-async def create_user(db: AsyncSession, is_superuser: bool = False, password: str = None, email: str = None) -> User:
+async def create_user(db: AsyncSession, is_superuser: bool = False, password: str = None, phone: str = None) -> User:
     if not password:
         password = fake.password()
-    if not email:
-        email = fake.email()
-    username = fake.user_name()
+    if not phone:
+        phone = f"+998{fake.msisdn()[4:]}"
+    username = fake.user_name()[:20].lower()
 
     user = User(
-        name=fake.name(),
+        first_name=fake.first_name(),
+        last_name=fake.last_name(),
+        middle_name=fake.first_name(),
         username=username,
-        email=email,
+        phone=phone,
         hashed_password=get_password_hash(password),
         profile_image_url=fake.image_url(),
         is_active=True,

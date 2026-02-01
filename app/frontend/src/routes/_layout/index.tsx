@@ -22,7 +22,7 @@ function Dashboard() {
     <div>
       <div>
         <h1 className="text-2xl truncate max-w-sm">
-          {t("hi")}, {currentUser?.full_name || currentUser?.email} 👋
+          {t("hi")}, {currentUser?.first_name || currentUser?.username} 👋
         </h1>
         <p className="text-muted-foreground">
           {t("welcome_back")}

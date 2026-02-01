@@ -33,11 +33,12 @@ import { handleError } from "@/utils"
 
 const formSchema = z
   .object({
-    email: z.email({ message: "Invalid email address" }),
-    full_name: z.string().optional(),
+    first_name: z.string().min(2).max(50),
+    last_name: z.string().min(2).max(50),
+    middle_name: z.string().max(50).optional().nullable(),
     password: z
       .string()
-      .min(8, { message: "Password must be at least 8 characters" })
+      .min(8, { message: "Parol kamida 8 ta belgidan iborat bo'lishi kerak" })
       .optional()
       .or(z.literal("")),
     confirm_password: z.string().optional(),
@@ -45,7 +46,7 @@ const formSchema = z
     is_active: z.boolean().optional(),
   })
   .refine((data) => !data.password || data.password === data.confirm_password, {
-    message: "The passwords don't match",
+    message: "Parollar mos kelmaydi",
     path: ["confirm_password"],
   })
 
@@ -66,8 +67,9 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      email: user.email,
-      full_name: user.full_name ?? undefined,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      middle_name: user.middle_name ?? undefined,
       is_superuser: user.is_superuser,
       is_active: user.is_active,
     },
@@ -117,16 +119,16 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
             <div className="grid gap-4 py-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="first_name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Email <span className="text-destructive">*</span>
+                      Ism <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Email"
-                        type="email"
+                        placeholder="Ism"
+                        type="text"
                         {...field}
                         required
                       />
@@ -138,12 +140,33 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
 
               <FormField
                 control={form.control}
-                name="full_name"
+                name="last_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>
+                      Familiya <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Full name" type="text" {...field} />
+                      <Input
+                        placeholder="Familiya"
+                        type="text"
+                        {...field}
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="middle_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Otasining ismi</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Otasining ismi" type="text" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -6,9 +6,10 @@ from app.models.user import User
 @pytest.mark.asyncio
 async def test_user_creation(db):
     user = User(
-        name="Test User",
+        first_name="Test",
+        last_name="User",
         username="testuser",
-        email="test@example.com",
+        phone="+998901234567",
         hashed_password="hashed_secret",
     )
     db.add(user)
@@ -23,9 +24,10 @@ async def test_user_creation(db):
 @pytest.mark.asyncio
 async def test_soft_delete(db):
     user = User(
-        name="Delete User",
+        first_name="Delete",
+        last_name="User",
         username="deleteuser",
-        email="delete@example.com",
+        phone="+998901234568",
         hashed_password="hashed_secret",
     )
     db.add(user)
