@@ -40,7 +40,7 @@ export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       {
-        title: "Log In - FastAPI Cloud",
+        title: "Kirish - UziProMax",
       },
     ],
   }),
@@ -70,22 +70,25 @@ function Login() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-6"
         >
-          <div className="flex flex-col items-center gap-2 text-center">
-            <h1 className="text-2xl font-bold">Login to your account</h1>
+          <div className="flex flex-col items-center gap-3 text-center">
+            <img src="/assets/images/favicon.png" alt="UziProMax" className="h-20 w-auto rounded-xl lg:hidden" />
+            <h1 className="text-3xl font-bold">Xush kelibsiz!</h1>
+            <p className="text-muted-foreground">Tizimga kirish uchun ma'lumotlaringizni kiriting</p>
           </div>
 
-          <div className="grid gap-4">
+          <div className="grid gap-5">
             <FormField
               control={form.control}
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-base">Email</FormLabel>
                   <FormControl>
                     <Input
                       data-testid="email-input"
-                      placeholder="user@example.com"
+                      placeholder="foydalanuvchi@example.com"
                       type="email"
+                      className="h-12 text-base"
                       {...field}
                     />
                   </FormControl>
@@ -100,12 +103,13 @@ function Login() {
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center">
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-base">Parol</FormLabel>
                   </div>
                   <FormControl>
                     <PasswordInput
                       data-testid="password-input"
-                      placeholder="Password"
+                      placeholder="Parolingizni kiriting"
+                      className="h-12 text-base"
                       {...field}
                     />
                   </FormControl>
@@ -114,8 +118,8 @@ function Login() {
               )}
             />
 
-            <LoadingButton type="submit" loading={loginMutation.isPending}>
-              Log In
+            <LoadingButton type="submit" loading={loginMutation.isPending} className="h-12 text-base font-semibold">
+              Kirish
             </LoadingButton>
           </div>
         </form>

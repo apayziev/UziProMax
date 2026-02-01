@@ -515,6 +515,9 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
     <div className={forPrint ? "p-8 text-sm" : ""}>
       {/* Header */}
       <div className="text-center mb-6">
+        <div className="flex justify-center mb-4">
+          <img src="/logo-full.jpg" alt="UziProMax" className="h-20 w-auto" />
+        </div>
         <h2 className="text-xl font-bold">УЗИ ТЕКШИРУВИ</h2>
         <p className="text-lg font-semibold mt-2">{templateInfo?.name_ru || examination.template_type}</p>
       </div>
