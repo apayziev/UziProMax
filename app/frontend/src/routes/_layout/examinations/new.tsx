@@ -52,6 +52,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useLanguage } from "@/hooks/useLanguage"
 import { cn } from "@/lib/utils"
+import { DatePicker } from "@/components/ui/date-picker"
 
 import { 
   TEMPLATE_TYPES, 
@@ -491,7 +492,7 @@ function NewExaminationPage() {
 
                   {/* Search Results */}
                   {patientSearchQuery.length > 1 && (
-                    <div className="border rounded-lg divide-y max-h-[200px] overflow-auto">
+                    <div className="border rounded-lg divide-y max-h-[250px] overflow-auto">
                       {searchResults?.items.length === 0 ? (
                         <div className="p-4 text-center text-muted-foreground">
                           <p>{language === "ru" ? "Пациент не найден" : "Bemor topilmadi"}</p>
@@ -505,24 +506,49 @@ function NewExaminationPage() {
                           </Button>
                         </div>
                       ) : (
-                        searchResults?.items.map((patient) => (
-                          <button
-                            key={patient.id}
-                            onClick={() => {
-                              setSelectedPatient(patient)
-                              setPatientSearchQuery("")
-                            }}
-                            className="w-full p-3 text-left hover:bg-muted/50 flex items-center gap-3 transition-colors"
-                          >
-                            <User className="h-4 w-4 text-muted-foreground" />
-                            <div>
-                              <p className="font-medium">{patient.full_name}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {patient.phone || (language === "ru" ? "Нет телефона" : "Telefon yo'q")}
-                              </p>
-                            </div>
-                          </button>
-                        ))
+                        searchResults?.items.map((patient) => {
+                          // Calculate age
+                          const age = patient.birth_date ? (() => {
+                            const today = new Date()
+                            const birth = new Date(patient.birth_date)
+                            let years = today.getFullYear() - birth.getFullYear()
+                            const m = today.getMonth() - birth.getMonth()
+                            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) years--
+                            return years
+                          })() : null
+                          
+                          return (
+                            <button
+                              key={patient.id}
+                              onClick={() => {
+                                setSelectedPatient(patient)
+                                setPatientSearchQuery("")
+                              }}
+                              className="w-full p-3 text-left hover:bg-muted/50 flex items-center gap-3 transition-colors"
+                            >
+                              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                <User className="h-5 w-5 text-primary" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium truncate">{patient.full_name}</p>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                  {age !== null && (
+                                    <span>{age} {language === "ru" ? "лет" : "yosh"}</span>
+                                  )}
+                                  {age !== null && patient.phone && <span>•</span>}
+                                  {patient.phone && <span>{patient.phone}</span>}
+                                </div>
+                              </div>
+                              {patient.examination_count !== undefined && patient.examination_count > 0 && (
+                                <div className="text-right shrink-0">
+                                  <span className="text-xs bg-muted px-2 py-1 rounded">
+                                    {patient.examination_count} {language === "ru" ? "иссл." : "teksh."}
+                                  </span>
+                                </div>
+                              )}
+                            </button>
+                          )
+                        })
                       )}
                     </div>
                   )}
@@ -763,9 +789,9 @@ function NewExaminationPage() {
               </div>
               <div className="space-y-2">
                 <Label>
-                  {language === "ru" ? "Тугилган сана" : "Tug'ilgan sana"}
+                  {language === "ru" ? "Дата рождения" : "Tug'ilgan sana"}
                   {newPatient.birth_date && (
-                    <span className="text-muted-foreground ml-1">
+                    <span className="text-foreground font-medium ml-1">
                       ({(() => {
                         const today = new Date()
                         const birth = new Date(newPatient.birth_date)
@@ -777,11 +803,16 @@ function NewExaminationPage() {
                     </span>
                   )}
                 </Label>
-                <Input
-                  type="date"
-                  value={newPatient.birth_date || ""}
-                  onChange={(e) => setNewPatient({ ...newPatient, birth_date: e.target.value || null })}
-                  className="w-full"
+                <DatePicker
+                  value={newPatient.birth_date}
+                  onChange={(date) => setNewPatient({ 
+                    ...newPatient, 
+                    birth_date: date 
+                      ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+                      : null 
+                  })}
+                  placeholder={language === "ru" ? "Выберите дату" : "Sanani tanlang"}
+                  language={language as "uz" | "ru"}
                 />
               </div>
             </div>
