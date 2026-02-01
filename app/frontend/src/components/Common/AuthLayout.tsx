@@ -6,7 +6,13 @@ interface AuthLayoutProps {
   children: React.ReactNode
 }
 
-const services = ["UZD", "SKRINING", "DOPLER", "3D/4D", "UZI"]
+const services = [
+  { uz: "AKUSHERLIK", ru: "АКУШЕРСТВО" },
+  { uz: "GINEKOLOGIYA", ru: "ГИНЕКОЛОГИЯ" },
+  { uz: "QORIN BO'SHLIG'I", ru: "БРЮШНАЯ ПОЛОСТЬ" },
+  { uz: "QALQONSIMON BEZ", ru: "ЩИТОВИДНАЯ ЖЕЛЕЗА" },
+  { uz: "KO'KRAK BEZI", ru: "МОЛОЧНАЯ ЖЕЛЕЗА" },
+]
 
 function AnimatedText() {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -25,13 +31,20 @@ function AnimatedText() {
   }, [])
 
   return (
-    <div className="h-12 flex items-center justify-center">
+    <div className="h-16 flex flex-col items-center justify-center">
       <span
-        className={`text-2xl font-bold text-primary transition-all duration-300 ${
+        className={`text-xl font-bold text-foreground transition-all duration-300 ${
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
         }`}
       >
-        {services[currentIndex]}
+        {services[currentIndex].uz}
+      </span>
+      <span
+        className={`text-sm text-foreground/50 transition-all duration-300 delay-75 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+        }`}
+      >
+        {services[currentIndex].ru}
       </span>
     </div>
   )
