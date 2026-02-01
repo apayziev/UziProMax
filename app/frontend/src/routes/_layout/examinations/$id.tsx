@@ -139,7 +139,7 @@ function ExaminationDetailPage() {
                 {t("ready")}
               </Button>
             )}
-            <Link to={`/examinations/edit/${examination.id}`}>
+            <Link to="/examinations/edit/$id" params={{ id: String(examination.id) }}>
               <Button variant="outline">
                 <Edit className="mr-2 h-4 w-4" />
                 {t("edit")}

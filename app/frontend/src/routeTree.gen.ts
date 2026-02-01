@@ -19,6 +19,7 @@ import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 import { Route as LayoutExaminationsIndexRouteImport } from './routes/_layout/examinations/index'
 import { Route as LayoutExaminationsNewRouteImport } from './routes/_layout/examinations/new'
 import { Route as LayoutExaminationsIdRouteImport } from './routes/_layout/examinations/$id'
+import { Route as LayoutExaminationsEditIdRouteImport } from './routes/_layout/examinations/edit.$id'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -69,6 +70,12 @@ const LayoutExaminationsIdRoute = LayoutExaminationsIdRouteImport.update({
   path: '/examinations/$id',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutExaminationsEditIdRoute =
+  LayoutExaminationsEditIdRouteImport.update({
+    id: '/examinations/edit/$id',
+    path: '/examinations/edit/$id',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/examinations/$id': typeof LayoutExaminationsIdRoute
   '/examinations/new': typeof LayoutExaminationsNewRoute
   '/examinations': typeof LayoutExaminationsIndexRoute
+  '/examinations/edit/$id': typeof LayoutExaminationsEditIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -91,6 +99,7 @@ export interface FileRoutesByTo {
   '/examinations/$id': typeof LayoutExaminationsIdRoute
   '/examinations/new': typeof LayoutExaminationsNewRoute
   '/examinations': typeof LayoutExaminationsIndexRoute
+  '/examinations/edit/$id': typeof LayoutExaminationsEditIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,6 +113,7 @@ export interface FileRoutesById {
   '/_layout/examinations/$id': typeof LayoutExaminationsIdRoute
   '/_layout/examinations/new': typeof LayoutExaminationsNewRoute
   '/_layout/examinations/': typeof LayoutExaminationsIndexRoute
+  '/_layout/examinations/edit/$id': typeof LayoutExaminationsEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/examinations/$id'
     | '/examinations/new'
     | '/examinations'
+    | '/examinations/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/examinations/$id'
     | '/examinations/new'
     | '/examinations'
+    | '/examinations/edit/$id'
   id:
     | '__root__'
     | '/_layout'
@@ -140,6 +152,7 @@ export interface FileRouteTypes {
     | '/_layout/examinations/$id'
     | '/_layout/examinations/new'
     | '/_layout/examinations/'
+    | '/_layout/examinations/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -219,6 +232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutExaminationsIdRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/examinations/edit/$id': {
+      id: '/_layout/examinations/edit/$id'
+      path: '/examinations/edit/$id'
+      fullPath: '/examinations/edit/$id'
+      preLoaderRoute: typeof LayoutExaminationsEditIdRouteImport
+      parentRoute: typeof LayoutRoute
+    }
   }
 }
 
@@ -231,6 +251,7 @@ interface LayoutRouteChildren {
   LayoutExaminationsIdRoute: typeof LayoutExaminationsIdRoute
   LayoutExaminationsNewRoute: typeof LayoutExaminationsNewRoute
   LayoutExaminationsIndexRoute: typeof LayoutExaminationsIndexRoute
+  LayoutExaminationsEditIdRoute: typeof LayoutExaminationsEditIdRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
@@ -242,6 +263,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutExaminationsIdRoute: LayoutExaminationsIdRoute,
   LayoutExaminationsNewRoute: LayoutExaminationsNewRoute,
   LayoutExaminationsIndexRoute: LayoutExaminationsIndexRoute,
+  LayoutExaminationsEditIdRoute: LayoutExaminationsEditIdRoute,
 }
 
 const LayoutRouteWithChildren =
