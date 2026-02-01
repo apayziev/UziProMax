@@ -159,11 +159,14 @@ function NewExaminationPage() {
 
   // New patient dialog
   const [newPatientOpen, setNewPatientOpen] = useState(false)
-  const [newPatient, setNewPatient] = useState<PatientCreate>({
+  const [newPatient, setNewPatient] = useState<PatientCreate & { last_name?: string; first_name?: string; middle_name?: string }>({
     full_name: "",
     gender: "female",
-    phone: "",
+    phone: "+998",
     birth_date: "",
+    last_name: "",
+    first_name: "",
+    middle_name: "",
   })
 
   // Load patient from URL if provided
@@ -189,7 +192,15 @@ function NewExaminationPage() {
     onSuccess: (patient) => {
       setSelectedPatient(patient)
       setNewPatientOpen(false)
-      setNewPatient({ full_name: "", gender: "female", phone: "", birth_date: "" })
+      setNewPatient({ 
+        full_name: "", 
+        gender: "female", 
+        phone: "+998", 
+        birth_date: "",
+        last_name: "",
+        first_name: "",
+        middle_name: "",
+      })
       toast({ title: t("success"), description: t("patient_added") })
     },
     onError: (error: Error) => {
@@ -223,11 +234,19 @@ function NewExaminationPage() {
   }
 
   const handleCreatePatient = () => {
-    if (!newPatient.full_name.trim()) {
+    const fullName = [newPatient.last_name, newPatient.first_name, newPatient.middle_name]
+      .filter(Boolean)
+      .join(" ")
+      .trim()
+    
+    if (!fullName) {
       toast({ title: t("error"), description: t("name_required"), variant: "destructive" })
       return
     }
-    createPatientMutation.mutate(newPatient)
+    createPatientMutation.mutate({
+      ...newPatient,
+      full_name: fullName,
+    })
   }
 
   // Navigation
@@ -423,8 +442,8 @@ function NewExaminationPage() {
                         <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
                           <User className="h-6 w-6 text-primary" />
                         </div>
-                        <div className="flex-1">
-                          <p className="font-semibold text-lg">{selectedPatient.full_name}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-lg break-words">{selectedPatient.full_name}</p>
                           <p className="text-muted-foreground">
                             {selectedPatient.gender === "female" 
                               ? (language === "ru" ? "Женский" : "Ayol") 
@@ -666,7 +685,7 @@ function NewExaminationPage() {
 
       {/* New Patient Dialog */}
       <Dialog open={newPatientOpen} onOpenChange={setNewPatientOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[550px]">
           <DialogHeader>
             <DialogTitle>
               {language === "ru" ? "Новый пациент" : "Yangi bemor"}
@@ -678,31 +697,42 @@ function NewExaminationPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>{language === "ru" ? "Фамилия *" : "Familiya *"}</Label>
+                <Input
+                  placeholder={language === "ru" ? "Иванов" : "Aliyev"}
+                  value={newPatient.last_name || ""}
+                  onChange={(e) => setNewPatient({ ...newPatient, last_name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{language === "ru" ? "Имя *" : "Ism *"}</Label>
+                <Input
+                  placeholder={language === "ru" ? "Иван" : "Ali"}
+                  value={newPatient.first_name || ""}
+                  onChange={(e) => setNewPatient({ ...newPatient, first_name: e.target.value })}
+                />
+              </div>
+            </div>
             <div className="space-y-2">
-              <Label>{language === "ru" ? "Ф.И.О *" : "F.I.O *"}</Label>
+              <Label>{language === "ru" ? "Отчество" : "Sharifi"}</Label>
               <Input
-                placeholder={language === "ru" ? "Иванов Иван Иванович" : "Aliyev Ali Valiyevich"}
-                value={newPatient.full_name}
-                onChange={(e) => setNewPatient({ ...newPatient, full_name: e.target.value })}
+                placeholder={language === "ru" ? "Иванович" : "Valiyevich"}
+                value={newPatient.middle_name || ""}
+                onChange={(e) => setNewPatient({ ...newPatient, middle_name: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>{language === "ru" ? "Телефон *" : "Telefon *"}</Label>
               <Input
                 placeholder="+998 90 123 45 67"
-                value={newPatient.phone || ""}
+                value={newPatient.phone || "+998"}
                 onChange={(e) => {
                   let value = e.target.value.replace(/[^\d+]/g, "")
-                  if (!value.startsWith("+998") && value.length > 0) {
-                    if (value.startsWith("+")) {
-                      value = "+998" + value.slice(1)
-                    } else if (value.startsWith("998")) {
-                      value = "+" + value
-                    } else if (value.startsWith("8") || value.startsWith("9")) {
-                      value = "+998" + value
-                    } else {
-                      value = "+998" + value
-                    }
+                  // Always keep +998 prefix
+                  if (!value.startsWith("+998")) {
+                    value = "+998"
                   }
                   if (value.length > 13) value = value.slice(0, 13)
                   setNewPatient({ ...newPatient, phone: value })
@@ -762,7 +792,7 @@ function NewExaminationPage() {
             </Button>
             <Button 
               onClick={handleCreatePatient}
-              disabled={createPatientMutation.isPending || !newPatient.full_name.trim()}
+              disabled={createPatientMutation.isPending || !newPatient.last_name?.trim() || !newPatient.first_name?.trim()}
             >
               {createPatientMutation.isPending 
                 ? (language === "ru" ? "Сохранение..." : "Saqlanmoqda...") 
