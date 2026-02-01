@@ -115,6 +115,7 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Footer
     "copyright": "© 2026 UziProMax. Barcha huquqlar himoyalangan.",
+    "clinic_address": "Buyuk ipak yo'li ko'chasi, 119-uy",
     
     // Common
     "loading": "Yuklanmoqda...",
@@ -234,6 +235,7 @@ const translations: Record<Language, Record<string, string>> = {
     
     // Footer
     "copyright": "© 2026 UziProMax. Все права защищены.",
+    "clinic_address": "ул. Великий Шёлковый путь, д. 119",
     
     // Common
     "loading": "Загрузка...",

@@ -12,6 +12,16 @@ import { useLanguage } from "@/hooks/useLanguage"
 
 import { TEMPLATE_TYPES, type Examination } from "@/types/medical"
 
+// Format date from YYYY-MM-DD to DD.MM.YYYY
+const formatDate = (dateStr: string | null | undefined) => {
+  if (!dateStr) return ""
+  const parts = dateStr.split("-")
+  if (parts.length === 3) {
+    return `${parts[2]}.${parts[1]}.${parts[0]}`
+  }
+  return dateStr
+}
+
 export const Route = createFileRoute("/_layout/examinations/$id")({
   component: ExaminationDetailPage,
 })
@@ -112,7 +122,7 @@ function ExaminationDetailPage() {
               {templateInfo?.name_ru || examination.template_type}
             </h1>
             <p className="text-muted-foreground">
-              {examination.patient_name} • {examination.examination_date}
+              {examination.patient_name} • {formatDate(examination.examination_date)}
             </p>
           </div>
           <Badge variant={statusColors[examination.status as keyof typeof statusColors]}>
@@ -167,6 +177,7 @@ interface PrintContentProps {
 }
 
 function PrintContent({ examination, forPrint = false }: PrintContentProps) {
+  const { t } = useLanguage()
   const templateInfo = TEMPLATE_TYPES[examination.template_type]
   const data = examination.examination_data || {}
 
@@ -272,7 +283,7 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
       {data.last_menstruation && (
         <div>
           <span className="font-semibold">День последней менструации: </span>
-          {data.last_menstruation}
+          {formatDate(data.last_menstruation)}
         </div>
       )}
 
@@ -562,7 +573,7 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
         <h2 className="text-xl font-bold uppercase">ПРОТОКОЛ УЗИ</h2>
         <p className="text-lg font-semibold mt-1">{templateInfo?.name_ru || examination.template_type}</p>
         <div className="mt-2 text-xs text-muted-foreground">
-          <p>Тел: +998 77 082 66 22 | Адрес: Buyuk ipak yo'li ko'chasi, 119-uy</p>
+          <p>{t("phone")}: +998 77 082 66 22 | {t("address")}: {t("clinic_address")}</p>
         </div>
       </div>
 
@@ -575,12 +586,12 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
           </div>
           <div>
             <span className="font-semibold">Дата исследования: </span>
-            {examination.examination_date}
+            {formatDate(examination.examination_date)}
           </div>
           {data.last_menstruation && (
             <div className="col-span-2">
               <span className="font-semibold">День последней менструации: </span>
-              {data.last_menstruation}
+              {formatDate(data.last_menstruation)}
             </div>
           )}
         </div>
@@ -611,22 +622,6 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
           <p className="mt-2 whitespace-pre-wrap">{examination.recommendations}</p>
         </div>
       )}
-
-      {/* Imzo va izoh */}
-      <div className="mt-8 pt-4 border-t">
-        <div className="flex justify-between items-end">
-          <div className="text-xs text-muted-foreground max-w-[60%]">
-            <p>Заключение УЗИ не является диагнозом.</p>
-            <p>Дальнейшее лечение проконсультируйтесь со специалистами.</p>
-          </div>
-          <div className="text-right">
-            <p className="font-semibold">Врач УЗИ: ___________________</p>
-            {examination.doctor_name && (
-              <p className="mt-1 text-sm">{examination.doctor_name}</p>
-            )}
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
