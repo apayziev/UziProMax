@@ -91,7 +91,10 @@ async def create_examination(
     )
     
     result = ExaminationRead.model_validate(examination)
-    result.patient_name = patient.full_name
+    patient_name = f"{patient.last_name} {patient.first_name}"
+    if patient.middle_name:
+        patient_name += f" {patient.middle_name}"
+    result.patient_name = patient_name
     result.doctor_name = current_user.name or current_user.username
     result.template_name = TEMPLATE_TYPES.get(examination.template_type, {}).get("name_ru")
     
@@ -112,7 +115,12 @@ async def get_recent_examinations(
     items = []
     for exam in examinations:
         item = ExaminationList.model_validate(exam)
-        item.patient_name = exam.patient.full_name if exam.patient else None
+        if exam.patient:
+            item.patient_name = f"{exam.patient.last_name} {exam.patient.first_name}"
+            if exam.patient.middle_name:
+                item.patient_name += f" {exam.patient.middle_name}"
+        else:
+            item.patient_name = None
         item.template_name = TEMPLATE_TYPES.get(exam.template_type, {}).get("name_ru", exam.template_type)
         items.append(item)
     
@@ -168,7 +176,13 @@ async def get_examination(
         raise HTTPException(status_code=404, detail="Tekshiruv topilmadi")
     
     result = ExaminationRead.model_validate(examination)
-    result.patient_name = examination.patient.full_name if examination.patient else None
+    if examination.patient:
+        patient_name = f"{examination.patient.last_name} {examination.patient.first_name}"
+        if examination.patient.middle_name:
+            patient_name += f" {examination.patient.middle_name}"
+        result.patient_name = patient_name
+    else:
+        result.patient_name = None
     result.doctor_name = examination.doctor.name if examination.doctor else None
     result.template_name = TEMPLATE_TYPES.get(examination.template_type, {}).get("name_ru")
     
@@ -196,7 +210,13 @@ async def update_examination(
     )
     
     result = ExaminationRead.model_validate(examination)
-    result.patient_name = examination.patient.full_name if examination.patient else None
+    if examination.patient:
+        patient_name = f"{examination.patient.last_name} {examination.patient.first_name}"
+        if examination.patient.middle_name:
+            patient_name += f" {examination.patient.middle_name}"
+        result.patient_name = patient_name
+    else:
+        result.patient_name = None
     result.doctor_name = examination.doctor.name if examination.doctor else None
     result.template_name = TEMPLATE_TYPES.get(examination.template_type, {}).get("name_ru")
     
@@ -257,13 +277,21 @@ async def get_examination_for_print(
     # Update status to printed
     await crud_examination.update_status(db=db, examination_id=examination_id, status="printed")
     
+    patient = examination.patient
+    patient_name = f"{patient.last_name} {patient.first_name}"
+    if patient.middle_name:
+        patient_name += f" {patient.middle_name}"
+    
     return {
         "examination": ExaminationRead.model_validate(examination),
         "patient": {
-            "full_name": examination.patient.full_name,
-            "birth_date": examination.patient.birth_date,
-            "gender": examination.patient.gender,
-            "phone": examination.patient.phone,
+            "last_name": patient.last_name,
+            "first_name": patient.first_name,
+            "middle_name": patient.middle_name,
+            "name": patient_name,
+            "birth_date": patient.birth_date,
+            "gender": patient.gender,
+            "phone": patient.phone,
         },
         "doctor": {
             "name": examination.doctor.name or examination.doctor.username,

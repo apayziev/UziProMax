@@ -8,7 +8,6 @@ export interface Patient {
   last_name: string
   first_name: string
   middle_name: string | null
-  full_name: string // computed from backend
   birth_date: string | null
   gender: "male" | "female"
   phone: string | null

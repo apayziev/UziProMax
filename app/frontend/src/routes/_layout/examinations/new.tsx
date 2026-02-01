@@ -51,6 +51,13 @@ import { ObstetricsForm } from "@/components/ExaminationForms/ObstetricsForm"
 import { BreastForm } from "@/components/ExaminationForms/BreastForm"
 import { ThyroidForm } from "@/components/ExaminationForms/ThyroidForm"
 
+// Helper to format patient name
+const formatPatientName = (patient: Patient | null | undefined) => {
+  if (!patient) return ""
+  const name = `${patient.last_name} ${patient.first_name}`
+  return patient.middle_name ? `${name} ${patient.middle_name}` : name
+}
+
 export const Route = createFileRoute("/_layout/examinations/new")({
   component: NewExaminationPage,
   validateSearch: (search: Record<string, unknown>) => {
@@ -416,7 +423,7 @@ function NewExaminationPage() {
                           <User className="h-6 w-6 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-lg break-words">{selectedPatient.full_name}</p>
+                          <p className="font-semibold text-lg break-words">{formatPatientName(selectedPatient)}</p>
                           <p className="text-muted-foreground">
                             {selectedPatient.gender === "female" 
                               ? (language === "ru" ? "Женский" : "Ayol") 
@@ -502,7 +509,7 @@ function NewExaminationPage() {
                                 <User className="h-5 w-5 text-primary" />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="font-medium truncate">{patient.full_name}</p>
+                                <p className="font-medium truncate">{formatPatientName(patient)}</p>
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                   {age !== null && (
                                     <span>{age} {language === "ru" ? "лет" : "yosh"}</span>
@@ -547,7 +554,7 @@ function NewExaminationPage() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ru" ? "Пациент" : "Bemor"}
                   </p>
-                  <p className="font-medium">{selectedPatient?.full_name}</p>
+                  <p className="font-medium">{formatPatientName(selectedPatient)}</p>
                 </div>
               </div>
 
@@ -585,7 +592,7 @@ function NewExaminationPage() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ru" ? "Пациент" : "Bemor"}
                   </p>
-                  <p className="font-medium">{selectedPatient?.full_name}</p>
+                  <p className="font-medium">{formatPatientName(selectedPatient)}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">

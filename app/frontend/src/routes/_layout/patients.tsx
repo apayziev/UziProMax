@@ -389,7 +389,9 @@ function PatientsPage() {
                 <TableBody>
                   {data?.items.map((patient) => (
                     <TableRow key={patient.id}>
-                      <TableCell className="font-medium">{patient.full_name}</TableCell>
+                      <TableCell className="font-medium">
+                        {patient.last_name} {patient.first_name}{patient.middle_name ? ` ${patient.middle_name}` : ''}
+                      </TableCell>
                       <TableCell>
                         <Badge variant={patient.gender === "female" ? "default" : "secondary"}>
                           {patient.gender === "female" ? t("female") : t("male")}

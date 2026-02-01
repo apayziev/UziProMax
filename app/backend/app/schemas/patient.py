@@ -3,7 +3,7 @@ Patient schemas - Bemor ma'lumotlari uchun Pydantic schemalar
 """
 from datetime import date, datetime
 
-from pydantic import BaseModel, ConfigDict, Field, computed_field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PatientBase(BaseModel):
@@ -16,13 +16,6 @@ class PatientBase(BaseModel):
     phone: str | None = Field(None, max_length=20, description="Telefon raqami")
     address: str | None = Field(None, description="Manzil")
     notes: str | None = Field(None, description="Izohlar")
-    
-    @computed_field
-    @property
-    def full_name(self) -> str:
-        """Computed full name from parts"""
-        parts = [self.last_name, self.first_name, self.middle_name]
-        return " ".join(p for p in parts if p)
 
 
 class PatientCreate(PatientBase):
@@ -65,13 +58,6 @@ class PatientList(BaseModel):
     phone: str | None = None
     created_at: datetime
     examination_count: int = 0
-    
-    @computed_field
-    @property
-    def full_name(self) -> str:
-        """Computed full name from parts"""
-        parts = [self.last_name, self.first_name, self.middle_name]
-        return " ".join(p for p in parts if p)
 
 
 class PatientSearch(BaseModel):
