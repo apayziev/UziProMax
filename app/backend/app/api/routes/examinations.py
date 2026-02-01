@@ -53,7 +53,17 @@ async def get_examinations(
     items = []
     for exam in examinations:
         item = ExaminationList.model_validate(exam)
-        item.patient_name = exam.patient.full_name if exam.patient else None
+        if exam.patient:
+            patient_name = f"{exam.patient.last_name} {exam.patient.first_name}"
+            if exam.patient.middle_name:
+                patient_name += f" {exam.patient.middle_name}"
+            item.patient_name = patient_name
+            item.patient_phone = exam.patient.phone
+            item.patient_birth_date = exam.patient.birth_date
+        else:
+            item.patient_name = None
+            item.patient_phone = None
+            item.patient_birth_date = None
         item.template_name = TEMPLATE_TYPES.get(exam.template_type, {}).get("name_ru", exam.template_type)
         items.append(item)
     
@@ -95,7 +105,8 @@ async def create_examination(
     if patient.middle_name:
         patient_name += f" {patient.middle_name}"
     result.patient_name = patient_name
-    result.doctor_name = current_user.name or current_user.username
+    doctor_name = f"{current_user.first_name} {current_user.last_name}"
+    result.doctor_name = doctor_name
     result.template_name = TEMPLATE_TYPES.get(examination.template_type, {}).get("name_ru")
     
     return result
@@ -183,7 +194,10 @@ async def get_examination(
         result.patient_name = patient_name
     else:
         result.patient_name = None
-    result.doctor_name = examination.doctor.name if examination.doctor else None
+    if examination.doctor:
+        result.doctor_name = f"{examination.doctor.first_name} {examination.doctor.last_name}"
+    else:
+        result.doctor_name = None
     result.template_name = TEMPLATE_TYPES.get(examination.template_type, {}).get("name_ru")
     
     return result
@@ -217,7 +231,10 @@ async def update_examination(
         result.patient_name = patient_name
     else:
         result.patient_name = None
-    result.doctor_name = examination.doctor.name if examination.doctor else None
+    if examination.doctor:
+        result.doctor_name = f"{examination.doctor.first_name} {examination.doctor.last_name}"
+    else:
+        result.doctor_name = None
     result.template_name = TEMPLATE_TYPES.get(examination.template_type, {}).get("name_ru")
     
     return result
@@ -257,7 +274,7 @@ async def delete_examination(
     if not examination:
         raise HTTPException(status_code=404, detail="Tekshiruv topilmadi")
     
-    await crud_examination.delete(db=db, instance=examination)
+    await crud_examination.delete(db=db, id=examination.id)
     return Message(message="Tekshiruv muvaffaqiyatli o'chirildi")
 
 
@@ -294,7 +311,7 @@ async def get_examination_for_print(
             "phone": patient.phone,
         },
         "doctor": {
-            "name": examination.doctor.name or examination.doctor.username,
+            "name": f"{examination.doctor.first_name} {examination.doctor.last_name}" if examination.doctor else examination.doctor.username,
         },
         "template": TEMPLATE_TYPES.get(examination.template_type, {}),
     }

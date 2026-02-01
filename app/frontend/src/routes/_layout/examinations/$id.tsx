@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
+import { useLanguage } from "@/hooks/useLanguage"
 
 import { TEMPLATE_TYPES, type Examination } from "@/types/medical"
 
@@ -41,6 +42,7 @@ function ExaminationDetailPage() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const queryClient = useQueryClient()
+  const { t, language } = useLanguage()
 
   const { data: examination, isLoading } = useQuery({
     queryKey: ["examination", id],
@@ -51,7 +53,7 @@ function ExaminationDetailPage() {
     mutationFn: (status: string) => updateExaminationStatus(Number(id), status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["examination", id] })
-      toast({ title: "Muvaffaqiyat!", description: "Holat o'zgartirildi" })
+      toast({ title: t("success"), description: t("status_updated") })
     },
   })
 
@@ -67,7 +69,7 @@ function ExaminationDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="text-muted-foreground">Yuklanmoqda...</div>
+        <div className="text-muted-foreground">{t("loading")}</div>
       </div>
     )
   }
@@ -75,7 +77,7 @@ function ExaminationDetailPage() {
   if (!examination) {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="text-destructive">Tekshiruv topilmadi</div>
+        <div className="text-destructive">{t("examination_not_found")}</div>
       </div>
     )
   }
@@ -89,9 +91,9 @@ function ExaminationDetailPage() {
   } as const
 
   const statusLabels = {
-    draft: "Qoralama",
-    completed: "Tayyor",
-    printed: "Chop etilgan",
+    draft: t("draft"),
+    completed: t("completed"),
+    printed: t("printed"),
   }
 
   return (
@@ -124,18 +126,18 @@ function ExaminationDetailPage() {
                 disabled={statusMutation.isPending}
               >
                 <CheckCircle className="mr-2 h-4 w-4" />
-                Tayyor
+                {t("ready")}
               </Button>
             )}
             <Link to={`/examinations/edit/${examination.id}`}>
               <Button variant="outline">
                 <Edit className="mr-2 h-4 w-4" />
-                Tahrirlash
+                {t("edit")}
               </Button>
             </Link>
             <Button onClick={handlePrint}>
               <Printer className="mr-2 h-4 w-4" />
-              Chop etish
+              {t("print")}
             </Button>
           </div>
         </div>
@@ -143,7 +145,7 @@ function ExaminationDetailPage() {
         {/* Content preview */}
         <Card>
           <CardHeader>
-            <CardTitle>Tekshiruv natijalari</CardTitle>
+            <CardTitle>{t("examination_results")}</CardTitle>
           </CardHeader>
           <CardContent>
             <PrintContent examination={examination} />
@@ -516,7 +518,7 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
       {/* Header */}
       <div className="text-center mb-6">
         <div className="flex justify-center mb-4">
-          <img src="/logo-full.jpg" alt="UziProMax" className="h-20 w-auto" />
+          <img src="/assets/images/favicon.png" alt="UziProMax" className="h-20 w-auto" />
         </div>
         <h2 className="text-xl font-bold">УЗИ ТЕКШИРУВИ</h2>
         <p className="text-lg font-semibold mt-2">{templateInfo?.name_ru || examination.template_type}</p>

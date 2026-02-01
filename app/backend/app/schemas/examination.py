@@ -56,6 +56,8 @@ class ExaminationList(BaseModel):
     id: int
     patient_id: int
     patient_name: str | None = None
+    patient_phone: str | None = None
+    patient_birth_date: date | None = None
     examination_date: date
     template_type: str
     template_name: str | None = None

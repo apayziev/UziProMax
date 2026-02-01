@@ -52,7 +52,11 @@ async function deleteExamination(id: number): Promise<void> {
     method: "DELETE",
     headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
   })
-  if (!response.ok) throw new Error("Failed to delete examination")
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    console.error("Delete error:", errorData)
+    throw new Error(errorData.detail || "Failed to delete examination")
+  }
 }
 
 function ExaminationsPage() {
@@ -74,6 +78,13 @@ function ExaminationsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["examinations"] })
       toast({ title: t("deleted"), description: t("examination_deleted") })
+    },
+    onError: (error: Error) => {
+      toast({ 
+        title: t("error"), 
+        description: error.message,
+        variant: "destructive"
+      })
     },
   })
 
@@ -180,11 +191,12 @@ function ExaminationsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t("date")}</TableHead>
+                    <TableHead>{t("examination_date")}</TableHead>
                     <TableHead>{t("patient")}</TableHead>
+                    <TableHead>{t("birth_date")}</TableHead>
+                    <TableHead>{t("phone")}</TableHead>
                     <TableHead>{t("examination_type")}</TableHead>
                     <TableHead>{t("status")}</TableHead>
-                    <TableHead>{t("created")}</TableHead>
                     <TableHead className="w-[70px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -198,15 +210,16 @@ function ExaminationsPage() {
                         </div>
                       </TableCell>
                       <TableCell>{exam.patient_name || "-"}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {exam.patient_birth_date ? formatDate(exam.patient_birth_date) : "-"}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">{exam.patient_phone || "-"}</TableCell>
                       <TableCell>
                         <Badge variant="outline">
-                          {TEMPLATE_TYPES[exam.template_type]?.[language === "ru" ? "name_ru" : "name_uz"] || exam.template_type}
+                          {TEMPLATE_TYPES[exam.template_type]?.[language === "ru" ? "name_ru" : "name"] || exam.template_type}
                         </Badge>
                       </TableCell>
                       <TableCell>{getStatusBadge(exam.status)}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {formatDate(exam.created_at)}
-                      </TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
