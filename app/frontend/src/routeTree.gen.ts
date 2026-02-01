@@ -15,8 +15,8 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutPatientsRouteImport } from './routes/_layout/patients'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
-import { Route as LayoutExaminationsRouteImport } from './routes/_layout/examinations'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
+import { Route as LayoutExaminationsIndexRouteImport } from './routes/_layout/examinations/index'
 import { Route as LayoutExaminationsNewRouteImport } from './routes/_layout/examinations/new'
 import { Route as LayoutExaminationsIdRouteImport } from './routes/_layout/examinations/$id'
 
@@ -49,97 +49,97 @@ const LayoutItemsRoute = LayoutItemsRouteImport.update({
   path: '/items',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutExaminationsRoute = LayoutExaminationsRouteImport.update({
-  id: '/examinations',
-  path: '/examinations',
-  getParentRoute: () => LayoutRoute,
-} as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutExaminationsIndexRoute = LayoutExaminationsIndexRouteImport.update({
+  id: '/examinations/',
+  path: '/examinations/',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutExaminationsNewRoute = LayoutExaminationsNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => LayoutExaminationsRoute,
+  id: '/examinations/new',
+  path: '/examinations/new',
+  getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutExaminationsIdRoute = LayoutExaminationsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => LayoutExaminationsRoute,
+  id: '/examinations/$id',
+  path: '/examinations/$id',
+  getParentRoute: () => LayoutRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
-  '/examinations': typeof LayoutExaminationsRouteWithChildren
   '/items': typeof LayoutItemsRoute
   '/patients': typeof LayoutPatientsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
   '/examinations/$id': typeof LayoutExaminationsIdRoute
   '/examinations/new': typeof LayoutExaminationsNewRoute
+  '/examinations': typeof LayoutExaminationsIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
-  '/examinations': typeof LayoutExaminationsRouteWithChildren
   '/items': typeof LayoutItemsRoute
   '/patients': typeof LayoutPatientsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
   '/examinations/$id': typeof LayoutExaminationsIdRoute
   '/examinations/new': typeof LayoutExaminationsNewRoute
+  '/examinations': typeof LayoutExaminationsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
   '/login': typeof LoginRoute
   '/_layout/admin': typeof LayoutAdminRoute
-  '/_layout/examinations': typeof LayoutExaminationsRouteWithChildren
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/patients': typeof LayoutPatientsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/examinations/$id': typeof LayoutExaminationsIdRoute
   '/_layout/examinations/new': typeof LayoutExaminationsNewRoute
+  '/_layout/examinations/': typeof LayoutExaminationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
     | '/admin'
-    | '/examinations'
     | '/items'
     | '/patients'
     | '/settings'
     | '/'
     | '/examinations/$id'
     | '/examinations/new'
+    | '/examinations'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/admin'
-    | '/examinations'
     | '/items'
     | '/patients'
     | '/settings'
     | '/'
     | '/examinations/$id'
     | '/examinations/new'
+    | '/examinations'
   id:
     | '__root__'
     | '/_layout'
     | '/login'
     | '/_layout/admin'
-    | '/_layout/examinations'
     | '/_layout/items'
     | '/_layout/patients'
     | '/_layout/settings'
     | '/_layout/'
     | '/_layout/examinations/$id'
     | '/_layout/examinations/new'
+    | '/_layout/examinations/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -191,13 +191,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutItemsRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/examinations': {
-      id: '/_layout/examinations'
-      path: '/examinations'
-      fullPath: '/examinations'
-      preLoaderRoute: typeof LayoutExaminationsRouteImport
-      parentRoute: typeof LayoutRoute
-    }
     '/_layout/admin': {
       id: '/_layout/admin'
       path: '/admin'
@@ -205,52 +198,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/examinations/': {
+      id: '/_layout/examinations/'
+      path: '/examinations'
+      fullPath: '/examinations'
+      preLoaderRoute: typeof LayoutExaminationsIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/examinations/new': {
       id: '/_layout/examinations/new'
-      path: '/new'
+      path: '/examinations/new'
       fullPath: '/examinations/new'
       preLoaderRoute: typeof LayoutExaminationsNewRouteImport
-      parentRoute: typeof LayoutExaminationsRoute
+      parentRoute: typeof LayoutRoute
     }
     '/_layout/examinations/$id': {
       id: '/_layout/examinations/$id'
-      path: '/$id'
+      path: '/examinations/$id'
       fullPath: '/examinations/$id'
       preLoaderRoute: typeof LayoutExaminationsIdRouteImport
-      parentRoute: typeof LayoutExaminationsRoute
+      parentRoute: typeof LayoutRoute
     }
   }
 }
 
-interface LayoutExaminationsRouteChildren {
-  LayoutExaminationsIdRoute: typeof LayoutExaminationsIdRoute
-  LayoutExaminationsNewRoute: typeof LayoutExaminationsNewRoute
-}
-
-const LayoutExaminationsRouteChildren: LayoutExaminationsRouteChildren = {
-  LayoutExaminationsIdRoute: LayoutExaminationsIdRoute,
-  LayoutExaminationsNewRoute: LayoutExaminationsNewRoute,
-}
-
-const LayoutExaminationsRouteWithChildren =
-  LayoutExaminationsRoute._addFileChildren(LayoutExaminationsRouteChildren)
-
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
-  LayoutExaminationsRoute: typeof LayoutExaminationsRouteWithChildren
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutPatientsRoute: typeof LayoutPatientsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutExaminationsIdRoute: typeof LayoutExaminationsIdRoute
+  LayoutExaminationsNewRoute: typeof LayoutExaminationsNewRoute
+  LayoutExaminationsIndexRoute: typeof LayoutExaminationsIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
-  LayoutExaminationsRoute: LayoutExaminationsRouteWithChildren,
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutPatientsRoute: LayoutPatientsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
+  LayoutExaminationsIdRoute: LayoutExaminationsIdRoute,
+  LayoutExaminationsNewRoute: LayoutExaminationsNewRoute,
+  LayoutExaminationsIndexRoute: LayoutExaminationsIndexRoute,
 }
 
 const LayoutRouteWithChildren =

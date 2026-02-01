@@ -1,20 +1,25 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router"
 import { useState, useEffect } from "react"
 import { useQuery, useMutation } from "@tanstack/react-query"
-import { ArrowLeft, Save, User, Calendar, Search } from "lucide-react"
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  Save, 
+  User, 
+  Search, 
+  Plus,
+  Check,
+  FileText,
+  Stethoscope,
+  ClipboardList,
+  CheckCircle2
+} from "lucide-react"
 import { Link } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import {
   Command,
   CommandEmpty,
@@ -28,14 +33,31 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
+import { useLanguage } from "@/hooks/useLanguage"
+import { cn } from "@/lib/utils"
 
 import { 
   TEMPLATE_TYPES, 
   TEMPLATE_CATEGORIES,
   type Patient, 
+  type PatientCreate,
   type ExaminationCreate,
   type PatientListResponse 
 } from "@/types/medical"
@@ -74,6 +96,22 @@ async function getPatient(id: number): Promise<Patient> {
   return response.json()
 }
 
+async function createPatient(data: PatientCreate): Promise<Patient> {
+  const response = await fetch("/api/v1/patients", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
+    body: JSON.stringify(data),
+  })
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.detail || "Failed to create patient")
+  }
+  return response.json()
+}
+
 async function createExamination(data: ExaminationCreate) {
   const response = await fetch("/api/v1/examinations", {
     method: "POST",
@@ -90,12 +128,24 @@ async function createExamination(data: ExaminationCreate) {
   return response.json()
 }
 
+// Step definitions
+const STEPS = [
+  { id: 1, title: "template", icon: FileText },
+  { id: 2, title: "patient", icon: User },
+  { id: 3, title: "measurements", icon: Stethoscope },
+  { id: 4, title: "conclusion", icon: ClipboardList },
+]
+
 function NewExaminationPage() {
   const navigate = useNavigate()
   const search = useSearch({ from: "/_layout/examinations/new" })
   const { toast } = useToast()
+  const { t, language } = useLanguage()
 
-  // State
+  // Wizard state
+  const [currentStep, setCurrentStep] = useState(1)
+  
+  // Form state
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   const [patientSearchOpen, setPatientSearchOpen] = useState(false)
   const [patientSearchQuery, setPatientSearchQuery] = useState("")
@@ -107,10 +157,22 @@ function NewExaminationPage() {
   const [conclusion, setConclusion] = useState("")
   const [recommendations, setRecommendations] = useState("")
 
+  // New patient dialog
+  const [newPatientOpen, setNewPatientOpen] = useState(false)
+  const [newPatient, setNewPatient] = useState<PatientCreate>({
+    full_name: "",
+    gender: "female",
+    phone: "",
+    birth_date: "",
+  })
+
   // Load patient from URL if provided
   useEffect(() => {
     if (search.patient_id) {
-      getPatient(search.patient_id).then(setSelectedPatient).catch(console.error)
+      getPatient(search.patient_id).then((patient) => {
+        setSelectedPatient(patient)
+        if (patient) setCurrentStep(1) // Start from template selection
+      }).catch(console.error)
     }
   }, [search.patient_id])
 
@@ -121,30 +183,35 @@ function NewExaminationPage() {
     enabled: patientSearchQuery.length > 1,
   })
 
-  // Create mutation
+  // Create patient mutation
+  const createPatientMutation = useMutation({
+    mutationFn: createPatient,
+    onSuccess: (patient) => {
+      setSelectedPatient(patient)
+      setNewPatientOpen(false)
+      setNewPatient({ full_name: "", gender: "female", phone: "", birth_date: "" })
+      toast({ title: t("success"), description: t("patient_added") })
+    },
+    onError: (error: Error) => {
+      toast({ title: t("error"), description: error.message, variant: "destructive" })
+    },
+  })
+
+  // Create examination mutation
   const createMutation = useMutation({
     mutationFn: createExamination,
     onSuccess: (data) => {
-      toast({ title: "Muvaffaqiyat!", description: "Tekshiruv saqlandi" })
+      toast({ title: t("success"), description: t("examination_saved") })
       navigate({ to: `/examinations/${data.id}` })
     },
     onError: (error: Error) => {
-      toast({ title: "Xatolik", description: error.message, variant: "destructive" })
+      toast({ title: t("error"), description: error.message, variant: "destructive" })
     },
   })
 
   const handleSave = (status: "draft" | "completed") => {
-    if (!selectedPatient) {
-      toast({ title: "Xatolik", description: "Bemorni tanlang", variant: "destructive" })
-      return
-    }
-    if (!templateType) {
-      toast({ title: "Xatolik", description: "Shablon turini tanlang", variant: "destructive" })
-      return
-    }
-
     const data: ExaminationCreate = {
-      patient_id: selectedPatient.id,
+      patient_id: selectedPatient!.id,
       examination_date: examinationDate,
       template_type: templateType,
       examination_data: examinationData,
@@ -152,26 +219,50 @@ function NewExaminationPage() {
       recommendations: recommendations || null,
       status,
     }
-
     createMutation.mutate(data)
   }
 
-  // Get template category for grouping
+  const handleCreatePatient = () => {
+    if (!newPatient.full_name.trim()) {
+      toast({ title: t("error"), description: t("name_required"), variant: "destructive" })
+      return
+    }
+    createPatientMutation.mutate(newPatient)
+  }
+
+  // Navigation
+  const canGoNext = () => {
+    switch (currentStep) {
+      case 1: return !!templateType
+      case 2: return !!selectedPatient
+      case 3: return true // Measurements are optional
+      case 4: return true
+      default: return false
+    }
+  }
+
+  const goNext = () => {
+    if (canGoNext() && currentStep < 4) {
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  const goBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1)
+    }
+  }
+
+  // Template categories grouped
   const templatesByCategory = Object.entries(TEMPLATE_TYPES).reduce((acc, [key, value]) => {
     if (!acc[value.category]) acc[value.category] = []
     acc[value.category].push({ key, ...value })
     return acc
-  }, {} as Record<string, Array<{ key: string; name: string; name_ru: string }>>)
+  }, {} as Record<string, Array<{ key: string; name: string; name_ru: string; category: string }>>)
 
   // Render form based on template type
-  const renderForm = () => {
-    if (!templateType) {
-      return (
-        <div className="flex items-center justify-center py-20 text-muted-foreground">
-          Shablon turini tanlang
-        </div>
-      )
-    }
+  const renderMeasurementsForm = () => {
+    if (!templateType) return null
 
     const category = TEMPLATE_TYPES[templateType]?.category
     const props = {
@@ -191,12 +282,20 @@ function NewExaminationPage() {
       case "thyroid":
         return <ThyroidForm {...props} />
       default:
-        return <div>Form not found for {templateType}</div>
+        return <div className="text-muted-foreground text-center py-10">Form not available</div>
     }
   }
 
+  // Step translations
+  const stepTitles: Record<string, { uz: string; ru: string }> = {
+    template: { uz: "Shablon tanlash", ru: "Выбор шаблона" },
+    patient: { uz: "Bemor", ru: "Пациент" },
+    measurements: { uz: "O'lchovlar", ru: "Измерения" },
+    conclusion: { uz: "Xulosa", ru: "Заключение" },
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link to="/examinations">
@@ -205,186 +304,473 @@ function NewExaminationPage() {
           </Button>
         </Link>
         <div className="flex-1">
-          <h1 className="text-3xl font-bold tracking-tight">Yangi tekshiruv</h1>
-          <p className="text-muted-foreground">UZI tekshiruv ma'lumotlarini kiriting</p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => handleSave("draft")}
-            disabled={createMutation.isPending}
-          >
-            Qoralama sifatida saqlash
-          </Button>
-          <Button onClick={() => handleSave("completed")} disabled={createMutation.isPending}>
-            <Save className="mr-2 h-4 w-4" />
-            Saqlash
-          </Button>
+          <h1 className="text-2xl font-bold tracking-tight">{t("new_examination")}</h1>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left sidebar - Patient & Settings */}
-        <div className="space-y-6">
-          {/* Patient Selection */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                Bemor
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {selectedPatient ? (
-                <div className="space-y-3">
-                  <div className="p-3 border rounded-lg bg-muted/50">
-                    <p className="font-medium">{selectedPatient.full_name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedPatient.gender === "female" ? "Ayol" : "Erkak"}
-                      {selectedPatient.birth_date && ` • ${selectedPatient.birth_date}`}
-                    </p>
-                    {selectedPatient.phone && (
-                      <p className="text-sm text-muted-foreground">{selectedPatient.phone}</p>
-                    )}
+      {/* Progress Steps */}
+      <div className="flex items-center justify-center gap-2">
+        {STEPS.map((step, index) => {
+          const Icon = step.icon
+          const isCompleted = currentStep > step.id
+          const isCurrent = currentStep === step.id
+          
+          return (
+            <div key={step.id} className="flex items-center">
+              <button
+                onClick={() => {
+                  // Allow going back to completed steps
+                  if (step.id < currentStep || (step.id === currentStep)) {
+                    setCurrentStep(step.id)
+                  }
+                }}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-full transition-all",
+                  isCompleted && "bg-primary/10 text-primary cursor-pointer",
+                  isCurrent && "bg-primary text-primary-foreground",
+                  !isCompleted && !isCurrent && "bg-muted text-muted-foreground",
+                  step.id < currentStep && "cursor-pointer hover:bg-primary/20"
+                )}
+              >
+                {isCompleted ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Icon className="h-4 w-4" />
+                )}
+                <span className="text-sm font-medium hidden sm:inline">
+                  {language === "ru" ? stepTitles[step.title].ru : stepTitles[step.title].uz}
+                </span>
+                <span className="text-sm font-medium sm:hidden">{step.id}</span>
+              </button>
+              {index < STEPS.length - 1 && (
+                <div className={cn(
+                  "w-8 h-0.5 mx-1",
+                  currentStep > step.id ? "bg-primary" : "bg-muted"
+                )} />
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Step Content */}
+      <Card className="min-h-[350px]">
+        <CardContent className="p-6">
+          {/* Step 1: Template Selection */}
+          {currentStep === 1 && (
+            <div className="space-y-4">
+              <div className="text-center mb-4">
+                <h2 className="text-lg font-semibold mb-1">
+                  {language === "ru" ? "Выберите тип исследования" : "Tekshiruv turini tanlang"}
+                </h2>
+                <p className="text-muted-foreground text-sm">
+                  {language === "ru" ? "Нажмите на карточку для выбора" : "Tanlash uchun kartochkani bosing"}
+                </p>
+              </div>
+
+              {Object.entries(templatesByCategory).map(([category, templates]) => (
+                <div key={category} className="space-y-2">
+                  <h3 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                    {language === "ru" 
+                      ? TEMPLATE_CATEGORIES[category as keyof typeof TEMPLATE_CATEGORIES]?.name_ru 
+                      : TEMPLATE_CATEGORIES[category as keyof typeof TEMPLATE_CATEGORIES]?.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {templates.map((template) => (
+                      <button
+                        key={template.key}
+                        onClick={() => setTemplateType(template.key)}
+                        className={cn(
+                          "relative px-3 py-2 rounded-md border text-left transition-all hover:border-primary/50",
+                          templateType === template.key
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border"
+                        )}
+                      >
+                        <span className="text-sm font-medium flex items-center gap-2">
+                          {language === "ru" ? template.name_ru : template.name}
+                          {templateType === template.key && (
+                            <Check className="h-3.5 w-3.5" />
+                          )}
+                        </span>
+                      </button>
+                    ))}
                   </div>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => setSelectedPatient(null)}
-                  >
-                    Boshqa bemor tanlash
-                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Step 2: Patient Selection */}
+          {currentStep === 2 && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <h2 className="text-lg font-semibold mb-1">
+                  {language === "ru" ? "Выберите пациента" : "Bemorni tanlang"}
+                </h2>
+                <p className="text-muted-foreground text-sm">
+                  {language === "ru" 
+                    ? "Найдите существующего или добавьте нового" 
+                    : "Mavjud bemorni toping yoki yangi qo'shing"}
+                </p>
+              </div>
+
+              {selectedPatient ? (
+                <div className="max-w-md mx-auto">
+                  <Card className="border-primary bg-primary/5">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                          <User className="h-6 w-6 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-lg">{selectedPatient.full_name}</p>
+                          <p className="text-muted-foreground">
+                            {selectedPatient.gender === "female" 
+                              ? (language === "ru" ? "Женский" : "Ayol") 
+                              : (language === "ru" ? "Мужской" : "Erkak")}
+                            {selectedPatient.birth_date && ` • ${selectedPatient.birth_date}`}
+                          </p>
+                          {selectedPatient.phone && (
+                            <p className="text-muted-foreground">{selectedPatient.phone}</p>
+                          )}
+                        </div>
+                        <CheckCircle2 className="h-6 w-6 text-primary" />
+                      </div>
+                      <Button
+                        variant="outline"
+                        className="w-full mt-4"
+                        onClick={() => setSelectedPatient(null)}
+                      >
+                        {language === "ru" ? "Выбрать другого" : "Boshqa bemor tanlash"}
+                      </Button>
+                    </CardContent>
+                  </Card>
                 </div>
               ) : (
-                <Popover open={patientSearchOpen} onOpenChange={setPatientSearchOpen}>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Search className="mr-2 h-4 w-4" />
-                      Bemorni qidirish...
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[300px] p-0" align="start">
-                    <Command>
-                      <CommandInput
-                        placeholder="Ism yoki telefon..."
+                <div className="max-w-md mx-auto space-y-3">
+                  {/* Search Input with Add Button */}
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder={language === "ru" ? "Введите имя или телефон..." : "Ism yoki telefon kiriting..."}
                         value={patientSearchQuery}
-                        onValueChange={setPatientSearchQuery}
+                        onChange={(e) => setPatientSearchQuery(e.target.value)}
+                        className="pl-10 h-11"
                       />
-                      <CommandList>
-                        <CommandEmpty>Bemor topilmadi</CommandEmpty>
-                        <CommandGroup>
-                          {searchResults?.items.map((patient) => (
-                            <CommandItem
-                              key={patient.id}
-                              onSelect={() => {
-                                setSelectedPatient(patient)
-                                setPatientSearchOpen(false)
-                              }}
-                            >
-                              <div>
-                                <p className="font-medium">{patient.full_name}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  {patient.phone || "Telefon yo'q"}
-                                </p>
-                              </div>
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              )}
-            </CardContent>
-          </Card>
+                    </div>
+                    <Button
+                      variant="outline"
+                      className="h-11 shrink-0"
+                      onClick={() => setNewPatientOpen(true)}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      {language === "ru" ? "Новый пациент" : "Yangi bemor"}
+                    </Button>
+                  </div>
 
-          {/* Examination Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Tekshiruv sozlamalari
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Sana</Label>
+                  {/* Search Results */}
+                  {patientSearchQuery.length > 1 && (
+                    <div className="border rounded-lg divide-y max-h-[200px] overflow-auto">
+                      {searchResults?.items.length === 0 ? (
+                        <div className="p-4 text-center text-muted-foreground">
+                          <p>{language === "ru" ? "Пациент не найден" : "Bemor topilmadi"}</p>
+                          <Button
+                            variant="link"
+                            className="mt-1 text-primary"
+                            onClick={() => setNewPatientOpen(true)}
+                          >
+                            <Plus className="h-4 w-4 mr-1" />
+                            {language === "ru" ? "Добавить нового" : "Yangi qo'shish"}
+                          </Button>
+                        </div>
+                      ) : (
+                        searchResults?.items.map((patient) => (
+                          <button
+                            key={patient.id}
+                            onClick={() => {
+                              setSelectedPatient(patient)
+                              setPatientSearchQuery("")
+                            }}
+                            className="w-full p-3 text-left hover:bg-muted/50 flex items-center gap-3 transition-colors"
+                          >
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            <div>
+                              <p className="font-medium">{patient.full_name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {patient.phone || (language === "ru" ? "Нет телефона" : "Telefon yo'q")}
+                              </p>
+                            </div>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Step 3: Measurements */}
+          {currentStep === 3 && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-xl font-semibold">
+                    {language === "ru" 
+                      ? TEMPLATE_TYPES[templateType]?.name_ru 
+                      : TEMPLATE_TYPES[templateType]?.name}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {language === "ru" ? "Введите результаты измерений" : "O'lchov natijalarini kiriting"}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ru" ? "Пациент" : "Bemor"}
+                  </p>
+                  <p className="font-medium">{selectedPatient?.full_name}</p>
+                </div>
+              </div>
+
+              <div className="space-y-2 mb-4">
+                <Label>{language === "ru" ? "Дата исследования" : "Tekshiruv sanasi"}</Label>
                 <Input
                   type="date"
                   value={examinationDate}
                   onChange={(e) => setExaminationDate(e.target.value)}
+                  className="w-48"
                 />
               </div>
+
+              {renderMeasurementsForm()}
+            </div>
+          )}
+
+          {/* Step 4: Conclusion */}
+          {currentStep === 4 && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-semibold mb-2">
+                  {language === "ru" ? "Заключение и рекомендации" : "Xulosa va tavsiyalar"}
+                </h2>
+                <p className="text-muted-foreground">
+                  {language === "ru" 
+                    ? "Напишите заключение по результатам исследования" 
+                    : "Tekshiruv natijalari bo'yicha xulosa yozing"}
+                </p>
+              </div>
+
+              {/* Summary */}
+              <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg mb-6">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ru" ? "Тип исследования" : "Tekshiruv turi"}
+                  </p>
+                  <p className="font-medium">
+                    {language === "ru" 
+                      ? TEMPLATE_TYPES[templateType]?.name_ru 
+                      : TEMPLATE_TYPES[templateType]?.name}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ru" ? "Пациент" : "Bemor"}
+                  </p>
+                  <p className="font-medium">{selectedPatient?.full_name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ru" ? "Дата" : "Sana"}
+                  </p>
+                  <p className="font-medium">{examinationDate}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-base">
+                    {language === "ru" ? "Заключение (ЗАКЛЮЧЕНИЕ)" : "Xulosa (ЗАКЛЮЧЕНИЕ)"}
+                  </Label>
+                  <Textarea
+                    placeholder={language === "ru" 
+                      ? "Напишите заключение по результатам исследования..." 
+                      : "Tekshiruv xulosasini yozing..."}
+                    value={conclusion}
+                    onChange={(e) => setConclusion(e.target.value)}
+                    rows={5}
+                    className="text-base"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-base">
+                    {language === "ru" ? "Рекомендации (РЕКОМЕНДАЦИИ)" : "Tavsiyalar (РЕКОМЕНДАЦИИ)"}
+                  </Label>
+                  <Textarea
+                    placeholder={language === "ru" 
+                      ? "Напишите рекомендации..." 
+                      : "Tavsiyalarni yozing..."}
+                    value={recommendations}
+                    onChange={(e) => setRecommendations(e.target.value)}
+                    rows={4}
+                    className="text-base"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Navigation Buttons */}
+      <div className="flex items-center justify-between">
+        <Button
+          variant="outline"
+          onClick={goBack}
+          disabled={currentStep === 1}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          {language === "ru" ? "Назад" : "Orqaga"}
+        </Button>
+
+        <div className="flex gap-2">
+          {currentStep === 4 ? (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => handleSave("draft")}
+                disabled={createMutation.isPending}
+              >
+                {language === "ru" ? "Сохранить черновик" : "Qoralama saqlash"}
+              </Button>
+              <Button
+                onClick={() => handleSave("completed")}
+                disabled={createMutation.isPending}
+              >
+                <Save className="mr-2 h-4 w-4" />
+                {language === "ru" ? "Сохранить" : "Saqlash"}
+              </Button>
+            </>
+          ) : (
+            <Button
+              onClick={goNext}
+              disabled={!canGoNext()}
+            >
+              {language === "ru" ? "Далее" : "Keyingi"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* New Patient Dialog */}
+      <Dialog open={newPatientOpen} onOpenChange={setNewPatientOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {language === "ru" ? "Новый пациент" : "Yangi bemor"}
+            </DialogTitle>
+            <DialogDescription>
+              {language === "ru" 
+                ? "Введите данные пациента" 
+                : "Bemor ma'lumotlarini kiriting"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label>{language === "ru" ? "Ф.И.О *" : "F.I.O *"}</Label>
+              <Input
+                placeholder={language === "ru" ? "Иванов Иван Иванович" : "Aliyev Ali Valiyevich"}
+                value={newPatient.full_name}
+                onChange={(e) => setNewPatient({ ...newPatient, full_name: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>{language === "ru" ? "Телефон *" : "Telefon *"}</Label>
+              <Input
+                placeholder="+998 90 123 45 67"
+                value={newPatient.phone || ""}
+                onChange={(e) => {
+                  let value = e.target.value.replace(/[^\d+]/g, "")
+                  if (!value.startsWith("+998") && value.length > 0) {
+                    if (value.startsWith("+")) {
+                      value = "+998" + value.slice(1)
+                    } else if (value.startsWith("998")) {
+                      value = "+" + value
+                    } else if (value.startsWith("8") || value.startsWith("9")) {
+                      value = "+998" + value
+                    } else {
+                      value = "+998" + value
+                    }
+                  }
+                  if (value.length > 13) value = value.slice(0, 13)
+                  setNewPatient({ ...newPatient, phone: value })
+                }}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Tekshiruv turi</Label>
-                <Select value={templateType} onValueChange={setTemplateType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Shablon tanlang" />
+                <Label>{language === "ru" ? "Пол" : "Jinsi"}</Label>
+                <Select
+                  value={newPatient.gender}
+                  onValueChange={(value: "male" | "female") => 
+                    setNewPatient({ ...newPatient, gender: value })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(templatesByCategory).map(([category, templates]) => (
-                      <div key={category}>
-                        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
-                          {TEMPLATE_CATEGORIES[category as keyof typeof TEMPLATE_CATEGORIES]?.name_ru || category}
-                        </div>
-                        {templates.map((t) => (
-                          <SelectItem key={t.key} value={t.key}>
-                            {t.name_ru}
-                          </SelectItem>
-                        ))}
-                      </div>
-                    ))}
+                    <SelectItem value="female">
+                      {language === "ru" ? "Женский" : "Ayol"}
+                    </SelectItem>
+                    <SelectItem value="male">
+                      {language === "ru" ? "Мужской" : "Erkak"}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Main content - Form */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {templateType
-                  ? TEMPLATE_TYPES[templateType]?.name_ru || "Tekshiruv"
-                  : "Tekshiruv ma'lumotlari"}
-              </CardTitle>
-              <CardDescription>
-                Barcha o'lchovlar va natijalarni kiriting
-              </CardDescription>
-            </CardHeader>
-            <CardContent>{renderForm()}</CardContent>
-          </Card>
-
-          {/* Conclusion */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Xulosa va tavsiyalar</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Xulosa (ЗАКЛЮЧЕНИЕ)</Label>
-                <Textarea
-                  placeholder="Tekshiruv xulosasini yozing..."
-                  value={conclusion}
-                  onChange={(e) => setConclusion(e.target.value)}
-                  rows={4}
+                <Label>
+                  {language === "ru" ? "Тугилган сана" : "Tug'ilgan sana"}
+                  {newPatient.birth_date && (
+                    <span className="text-muted-foreground ml-1">
+                      ({(() => {
+                        const today = new Date()
+                        const birth = new Date(newPatient.birth_date)
+                        let age = today.getFullYear() - birth.getFullYear()
+                        const m = today.getMonth() - birth.getMonth()
+                        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+                        return age
+                      })()} {language === "ru" ? "лет" : "yosh"})
+                    </span>
+                  )}
+                </Label>
+                <Input
+                  type="date"
+                  value={newPatient.birth_date || ""}
+                  onChange={(e) => setNewPatient({ ...newPatient, birth_date: e.target.value || null })}
+                  className="w-full"
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Tavsiyalar (РЕКОМЕНДАЦИИ)</Label>
-                <Textarea
-                  placeholder="Tavsiyalarni yozing..."
-                  value={recommendations}
-                  onChange={(e) => setRecommendations(e.target.value)}
-                  rows={3}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setNewPatientOpen(false)}>
+              {t("cancel")}
+            </Button>
+            <Button 
+              onClick={handleCreatePatient}
+              disabled={createPatientMutation.isPending || !newPatient.full_name.trim()}
+            >
+              {createPatientMutation.isPending 
+                ? (language === "ru" ? "Сохранение..." : "Saqlanmoqda...") 
+                : t("save")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

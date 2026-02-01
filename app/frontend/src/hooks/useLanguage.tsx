@@ -26,6 +26,9 @@ const translations: Record<Language, Record<string, string>> = {
     "new_examination": "Yangi tekshiruv",
     "settings": "Sozlamalar",
     
+    // Common filters
+    "all": "Barchasi",
+    
     // Dashboard
     "hi": "Salom",
     "welcome_back": "Qaytganingizdan xursandmiz!",
@@ -138,6 +141,9 @@ const translations: Record<Language, Record<string, string>> = {
     "examinations": "Исследования",
     "new_examination": "Новое исследование",
     "settings": "Настройки",
+    
+    // Common filters
+    "all": "Все",
     
     // Dashboard
     "hi": "Привет",

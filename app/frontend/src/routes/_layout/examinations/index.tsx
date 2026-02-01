@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Search, FileText, Calendar, MoreHorizontal, Eye, Printer, Trash2, Filter } from "lucide-react"
+import { FileText, Calendar, MoreHorizontal, Eye, Printer, Trash2 } from "lucide-react"
 import { Link } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -20,13 +19,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
@@ -34,7 +26,7 @@ import { useLanguage } from "@/hooks/useLanguage"
 
 import { TEMPLATE_TYPES, type ExaminationListResponse } from "@/types/medical"
 
-export const Route = createFileRoute("/_layout/examinations")({
+export const Route = createFileRoute("/_layout/examinations/")({
   component: ExaminationsPage,
 })
 
@@ -118,41 +110,58 @@ function ExaminationsPage() {
         </Link>
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex gap-4">
-            <div className="w-[200px]">
-              <Select value={templateFilter} onValueChange={setTemplateFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t("template_type")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("all_templates")}</SelectItem>
-                  {Object.entries(TEMPLATE_TYPES).map(([key, value]) => (
-                    <SelectItem key={key} value={key}>
-                      {language === "ru" ? value.name_ru : value.name_uz}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="w-[180px]">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t("status")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("all_statuses")}</SelectItem>
-                  <SelectItem value="draft">{t("draft")}</SelectItem>
-                  <SelectItem value="completed">{t("completed")}</SelectItem>
-                  <SelectItem value="printed">{t("printed")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Template Type Tabs */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant={templateFilter === "all" ? "default" : "outline"}
+          size="sm"
+          onClick={() => { setTemplateFilter("all"); setPage(1) }}
+        >
+          {t("all")}
+        </Button>
+        {Object.entries(TEMPLATE_TYPES).map(([key, value]) => (
+          <Button
+            key={key}
+            variant={templateFilter === key ? "default" : "outline"}
+            size="sm"
+            onClick={() => { setTemplateFilter(key); setPage(1) }}
+          >
+            {language === "ru" ? value.name_ru : value.name}
+          </Button>
+        ))}
+      </div>
+
+      {/* Status Filter */}
+      <div className="flex gap-2">
+        <Badge 
+          variant={statusFilter === "all" ? "default" : "outline"} 
+          className="cursor-pointer px-3 py-1"
+          onClick={() => { setStatusFilter("all"); setPage(1) }}
+        >
+          {t("all")}
+        </Badge>
+        <Badge 
+          variant={statusFilter === "draft" ? "secondary" : "outline"} 
+          className="cursor-pointer px-3 py-1"
+          onClick={() => { setStatusFilter("draft"); setPage(1) }}
+        >
+          {t("draft")}
+        </Badge>
+        <Badge 
+          variant={statusFilter === "completed" ? "default" : "outline"} 
+          className="cursor-pointer px-3 py-1"
+          onClick={() => { setStatusFilter("completed"); setPage(1) }}
+        >
+          {t("completed")}
+        </Badge>
+        <Badge 
+          variant={statusFilter === "printed" ? "outline" : "outline"} 
+          className={`cursor-pointer px-3 py-1 ${statusFilter === "printed" ? "bg-muted" : ""}`}
+          onClick={() => { setStatusFilter("printed"); setPage(1) }}
+        >
+          {t("printed")}
+        </Badge>
+      </div>
 
       {/* Table */}
       <Card>
