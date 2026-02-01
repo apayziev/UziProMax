@@ -18,7 +18,9 @@ class Patient(BaseModel):
     __tablename__ = "patient"
 
     # Shaxsiy ma'lumotlar - Personal information
-    full_name: Mapped[str] = mapped_column(String(100), index=True, kw_only=True)  # ФИО
+    last_name: Mapped[str] = mapped_column(String(50), index=True, kw_only=True)  # Familiya
+    first_name: Mapped[str] = mapped_column(String(50), kw_only=True)  # Ism
+    middle_name: Mapped[str | None] = mapped_column(String(50), nullable=True, kw_only=True)  # Otasining ismi
     birth_date: Mapped[date | None] = mapped_column(Date, nullable=True, kw_only=True)  # Tug'ilgan sana
     gender: Mapped[str] = mapped_column(String(10), kw_only=True)  # Jins: male/female
     

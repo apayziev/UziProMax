@@ -5,7 +5,10 @@
 // Patient types
 export interface Patient {
   id: number
-  full_name: string
+  last_name: string
+  first_name: string
+  middle_name: string | null
+  full_name: string // computed from backend
   birth_date: string | null
   gender: "male" | "female"
   phone: string | null
@@ -17,7 +20,9 @@ export interface Patient {
 }
 
 export interface PatientCreate {
-  full_name: string
+  last_name: string
+  first_name: string
+  middle_name?: string | null
   birth_date?: string | null
   gender: "male" | "female"
   phone?: string | null
@@ -26,7 +31,9 @@ export interface PatientCreate {
 }
 
 export interface PatientUpdate {
-  full_name?: string
+  last_name?: string
+  first_name?: string
+  middle_name?: string | null
   birth_date?: string | null
   gender?: "male" | "female"
   phone?: string | null

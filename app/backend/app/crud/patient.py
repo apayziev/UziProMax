@@ -94,7 +94,9 @@ class CRUDPatient(BaseCRUD[Patient]):
         # Search filter
         if query:
             search_filter = or_(
-                Patient.full_name.ilike(f"%{query}%"),
+                Patient.last_name.ilike(f"%{query}%"),
+                Patient.first_name.ilike(f"%{query}%"),
+                Patient.middle_name.ilike(f"%{query}%"),
                 Patient.phone.ilike(f"%{query}%")
             )
             stmt = stmt.where(search_filter)

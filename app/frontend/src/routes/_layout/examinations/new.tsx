@@ -21,19 +21,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -148,7 +135,6 @@ function NewExaminationPage() {
   
   // Form state
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
-  const [patientSearchOpen, setPatientSearchOpen] = useState(false)
   const [patientSearchQuery, setPatientSearchQuery] = useState("")
   const [templateType, setTemplateType] = useState<string>("")
   const [examinationDate, setExaminationDate] = useState(
@@ -160,14 +146,13 @@ function NewExaminationPage() {
 
   // New patient dialog
   const [newPatientOpen, setNewPatientOpen] = useState(false)
-  const [newPatient, setNewPatient] = useState<PatientCreate & { last_name?: string; first_name?: string; middle_name?: string }>({
-    full_name: "",
-    gender: "female",
-    phone: "+998",
-    birth_date: "",
+  const [newPatient, setNewPatient] = useState<PatientCreate>({
     last_name: "",
     first_name: "",
     middle_name: "",
+    gender: "female",
+    phone: "+998",
+    birth_date: "",
   })
 
   // Load patient from URL if provided
@@ -194,13 +179,12 @@ function NewExaminationPage() {
       setSelectedPatient(patient)
       setNewPatientOpen(false)
       setNewPatient({ 
-        full_name: "", 
-        gender: "female", 
-        phone: "+998", 
-        birth_date: "",
         last_name: "",
         first_name: "",
         middle_name: "",
+        gender: "female", 
+        phone: "+998", 
+        birth_date: "",
       })
       toast({ title: t("success"), description: t("patient_added") })
     },
@@ -235,18 +219,13 @@ function NewExaminationPage() {
   }
 
   const handleCreatePatient = () => {
-    const fullName = [newPatient.last_name, newPatient.first_name, newPatient.middle_name]
-      .filter(Boolean)
-      .join(" ")
-      .trim()
-    
-    if (!fullName) {
+    if (!newPatient.last_name?.trim() || !newPatient.first_name?.trim()) {
       toast({ title: t("error"), description: t("name_required"), variant: "destructive" })
       return
     }
     createPatientMutation.mutate({
       ...newPatient,
-      full_name: fullName,
+      phone: newPatient.phone === "+998" ? "" : newPatient.phone,
     })
   }
 

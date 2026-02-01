@@ -3,17 +3,26 @@ Patient schemas - Bemor ma'lumotlari uchun Pydantic schemalar
 """
 from datetime import date, datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 
 class PatientBase(BaseModel):
     """Bemor asosiy ma'lumotlari"""
-    full_name: str = Field(..., min_length=2, max_length=100, description="ФИО / To'liq ism")
+    last_name: str = Field(..., min_length=1, max_length=50, description="Familiya")
+    first_name: str = Field(..., min_length=1, max_length=50, description="Ism")
+    middle_name: str | None = Field(None, max_length=50, description="Otasining ismi / Sharifi")
     birth_date: date | None = Field(None, description="Tug'ilgan sana")
     gender: str = Field(..., pattern="^(male|female)$", description="Jins: male/female")
     phone: str | None = Field(None, max_length=20, description="Telefon raqami")
     address: str | None = Field(None, description="Manzil")
     notes: str | None = Field(None, description="Izohlar")
+    
+    @computed_field
+    @property
+    def full_name(self) -> str:
+        """Computed full name from parts"""
+        parts = [self.last_name, self.first_name, self.middle_name]
+        return " ".join(p for p in parts if p)
 
 
 class PatientCreate(PatientBase):
@@ -23,7 +32,9 @@ class PatientCreate(PatientBase):
 
 class PatientUpdate(BaseModel):
     """Bemor ma'lumotlarini yangilash"""
-    full_name: str | None = Field(None, min_length=2, max_length=100)
+    last_name: str | None = Field(None, min_length=1, max_length=50)
+    first_name: str | None = Field(None, min_length=1, max_length=50)
+    middle_name: str | None = Field(None, max_length=50)
     birth_date: date | None = None
     gender: str | None = Field(None, pattern="^(male|female)$")
     phone: str | None = None
@@ -38,8 +49,6 @@ class PatientRead(PatientBase):
     id: int
     created_at: datetime
     updated_at: datetime | None = None
-    
-    # Computed fields
     examination_count: int = 0
 
 
@@ -48,12 +57,21 @@ class PatientList(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     
     id: int
-    full_name: str
+    last_name: str
+    first_name: str
+    middle_name: str | None = None
     birth_date: date | None = None
     gender: str
     phone: str | None = None
     created_at: datetime
     examination_count: int = 0
+    
+    @computed_field
+    @property
+    def full_name(self) -> str:
+        """Computed full name from parts"""
+        parts = [self.last_name, self.first_name, self.middle_name]
+        return " ".join(p for p in parts if p)
 
 
 class PatientSearch(BaseModel):
