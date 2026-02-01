@@ -104,14 +104,37 @@ export function GynecologyPrint({ data }: GynecologyPrintProps) {
       </div>
 
       {/* Mioma */}
-      {(data.myoma_count || data.myoma_sizes) && (
+      {(data.myoma_count || data.myoma_intramural_sizes || data.subserous_length) && (
         <div>
           <h4 className="font-bold text-primary">МИОМАТОЗНЫЕ УЗЛЫ:</h4>
           <p>
-            {data.myoma_count && `Количество: ${data.myoma_count} шт. `}
-            {data.myoma_location && `Локализация: ${data.myoma_location}. `}
-            {data.myoma_sizes && `Размеры: ${data.myoma_sizes}. `}
-            {data.myoma_figo && `Тип по FIGO: ${data.myoma_figo}.`}
+            Структура миометрия: неоднородная, за счёт {data.myoma_location || "передней стенки"} матки визуализируются{" "}
+            {data.myoma_count || "___"} шт {data.myoma_echogenicity || "гиперэхогенные"} узлы.{" "}
+            Имеющие {data.myoma_shape || "округлую"} форму с {data.myoma_contours || "ровными четкими"} контурами.{" "}
+            Размерами {data.myoma_intramural_sizes || "от___х___мм до___х___мм"}.{" "}
+            При ЦДК {data.myoma_cdk || "аваскулярные"}.
+            {data.myoma_figo && ` Тип по FIGO-${data.myoma_figo} (Интрамуральная миома).`}
+          </p>
+          {/* Subseroz tugun */}
+          {(data.subserous_length || data.subserous_width || data.subserous_thickness) && (
+            <p>
+              В проекции {data.subserous_location || "дно матки"} расположен субсерозный узел.{" "}
+              Д {data.subserous_length || "___"}х{data.subserous_width || "___"}х{data.subserous_thickness || "___"} мм.
+              {data.subserous_figo && ` Тип по FIGO-${data.subserous_figo} (Субсерозная миома).`}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Kista - O-RADS */}
+      {(data.cyst_location || data.cyst_size || data.cyst_orads) && (
+        <div>
+          <h4 className="font-bold text-primary">ОБРАЗОВАНИЕ В ПРИДАТКАХ:</h4>
+          <p>
+            {data.cyst_location && `Локализация: ${data.cyst_location}. `}
+            {data.cyst_size && `Размеры: ${data.cyst_size} мм. `}
+            {data.cyst_content && `Содержимое: ${data.cyst_content}. `}
+            {data.cyst_orads && `Классификация: ${data.cyst_orads}.`}
           </p>
         </div>
       )}

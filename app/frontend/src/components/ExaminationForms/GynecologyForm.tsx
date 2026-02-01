@@ -310,10 +310,11 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
             </AccordionTrigger>
             <AccordionContent className="pt-4">
               <div className="space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {/* 1-qator: Umumiy ma'lumotlar */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div className="space-y-2">
                     <Label>{t.nodeCount}</Label>
-                    <Input type="number" value={data.myoma_count || ""} onChange={(e) => updateField("myoma_count", e.target.value)} />
+                    <Input type="number" placeholder="3-4" value={data.myoma_count || ""} onChange={(e) => updateField("myoma_count", e.target.value)} />
                   </div>
                   <div className="space-y-2">
                     <Label>{t.localization}</Label>
@@ -324,6 +325,57 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                         <SelectItem value="задняя стенка">{t.posteriorWall}</SelectItem>
                         <SelectItem value="дно">{t.fundus}</SelectItem>
                         <SelectItem value="боковая стенка">{t.lateralWall}</SelectItem>
+                        <SelectItem value="множественная">множественная</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t.nodeEchogenicity}</Label>
+                    <Select value={data.myoma_echogenicity || ""} onValueChange={(v) => updateField("myoma_echogenicity", v)}>
+                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="гиперэхогенные">{t.hyperechoic}</SelectItem>
+                        <SelectItem value="гипоэхогенные">{t.hypoechoic}</SelectItem>
+                        <SelectItem value="изоэхогенные">{t.isoechoic}</SelectItem>
+                        <SelectItem value="смешанные">{t.mixed}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t.nodeShape}</Label>
+                    <Select value={data.myoma_shape || ""} onValueChange={(v) => updateField("myoma_shape", v)}>
+                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="округлая">{t.rounded}</SelectItem>
+                        <SelectItem value="овальная">овальная</SelectItem>
+                        <SelectItem value="неправильная">{t.irregular}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* 2-qator: Kontur va CDC */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="space-y-2">
+                    <Label>{t.nodeContours}</Label>
+                    <Select value={data.myoma_contours || ""} onValueChange={(v) => updateField("myoma_contours", v)}>
+                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ровные, четкие">{t.smooth}</SelectItem>
+                        <SelectItem value="неровные">{t.uneven}</SelectItem>
+                        <SelectItem value="нечеткие">{t.unclear}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t.cdkVascularization}</Label>
+                    <Select value={data.myoma_cdk || ""} onValueChange={(v) => updateField("myoma_cdk", v)}>
+                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="аваскулярный">{t.avascular}</SelectItem>
+                        <SelectItem value="периферический">{t.peripheral}</SelectItem>
+                        <SelectItem value="центральный">{t.central}</SelectItem>
+                        <SelectItem value="смешанный">{t.mixedVasc}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -332,21 +384,134 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                     <Select value={data.myoma_figo || ""} onValueChange={(v) => updateField("myoma_figo", v)}>
                       <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="0">0 - submukosal oyoqchada</SelectItem>
-                        <SelectItem value="1">1 - submukosal &lt;50%</SelectItem>
-                        <SelectItem value="2">2 - submukosal &gt;50%</SelectItem>
-                        <SelectItem value="3">3 - intramural</SelectItem>
-                        <SelectItem value="4">4 - intramural</SelectItem>
-                        <SelectItem value="5">5 - subseroz &gt;50%</SelectItem>
-                        <SelectItem value="6">6 - subseroz &lt;50%</SelectItem>
-                        <SelectItem value="7">7 - subseroz oyoqchada</SelectItem>
+                        <SelectItem value="0">FIGO 0 - submukosal oyoqchada</SelectItem>
+                        <SelectItem value="1">FIGO 1 - submukosal &lt;50%</SelectItem>
+                        <SelectItem value="2">FIGO 2 - submukosal &gt;50%</SelectItem>
+                        <SelectItem value="3">FIGO 3 - intramural (endometriyga tegib)</SelectItem>
+                        <SelectItem value="4">FIGO 4 - intramural</SelectItem>
+                        <SelectItem value="5">FIGO 5 - subseroz &gt;50%</SelectItem>
+                        <SelectItem value="6">FIGO 6 - subseroz &lt;50%</SelectItem>
+                        <SelectItem value="7">FIGO 7 - subseroz oyoqchada</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* 3-qator: Intramural tugunlar o'lchami */}
+                <div className="space-y-2">
+                  <Label>{t.intramuralNode} - {t.nodeSizes}</Label>
+                  <Input 
+                    placeholder={language === "ru" ? "от 2.5х3.9мм до 10.3х7.9мм" : "2.5x3.9mm dan 10.3x7.9mm gacha"} 
+                    value={data.myoma_intramural_sizes || ""} 
+                    onChange={(e) => updateField("myoma_intramural_sizes", e.target.value)} 
+                  />
+                </div>
+
+                {/* 4-qator: Subseroz tugun */}
+                <div className="p-3 border rounded-lg bg-orange-100/50">
+                  <h4 className="font-medium text-sm mb-3">{t.subserousNode}</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="space-y-2">
+                      <Label>{t.nodeLocation}</Label>
+                      <Select value={data.subserous_location || ""} onValueChange={(v) => updateField("subserous_location", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="дно матки">{t.fundus}</SelectItem>
+                          <SelectItem value="передняя стенка">{t.anteriorWall}</SelectItem>
+                          <SelectItem value="задняя стенка">{t.posteriorWall}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t.length} ({t.mm})</Label>
+                      <Input type="number" placeholder="65.3" value={data.subserous_length || ""} onChange={(e) => updateField("subserous_length", e.target.value)} className="h-9" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t.width} ({t.mm})</Label>
+                      <Input type="number" placeholder="5.4" value={data.subserous_width || ""} onChange={(e) => updateField("subserous_width", e.target.value)} className="h-9" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t.thickness} ({t.mm})</Label>
+                      <Input type="number" placeholder="60.4" value={data.subserous_thickness || ""} onChange={(e) => updateField("subserous_thickness", e.target.value)} className="h-9" />
+                    </div>
+                  </div>
+                  <div className="mt-2">
+                    <Label>{t.figoType}</Label>
+                    <Select value={data.subserous_figo || ""} onValueChange={(v) => updateField("subserous_figo", v)}>
+                      <SelectTrigger className="h-9 mt-1"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">FIGO 5 - subseroz &gt;50%</SelectItem>
+                        <SelectItem value="6">FIGO 6 - subseroz &lt;50%</SelectItem>
+                        <SelectItem value="7">FIGO 7 - subseroz oyoqchada</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Qo'shimcha tavsif */}
+                <div className="space-y-2">
+                  <Label>{t.nodeDescription}</Label>
+                  <Input 
+                    placeholder={language === "ru" ? "Дополнительное описание узлов..." : "Tugunlar haqida qo'shimcha..."} 
+                    value={data.myoma_description || ""} 
+                    onChange={(e) => updateField("myoma_description", e.target.value)} 
+                  />
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        )}
+
+        {/* Kista uchun qo'shimcha - O-RADS */}
+        {templateType === "gynecology_cyst" && (
+          <AccordionItem value="cyst" className="border rounded-lg px-4 border-purple-200 bg-purple-50/50">
+            <AccordionTrigger className="text-base font-semibold hover:no-underline text-purple-700">
+              {t.ovarianMass}
+            </AccordionTrigger>
+            <AccordionContent className="pt-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="space-y-2">
+                    <Label>{t.localization}</Label>
+                    <Select value={data.cyst_location || ""} onValueChange={(v) => updateField("cyst_location", v)}>
+                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="правый придаток">{t.rightOvary}</SelectItem>
+                        <SelectItem value="левый придаток">{t.leftOvary}</SelectItem>
+                        <SelectItem value="оба придатка">Оба придатка</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t.size} ({t.mm})</Label>
+                    <Input placeholder="30x25x20" value={data.cyst_size || ""} onChange={(e) => updateField("cyst_size", e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t.massContent}</Label>
+                    <Select value={data.cyst_content || ""} onValueChange={(v) => updateField("cyst_content", v)}>
+                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="анэхогенное">{t.anechoicContent}</SelectItem>
+                        <SelectItem value="с перегородками">{t.withSeptations}</SelectItem>
+                        <SelectItem value="с солидным компонентом">{t.withSolidComponent}</SelectItem>
+                        <SelectItem value="смешанное">{t.mixed}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>{t.nodeSizes}</Label>
-                  <Input placeholder={language === "ru" ? "размер1 мм, размер2 мм..." : "o'lcham1 mm, o'lcham2 mm..."} value={data.myoma_sizes || ""} onChange={(e) => updateField("myoma_sizes", e.target.value)} />
+                  <Label>{t.oradsClassification}</Label>
+                  <Select value={data.cyst_orads || ""} onValueChange={(v) => updateField("cyst_orads", v)}>
+                    <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="O-RADS 1">{t.orads1}</SelectItem>
+                      <SelectItem value="O-RADS 2">{t.orads2}</SelectItem>
+                      <SelectItem value="O-RADS 2-3">O-RADS 2-3</SelectItem>
+                      <SelectItem value="O-RADS 3">{t.orads3}</SelectItem>
+                      <SelectItem value="O-RADS 4">{t.orads4}</SelectItem>
+                      <SelectItem value="O-RADS 5">{t.orads5}</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </AccordionContent>
