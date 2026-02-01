@@ -158,6 +158,26 @@ export function getGynecologyTranslations(language: Language) {
     fluidInPelvis: language === "ru" ? "Жидкость в малом тазу" : "Kichik tos bo'shlig'ida suyuqlik",
     pelvicVeins: language === "ru" ? "Вены малого таза" : "Kichik tos venalari",
     
+    // Bachadon bo'shlig'i
+    uterineCavity: language === "ru" ? "Полость матки" : "Bachadon bo'shlig'i",
+    notDeformed: language === "ru" ? "не деформирована" : "deformatsiyalanmagan",
+    deformed: language === "ru" ? "деформирована" : "deformatsiyalangan",
+    notExpanded: language === "ru" ? "не расширена" : "kengaymagan",
+    expanded: language === "ru" ? "расширена" : "kengaygan",
+    
+    // Bachadon bo'yni shakli
+    cervixShape: language === "ru" ? "Форма шейки" : "Bo'yin shakli",
+    cylindrical: language === "ru" ? "цилиндрическая" : "silindrsimon",
+    conical: language === "ru" ? "коническая" : "konussimon",
+    irregular: language === "ru" ? "неправильная" : "noto'g'ri",
+    
+    // Bachadon naychalari
+    fallopianTubes: language === "ru" ? "Маточные трубы" : "Bachadon naychalari",
+    
+    // Maksimal follikul
+    maxFollicle: language === "ru" ? "Макс. фолликул" : "Maks. follikula",
+    dominantFollicle: language === "ru" ? "Доминантный фолликул" : "Dominant follikula",
+    
     // Mioma
     myomaNodes: language === "ru" ? "МИОМАТОЗНЫЕ УЗЛЫ" : "MIOMA TUGUNLARI",
     nodeCount: language === "ru" ? "Количество узлов" : "Tugunlar soni",

@@ -102,6 +102,18 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                   </SelectContent>
                 </Select>
               </div>
+              {/* Bachadon bo'shlig'i */}
+              <div className="space-y-2">
+                <Label>{t.uterineCavity}</Label>
+                <Select value={data.uterine_cavity || ""} onValueChange={(v) => updateField("uterine_cavity", v)}>
+                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="не деформирована, не расширена">{t.notDeformed}, {t.notExpanded}</SelectItem>
+                    <SelectItem value="деформирована">{t.deformed}</SelectItem>
+                    <SelectItem value="расширена">{t.expanded}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -148,7 +160,18 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
             {t.cervix}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <Label>{t.cervixShape}</Label>
+                <Select value={data.cervix_shape || ""} onValueChange={(v) => updateField("cervix_shape", v)}>
+                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="цилиндрическая">{t.cylindrical}</SelectItem>
+                    <SelectItem value="коническая">{t.conical}</SelectItem>
+                    <SelectItem value="неправильная">{t.irregular}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label>{t.length} ({t.mm})</Label>
                 <Input type="number" value={data.cervix_length || ""} onChange={(e) => updateField("cervix_length", e.target.value)} />
@@ -189,6 +212,10 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                     <Input placeholder={t.diameterCount} value={data.ovary_right_follicles || ""} onChange={(e) => updateField("ovary_right_follicles", e.target.value)} className="h-9" />
                   </div>
                 </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">{t.maxFollicle} ({t.mm})</Label>
+                  <Input type="number" placeholder="Ø" value={data.ovary_right_max_follicle || ""} onChange={(e) => updateField("ovary_right_max_follicle", e.target.value)} className="h-9" />
+                </div>
                 {(templateType === "gynecology_cyst" || templateType === "gynecology_myoma") && (
                   <div className="space-y-1">
                     <Label className="text-xs">{t.mass}</Label>
@@ -214,6 +241,10 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                     <Input placeholder={t.diameterCount} value={data.ovary_left_follicles || ""} onChange={(e) => updateField("ovary_left_follicles", e.target.value)} className="h-9" />
                   </div>
                 </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">{t.maxFollicle} ({t.mm})</Label>
+                  <Input type="number" placeholder="Ø" value={data.ovary_left_max_follicle || ""} onChange={(e) => updateField("ovary_left_max_follicle", e.target.value)} className="h-9" />
+                </div>
                 {(templateType === "gynecology_cyst" || templateType === "gynecology_myoma") && (
                   <div className="space-y-1">
                     <Label className="text-xs">{t.mass}</Label>
@@ -231,7 +262,17 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
             {t.additional}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>{t.fallopianTubes}</Label>
+                <Select value={data.fallopian_tubes || ""} onValueChange={(v) => updateField("fallopian_tubes", v)}>
+                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="не визуализируются">{t.notVisualized}</SelectItem>
+                    <SelectItem value="визуализируются">{t.visualized}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label>{t.fluidInPelvis}</Label>
                 <Select value={data.fluid_in_pelvis || ""} onValueChange={(v) => updateField("fluid_in_pelvis", v)}>

@@ -173,80 +173,86 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
   const renderAbdominal = () => (
     <div className="space-y-4">
       {/* Jigar */}
-      {(data.liver_right_lobe || data.liver_left_lobe) && (
-        <div>
-          <h4 className="font-semibold">ПЕЧЕНЬ:</h4>
-          <p>
-            Правая доля {data.liver_right_lobe} мм, левая доля {data.liver_left_lobe} мм.
-            {data.liver_contours && ` Контуры ${data.liver_contours}.`}
-            {data.liver_echogenicity && ` Эхогенность ${data.liver_echogenicity}.`}
-            {data.liver_structure && ` Структура ${data.liver_structure}.`}
-          </p>
-        </div>
-      )}
+      <div>
+        <h4 className="font-semibold">ПЕЧЕНЬ:</h4>
+        <p>
+          Контуры печени {data.liver_contour || "ровные, четкие"}.
+          {" "}Звукопроводимость – сохранена.
+        </p>
+        <p>
+          Размеры: Правая доля КВР {data.liver_kvr_right || "___"} мм (норма до 150-160 мм), 
+          ПЗР {data.liver_pzr || "___"} мм (норма до 125 мм). 
+          Левая доля КВР {data.liver_kvr_left || "___"} мм (норма до 100 мм).
+        </p>
+        <p>
+          Эхоструктура {data.liver_echostructure || "однородная"}.
+          {data.liver_echogenicity && ` Эхогенность ${data.liver_echogenicity}.`}
+        </p>
+        <p>
+          Сосуды печени: V. portae – {data.portal_vein || "___"} мм (норма 7-14 мм).
+          {" "}Нижняя полая вена (IVC) – {data.ivc || "___"} мм (норма 12-23 мм).
+          {" "}Общий желчный проток (choledoch) – {data.choledoch || "___"} мм (норма до 6-8 мм).
+        </p>
+      </div>
 
       {/* O't pufagi */}
-      {(data.gallbladder_length || data.gallbladder_width) && (
-        <div>
-          <h4 className="font-semibold">ЖЕЛЧНЫЙ ПУЗЫРЬ:</h4>
-          <p>
-            Размеры: {data.gallbladder_length} x {data.gallbladder_width} мм.
-            {data.gallbladder_wall && ` Стенка ${data.gallbladder_wall} мм.`}
-            {data.gallbladder_contents && ` Содержимое: ${data.gallbladder_contents}.`}
-            {data.gallbladder_stones === "есть" && ` Конкременты: ${data.gallbladder_stone_size} мм.`}
-          </p>
-        </div>
-      )}
+      <div>
+        <h4 className="font-semibold">ЖЕЛЧНЫЙ ПУЗЫРЬ:</h4>
+        <p>
+          Размеры: {data.gallbladder_size || "___"} мм.
+          {" "}Стенки толщиной {data.gallbladder_wall || "___"} мм (норма 1-2 мм).
+          {" "}Содержимое {data.gallbladder_content || "гомогенное"}.
+        </p>
+      </div>
 
-      {/* Me'da osti bezi */}
-      {(data.pancreas_head || data.pancreas_body || data.pancreas_tail) && (
-        <div>
-          <h4 className="font-semibold">ПОДЖЕЛУДОЧНАЯ ЖЕЛЕЗА:</h4>
-          <p>
-            Головка {data.pancreas_head} мм, тело {data.pancreas_body} мм, хвост {data.pancreas_tail} мм.
-            {data.pancreas_contours && ` Контуры ${data.pancreas_contours}.`}
-            {data.pancreas_echogenicity && ` Эхогенность ${data.pancreas_echogenicity}.`}
-            {data.pancreas_structure && ` Структура ${data.pancreas_structure}.`}
-            {data.virsung_duct && ` Вирсунгов проток ${data.virsung_duct} мм.`}
-          </p>
-        </div>
-      )}
+      {/* Oshqozon osti bezi */}
+      <div>
+        <h4 className="font-semibold">ПОДЖЕЛУДОЧНАЯ ЖЕЛЕЗА:</h4>
+        <p>
+          Контуры {data.pancreas_contour || "ровные, четкие"}.
+          {" "}Размеры: головка {data.pancreas_head || "___"} мм (норма 11-32 мм), 
+          тело {data.pancreas_body || "___"} мм (норма 4-21 мм), 
+          хвост {data.pancreas_tail || "___"} мм (норма 7-35 мм).
+          {data.pancreas_duct && ` Вирсунгов проток ${data.pancreas_duct} мм.`}
+        </p>
+        <p>
+          Эхоструктура {data.pancreas_echostructure || "однородная"}.
+        </p>
+      </div>
 
       {/* Taloq */}
-      {(data.spleen_length || data.spleen_width) && (
-        <div>
-          <h4 className="font-semibold">СЕЛЕЗЕНКА:</h4>
-          <p>
-            Размеры: {data.spleen_length} x {data.spleen_width} мм.
-            {data.spleen_contours && ` Контуры ${data.spleen_contours}.`}
-            {data.spleen_structure && ` Структура ${data.spleen_structure}.`}
-            {data.spleen_vein && ` Селезеночная вена ${data.spleen_vein} мм.`}
-          </p>
-        </div>
-      )}
+      <div>
+        <h4 className="font-semibold">СЕЛЕЗЕНКА:</h4>
+        <p>
+          Размеры: {data.spleen_length || "___"} x {data.spleen_width || "___"} мм (норма до 125x50 мм).
+          {" "}Контуры {data.spleen_contour || "ровные, четкие"}.
+          {" "}Эхоструктура {data.spleen_echostructure || "однородная"}.
+          {data.spleen_vein && ` Селезеночная вена ${data.spleen_vein} мм.`}
+        </p>
+      </div>
 
       {/* O'ng buyrak */}
-      {(data.right_kidney_length || data.right_kidney_width) && (
+      {(data.kidney_right_size || data.kidney_right_parenchyma) && (
         <div>
           <h4 className="font-semibold">ПРАВАЯ ПОЧКА:</h4>
           <p>
-            Размеры: {data.right_kidney_length} x {data.right_kidney_width} мм.
-            {data.right_kidney_parenchyma && ` Паренхима ${data.right_kidney_parenchyma} мм.`}
-            {data.right_kidney_contours && ` Контуры ${data.right_kidney_contours}.`}
-            {data.right_kidney_pcs && ` ЧЛС ${data.right_kidney_pcs}.`}
+            Размеры: {data.kidney_right_size || "___"} мм.
+            {data.kidney_right_parenchyma && ` Паренхима ${data.kidney_right_parenchyma} мм.`}
+            {" "}Контуры {data.kidney_right_contour || "ровные, четкие"}.
+            {data.kidney_right_pcs && ` ЧЛС: ${data.kidney_right_pcs}.`}
           </p>
         </div>
       )}
 
       {/* Chap buyrak */}
-      {(data.left_kidney_length || data.left_kidney_width) && (
+      {(data.kidney_left_size || data.kidney_left_parenchyma) && (
         <div>
           <h4 className="font-semibold">ЛЕВАЯ ПОЧКА:</h4>
           <p>
-            Размеры: {data.left_kidney_length} x {data.left_kidney_width} мм.
-            {data.left_kidney_parenchyma && ` Паренхима ${data.left_kidney_parenchyma} мм.`}
-            {data.left_kidney_contours && ` Контуры ${data.left_kidney_contours}.`}
-            {data.left_kidney_pcs && ` ЧЛС ${data.left_kidney_pcs}.`}
+            Размеры: {data.kidney_left_size || "___"} мм.
+            {data.kidney_left_parenchyma && ` Паренхима ${data.kidney_left_parenchyma} мм.`}
+            {" "}Контуры {data.kidney_left_contour || "ровные, четкие"}.
+            {data.kidney_left_pcs && ` ЧЛС: ${data.kidney_left_pcs}.`}
           </p>
         </div>
       )}
@@ -254,8 +260,7 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
       {/* Qorin bo'shlig'ida suyuqlik */}
       {data.free_fluid && (
         <div>
-          <h4 className="font-semibold">СВОБОДНАЯ ЖИДКОСТЬ:</h4>
-          <p>{data.free_fluid}</p>
+          <p><span className="font-semibold">Свободная жидкость в брюшной полости: </span>{data.free_fluid}.</p>
         </div>
       )}
     </div>
@@ -263,72 +268,106 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
 
   const renderGynecology = () => (
     <div className="space-y-4">
-      {/* Bachadon */}
-      {(data.uterus_length || data.uterus_width || data.uterus_ap) && (
+      {/* So'nggi hayz */}
+      {data.last_menstruation && (
         <div>
-          <h4 className="font-semibold">МАТКА:</h4>
-          <p>
-            {data.uterus_position && `Положение: ${data.uterus_position}. `}
-            Размеры: {data.uterus_length} x {data.uterus_width} x {data.uterus_ap} мм.
-            {data.uterus_contours && ` Контуры ${data.uterus_contours}.`}
-            {data.uterus_structure && ` Структура ${data.uterus_structure}.`}
-          </p>
+          <span className="font-semibold">День последней менструации: </span>
+          {data.last_menstruation}
         </div>
       )}
+
+      {/* Bachadon */}
+      <div>
+        <h4 className="font-semibold">МАТКА:</h4>
+        <p>
+          {data.uterus_position && `Положение: ${data.uterus_position}. `}
+          Контуры: {data.uterus_contour || "ровные, чёткие"}, форма обычная.
+        </p>
+        <p>
+          Размеры тела матки: длина {data.uterus_length || "___"} мм (N: 44,0-70,0), 
+          толщина {data.uterus_thickness || "___"} мм (N: 33,0-46,0), 
+          ширина {data.uterus_width || "___"} мм (N: 42,0-60,0).
+        </p>
+        <p>
+          Структура миометрия: {data.myometrium_structure || "однородная"}.
+          {data.uterine_cavity && ` Полость матки: ${data.uterine_cavity}.`}
+        </p>
+      </div>
 
       {/* Endometriy */}
-      {data.endometrium_thickness && (
-        <div>
-          <h4 className="font-semibold">ЭНДОМЕТРИЙ:</h4>
-          <p>
-            Толщина {data.endometrium_thickness} мм.
-            {data.endometrium_structure && ` Структура ${data.endometrium_structure}.`}
-            {data.cavity && ` Полость матки ${data.cavity}.`}
-          </p>
-        </div>
-      )}
+      <div>
+        <h4 className="font-semibold">ЭНДОМЕТРИЙ:</h4>
+        <p>
+          Толщина: {data.endometrium_thickness || "___"} мм.
+          {data.endometrium_structure && ` Эхоструктура: ${data.endometrium_structure}.`}
+          {data.menstrual_phase && ` Соответствует ${data.menstrual_phase} фазе МЦ.`}
+          {" "}Границы чёткие, контуры ровные.
+        </p>
+      </div>
 
       {/* Bachadon bo'yni */}
-      {data.cervix_length && (
-        <div>
-          <h4 className="font-semibold">ШЕЙКА МАТКИ:</h4>
-          <p>
-            Длина {data.cervix_length} мм.
-            {data.cervical_canal && ` Цервикальный канал ${data.cervical_canal} мм.`}
-            {data.nabothian_cysts && ` Наботовы кисты: ${data.nabothian_cysts}.`}
-          </p>
-        </div>
-      )}
+      <div>
+        <h4 className="font-semibold">ШЕЙКА МАТКИ:</h4>
+        <p>
+          {data.cervix_shape && `Форма: ${data.cervix_shape}. `}
+          Длина: {data.cervix_length || "___"} мм
+          {data.cervix_width && `, ширина: ${data.cervix_width} мм`}.
+          {data.endocervix && ` Эндоцервикс: ${data.endocervix} мм (N: 2-8 мм).`}
+          {" "}Контуры ровные, чёткие.
+        </p>
+      </div>
 
       {/* O'ng tuxumdon */}
-      {(data.right_ovary_length || data.right_ovary_width) && (
-        <div>
-          <h4 className="font-semibold">ПРАВЫЙ ЯИЧНИК:</h4>
-          <p>
-            Размеры: {data.right_ovary_length} x {data.right_ovary_width} x {data.right_ovary_ap} мм.
-            {data.right_ovary_volume && ` Объем ${data.right_ovary_volume} мл.`}
-            {data.right_follicles && ` Фолликулы: ${data.right_follicles}.`}
-          </p>
-        </div>
-      )}
+      <div>
+        <h4 className="font-semibold">ПРАВЫЙ ЯИЧНИК:</h4>
+        <p>
+          В типичном месте. Размеры: {data.ovary_right_size || "___"} мм.
+          {data.ovary_right_volume && ` Объём: ${data.ovary_right_volume} мл.`}
+          {" "}Контуры ровные, чёткие.
+        </p>
+        <p>
+          {data.ovary_right_follicles && `Фолликулы: ${data.ovary_right_follicles}.`}
+          {data.ovary_right_max_follicle && ` Максимальный фолликул: Ø ${data.ovary_right_max_follicle} мм.`}
+          {data.ovary_right_mass && ` Образование: ${data.ovary_right_mass}.`}
+        </p>
+      </div>
 
       {/* Chap tuxumdon */}
-      {(data.left_ovary_length || data.left_ovary_width) && (
-        <div>
-          <h4 className="font-semibold">ЛЕВЫЙ ЯИЧНИК:</h4>
-          <p>
-            Размеры: {data.left_ovary_length} x {data.left_ovary_width} x {data.left_ovary_ap} мм.
-            {data.left_ovary_volume && ` Объем ${data.left_ovary_volume} мл.`}
-            {data.left_follicles && ` Фолликулы: ${data.left_follicles}.`}
-          </p>
-        </div>
-      )}
+      <div>
+        <h4 className="font-semibold">ЛЕВЫЙ ЯИЧНИК:</h4>
+        <p>
+          В типичном месте. Размеры: {data.ovary_left_size || "___"} мм.
+          {data.ovary_left_volume && ` Объём: ${data.ovary_left_volume} мл.`}
+          {" "}Контуры ровные, чёткие.
+        </p>
+        <p>
+          {data.ovary_left_follicles && `Фолликулы: ${data.ovary_left_follicles}.`}
+          {data.ovary_left_max_follicle && ` Максимальный фолликул: Ø ${data.ovary_left_max_follicle} мм.`}
+          {data.ovary_left_mass && ` Образование: ${data.ovary_left_mass}.`}
+        </p>
+      </div>
 
-      {/* Duglas bo'shlig'i */}
-      {data.douglas && (
+      {/* Bachadon naychalari */}
+      <div>
+        <p><span className="font-semibold">Маточные трубы: </span>{data.fallopian_tubes || "не визуализируются"} (в норме не виз-ся).</p>
+      </div>
+
+      {/* Kichik tos */}
+      <div>
+        <p><span className="font-semibold">Жидкость в полости малого таза: </span>{data.fluid_in_pelvis || "не визуализируется"}.</p>
+        <p><span className="font-semibold">Вены малого таза: </span>{data.pelvic_veins || "не расширены"}.</p>
+      </div>
+
+      {/* Mioma tugunlari */}
+      {(data.myoma_count || data.myoma_sizes) && (
         <div>
-          <h4 className="font-semibold">ПОЗАДИМАТОЧНОЕ ПРОСТРАНСТВО:</h4>
-          <p>{data.douglas}</p>
+          <h4 className="font-semibold">МИОМАТОЗНЫЕ УЗЛЫ:</h4>
+          <p>
+            {data.myoma_count && `Количество: ${data.myoma_count} шт. `}
+            {data.myoma_location && `Локализация: ${data.myoma_location}. `}
+            {data.myoma_sizes && `Размеры: ${data.myoma_sizes}. `}
+            {data.myoma_figo && `Тип по FIGO: ${data.myoma_figo}.`}
+          </p>
         </div>
       )}
     </div>
@@ -514,41 +553,52 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
   }
 
   return (
-    <div className={forPrint ? "p-8 text-sm" : ""}>
+    <div className={forPrint ? "p-8 text-sm leading-relaxed" : ""}>
       {/* Header */}
       <div className="text-center mb-6">
-        <div className="flex justify-center mb-4">
-          <img src="/assets/images/favicon.png" alt="UziProMax" className="h-20 w-auto" />
+        <div className="flex justify-center mb-3">
+          <img src="/assets/images/favicon.png" alt="UziProMax" className="h-16 w-auto print:h-12" />
         </div>
-        <h2 className="text-xl font-bold">УЗИ ТЕКШИРУВИ</h2>
-        <p className="text-lg font-semibold mt-2">{templateInfo?.name_ru || examination.template_type}</p>
+        <h2 className="text-xl font-bold uppercase">ПРОТОКОЛ УЗИ</h2>
+        <p className="text-lg font-semibold mt-1">{templateInfo?.name_ru || examination.template_type}</p>
+        <div className="mt-2 text-xs text-muted-foreground">
+          <p>Тел: +998 77 082 66 22 | Адрес: Buyuk ipak yo'li ko'chasi, 119-uy</p>
+        </div>
       </div>
 
       {/* Bemor ma'lumotlari */}
-      <div className="mb-6">
-        <div className="grid grid-cols-2 gap-4">
+      <div className="mb-4 p-3 border rounded bg-muted/30 print:bg-transparent print:border-0">
+        <div className="grid grid-cols-2 gap-2 text-sm">
           <div>
             <span className="font-semibold">ФИО: </span>
-            {examination.patient_name}
+            {examination.patient_name || "___"}
           </div>
           <div>
-            <span className="font-semibold">Дата: </span>
+            <span className="font-semibold">Дата исследования: </span>
             {examination.examination_date}
           </div>
+          {data.last_menstruation && (
+            <div className="col-span-2">
+              <span className="font-semibold">День последней менструации: </span>
+              {data.last_menstruation}
+            </div>
+          )}
         </div>
       </div>
 
-      <Separator className="my-4" />
+      <Separator className="my-4 print:my-2" />
 
       {/* Tekshiruv ma'lumotlari */}
-      {renderExaminationData()}
+      <div className="text-sm leading-relaxed">
+        {renderExaminationData()}
+      </div>
 
       {/* Xulosa */}
       {examination.conclusion && (
         <>
-          <Separator className="my-4" />
+          <Separator className="my-4 print:my-2" />
           <div>
-            <h4 className="font-bold">ЗАКЛЮЧЕНИЕ:</h4>
+            <h4 className="font-bold uppercase">ЗАКЛЮЧЕНИЕ:</h4>
             <p className="mt-2 whitespace-pre-wrap">{examination.conclusion}</p>
           </div>
         </>
@@ -557,15 +607,25 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
       {/* Tavsiyalar */}
       {examination.recommendations && (
         <div className="mt-4">
-          <h4 className="font-bold">РЕКОМЕНДАЦИИ:</h4>
+          <h4 className="font-bold uppercase">РЕКОМЕНДАЦИИ:</h4>
           <p className="mt-2 whitespace-pre-wrap">{examination.recommendations}</p>
         </div>
       )}
 
-      {/* Imzo */}
-      <div className="mt-8 text-right">
-        <p>Врач УЗИ: ___________________</p>
-        <p className="mt-1 text-sm text-muted-foreground">{examination.doctor_name}</p>
+      {/* Imzo va izoh */}
+      <div className="mt-8 pt-4 border-t">
+        <div className="flex justify-between items-end">
+          <div className="text-xs text-muted-foreground max-w-[60%]">
+            <p>Заключение УЗИ не является диагнозом.</p>
+            <p>Дальнейшее лечение проконсультируйтесь со специалистами.</p>
+          </div>
+          <div className="text-right">
+            <p className="font-semibold">Врач УЗИ: ___________________</p>
+            {examination.doctor_name && (
+              <p className="mt-1 text-sm">{examination.doctor_name}</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )
