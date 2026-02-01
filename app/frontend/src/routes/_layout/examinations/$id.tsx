@@ -279,35 +279,27 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
 
   const renderGynecology = () => (
     <div className="space-y-4">
-      {/* So'nggi hayz */}
-      {data.last_menstruation && (
-        <div>
-          <span className="font-semibold">День последней менструации: </span>
-          {formatDate(data.last_menstruation)}
-        </div>
-      )}
-
       {/* Bachadon */}
-      <div>
-        <h4 className="font-semibold">МАТКА:</h4>
+      <div className="border-b pb-3">
+        <h4 className="font-bold text-primary uppercase mb-2">МАТКА:</h4>
         <p>
           {data.uterus_position && `Положение: ${data.uterus_position}. `}
           Контуры: {data.uterus_contour || "ровные, чёткие"}, форма обычная.
         </p>
-        <p>
+        <p className="mt-1">
           Размеры тела матки: длина {data.uterus_length || "___"} мм (N: 44,0-70,0), 
           толщина {data.uterus_thickness || "___"} мм (N: 33,0-46,0), 
           ширина {data.uterus_width || "___"} мм (N: 42,0-60,0).
         </p>
-        <p>
+        <p className="mt-1">
           Структура миометрия: {data.myometrium_structure || "однородная"}.
           {data.uterine_cavity && ` Полость матки: ${data.uterine_cavity}.`}
         </p>
       </div>
 
       {/* Endometriy */}
-      <div>
-        <h4 className="font-semibold">ЭНДОМЕТРИЙ:</h4>
+      <div className="border-b pb-3">
+        <h4 className="font-bold text-primary uppercase mb-2">ЭНДОМЕТРИЙ:</h4>
         <p>
           Толщина: {data.endometrium_thickness || "___"} мм.
           {data.endometrium_structure && ` Эхоструктура: ${data.endometrium_structure}.`}
@@ -317,8 +309,8 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
       </div>
 
       {/* Bachadon bo'yni */}
-      <div>
-        <h4 className="font-semibold">ШЕЙКА МАТКИ:</h4>
+      <div className="border-b pb-3">
+        <h4 className="font-bold text-primary uppercase mb-2">ШЕЙКА МАТКИ:</h4>
         <p>
           {data.cervix_shape && `Форма: ${data.cervix_shape}. `}
           Длина: {data.cervix_length || "___"} мм
@@ -329,44 +321,44 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
       </div>
 
       {/* O'ng tuxumdon */}
-      <div>
-        <h4 className="font-semibold">ПРАВЫЙ ЯИЧНИК:</h4>
+      <div className="border-b pb-3">
+        <h4 className="font-bold text-primary uppercase mb-2">ПРАВЫЙ ЯИЧНИК:</h4>
         <p>
           В типичном месте. Размеры: {data.ovary_right_size || "___"} мм.
           {data.ovary_right_volume && ` Объём: ${data.ovary_right_volume} мл.`}
           {" "}Контуры ровные, чёткие.
         </p>
-        <p>
-          {data.ovary_right_follicles && `Фолликулы: ${data.ovary_right_follicles}.`}
-          {data.ovary_right_max_follicle && ` Максимальный фолликул: Ø ${data.ovary_right_max_follicle} мм.`}
-          {data.ovary_right_mass && ` Образование: ${data.ovary_right_mass}.`}
-        </p>
+        {(data.ovary_right_follicles || data.ovary_right_max_follicle) && (
+          <p className="mt-1">
+            {data.ovary_right_follicles && `Фолликулы: ${data.ovary_right_follicles}.`}
+            {data.ovary_right_max_follicle && ` Максимальный фолликул: Ø ${data.ovary_right_max_follicle} мм.`}
+            {data.ovary_right_mass && ` Образование: ${data.ovary_right_mass}.`}
+          </p>
+        )}
       </div>
 
       {/* Chap tuxumdon */}
-      <div>
-        <h4 className="font-semibold">ЛЕВЫЙ ЯИЧНИК:</h4>
+      <div className="border-b pb-3">
+        <h4 className="font-bold text-primary uppercase mb-2">ЛЕВЫЙ ЯИЧНИК:</h4>
         <p>
           В типичном месте. Размеры: {data.ovary_left_size || "___"} мм.
           {data.ovary_left_volume && ` Объём: ${data.ovary_left_volume} мл.`}
           {" "}Контуры ровные, чёткие.
         </p>
-        <p>
-          {data.ovary_left_follicles && `Фолликулы: ${data.ovary_left_follicles}.`}
-          {data.ovary_left_max_follicle && ` Максимальный фолликул: Ø ${data.ovary_left_max_follicle} мм.`}
-          {data.ovary_left_mass && ` Образование: ${data.ovary_left_mass}.`}
-        </p>
+        {(data.ovary_left_follicles || data.ovary_left_max_follicle) && (
+          <p className="mt-1">
+            {data.ovary_left_follicles && `Фолликулы: ${data.ovary_left_follicles}.`}
+            {data.ovary_left_max_follicle && ` Максимальный фолликул: Ø ${data.ovary_left_max_follicle} мм.`}
+            {data.ovary_left_mass && ` Образование: ${data.ovary_left_mass}.`}
+          </p>
+        )}
       </div>
 
-      {/* Bachadon naychalari */}
-      <div>
-        <p><span className="font-semibold">Маточные трубы: </span>{data.fallopian_tubes || "не визуализируются"} (в норме не виз-ся).</p>
-      </div>
-
-      {/* Kichik tos */}
-      <div>
-        <p><span className="font-semibold">Жидкость в полости малого таза: </span>{data.fluid_in_pelvis || "не визуализируется"}.</p>
-        <p><span className="font-semibold">Вены малого таза: </span>{data.pelvic_veins || "не расширены"}.</p>
+      {/* Bachadon naychalari va kichik tos */}
+      <div className="space-y-2">
+        <p><span className="font-semibold">Маточные трубы:</span> {data.fallopian_tubes || "не визуализируются"} (в норме не виз-ся).</p>
+        <p><span className="font-semibold">Жидкость в полости малого таза:</span> {data.fluid_in_pelvis || "не визуализируется"}.</p>
+        <p><span className="font-semibold">Вены малого таза:</span> {data.pelvic_veins || "не расширены"}.</p>
       </div>
 
       {/* Mioma tugunlari */}
@@ -564,22 +556,22 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
   }
 
   return (
-    <div className={forPrint ? "p-8 text-sm leading-relaxed" : ""}>
+    <div className={forPrint ? "p-4 pt-2 text-sm leading-relaxed print:p-2 print:pt-0" : ""}>
       {/* Header */}
-      <div className="text-center mb-6">
-        <div className="flex justify-center mb-3">
-          <img src="/assets/images/favicon.png" alt="UziProMax" className="h-16 w-auto print:h-12" />
+      <div className="text-center mb-3 print:mb-2">
+        <div className="flex justify-center mb-1">
+          <img src="/assets/images/favicon.png" alt="UziProMax" className="h-14 w-auto print:h-10" />
         </div>
-        <h2 className="text-xl font-bold uppercase">ПРОТОКОЛ УЗИ</h2>
-        <p className="text-lg font-semibold mt-1">{templateInfo?.name_ru || examination.template_type}</p>
-        <div className="mt-2 text-xs text-muted-foreground">
-          <p>{t("phone")}: +998 77 082 66 22 | {t("address")}: {t("clinic_address")}</p>
+        <h2 className="text-lg font-bold uppercase print:text-base">ПРОТОКОЛ УЗИ</h2>
+        <p className="text-base font-semibold print:text-sm">{templateInfo?.name_ru || examination.template_type}</p>
+        <div className="mt-1 text-xs text-muted-foreground">
+          <p>Тел: +998 77 082 66 22 | {t("clinic_address")}</p>
         </div>
       </div>
 
       {/* Bemor ma'lumotlari */}
-      <div className="mb-4 p-3 border rounded bg-muted/30 print:bg-transparent print:border-0">
-        <div className="grid grid-cols-2 gap-2 text-sm">
+      <div className="mb-3 p-2 border rounded bg-muted/30 print:bg-transparent print:border-0 print:p-0 print:mb-2">
+        <div className="grid grid-cols-2 gap-1 text-sm">
           <div>
             <span className="font-semibold">ФИО: </span>
             {examination.patient_name || "___"}

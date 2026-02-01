@@ -2,33 +2,25 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { 
-  ArrowLeft, 
-  ArrowRight, 
-  Save,
+  ArrowLeft,
   Stethoscope,
   ClipboardList,
-  CheckCircle2
 } from "lucide-react"
 import { Link } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useLanguage } from "@/hooks/useLanguage"
-import { cn } from "@/lib/utils"
 
+import { TEMPLATE_TYPES, type Examination } from "@/types/medical"
 import { 
-  TEMPLATE_TYPES, 
-  type Examination,
-} from "@/types/medical"
-
-// Import form components
-import { AbdominalForm } from "@/components/ExaminationForms/AbdominalForm"
-import { GynecologyForm } from "@/components/ExaminationForms/GynecologyForm"
-import { ObstetricsForm } from "@/components/ExaminationForms/ObstetricsForm"
-import { BreastForm } from "@/components/ExaminationForms/BreastForm"
-import { ThyroidForm } from "@/components/ExaminationForms/ThyroidForm"
+  ExaminationFormRenderer, 
+  ConclusionForm, 
+  WizardStepper, 
+  WizardNavigation,
+  type WizardStep 
+} from "@/components/ExaminationForms"
 
 export const Route = createFileRoute("/_layout/examinations/edit/$id")({
   component: EditExaminationPage,
@@ -60,7 +52,7 @@ async function updateExamination(id: number, data: Partial<Examination>) {
 }
 
 // Step definitions for edit mode
-const STEPS = [
+const STEPS: WizardStep[] = [
   { id: 1, title: "measurements", icon: Stethoscope },
   { id: 2, title: "conclusion", icon: ClipboardList },
 ]
@@ -69,7 +61,7 @@ function EditExaminationPage() {
   const { id } = Route.useParams()
   const navigate = useNavigate()
   const { toast } = useToast()
-  const { t, language } = useLanguage()
+  const { t } = useLanguage()
   const queryClient = useQueryClient()
 
   // Wizard state
@@ -120,56 +112,8 @@ function EditExaminationPage() {
   }
 
   // Navigation
-  const goNext = () => {
-    if (currentStep < 2) {
-      setCurrentStep(currentStep + 1)
-    }
-  }
-
-  const goBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
-    }
-  }
-
-  // Render form based on template category
-  const renderExaminationForm = () => {
-    if (!examination) return null
-    
-    const templateInfo = TEMPLATE_TYPES[examination.template_type]
-    if (!templateInfo) {
-      return (
-        <div className="p-4 text-center text-muted-foreground">
-          {t("unknown_template")}
-        </div>
-      )
-    }
-
-    const formProps = {
-      data: examinationData,
-      onChange: setExaminationData,
-      language: language as "ru" | "uz",
-    }
-
-    switch (templateInfo.category) {
-      case "abdominal":
-        return <AbdominalForm {...formProps} />
-      case "gynecology":
-        return <GynecologyForm {...formProps} templateType={examination.template_type} />
-      case "obstetrics":
-        return <ObstetricsForm {...formProps} templateType={examination.template_type} />
-      case "breast":
-        return <BreastForm {...formProps} />
-      case "thyroid":
-        return <ThyroidForm {...formProps} />
-      default:
-        return (
-          <div className="p-4 text-center text-muted-foreground">
-            {t("form_not_available")}
-          </div>
-        )
-    }
-  }
+  const goNext = () => currentStep < 2 && setCurrentStep(currentStep + 1)
+  const goBack = () => currentStep > 1 && setCurrentStep(currentStep - 1)
 
   if (isLoading || !examination) {
     return (
@@ -198,33 +142,11 @@ function EditExaminationPage() {
         </div>
 
         {/* Progress steps */}
-        <div className="flex items-center justify-center gap-2 mt-4">
-          {STEPS.map((step, index) => (
-            <div key={step.id} className="flex items-center">
-              <button
-                onClick={() => setCurrentStep(step.id)}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all",
-                  currentStep === step.id
-                    ? "bg-primary text-primary-foreground"
-                    : currentStep > step.id
-                    ? "bg-primary/20 text-primary"
-                    : "bg-muted text-muted-foreground"
-                )}
-              >
-                <step.icon className="h-4 w-4" />
-                {t(step.title)}
-                {currentStep > step.id && <CheckCircle2 className="h-4 w-4 ml-1" />}
-              </button>
-              {index < STEPS.length - 1 && (
-                <div className={cn(
-                  "w-8 h-0.5 mx-2",
-                  currentStep > step.id ? "bg-primary" : "bg-muted"
-                )} />
-              )}
-            </div>
-          ))}
-        </div>
+        <WizardStepper 
+          steps={STEPS} 
+          currentStep={currentStep} 
+          onStepClick={setCurrentStep} 
+        />
       </div>
 
       {/* Step content */}
@@ -239,85 +161,37 @@ function EditExaminationPage() {
                 </h2>
                 <p className="text-muted-foreground">{t("enter_measurements")}</p>
               </div>
-              {renderExaminationForm()}
+              <ExaminationFormRenderer
+                templateType={examination.template_type}
+                data={examinationData}
+                onChange={setExaminationData}
+              />
             </div>
           )}
 
           {/* Step 2: Conclusion */}
           {currentStep === 2 && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold">{t("conclusion_title")}</h2>
-                <p className="text-muted-foreground">{t("enter_conclusion")}</p>
-              </div>
-
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("conclusion")}</label>
-                  <Textarea
-                    placeholder={t("conclusion_placeholder")}
-                    value={conclusion}
-                    onChange={(e) => setConclusion(e.target.value)}
-                    rows={4}
-                    className="resize-none"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("recommendations")}</label>
-                  <Textarea
-                    placeholder={t("recommendations_placeholder")}
-                    value={recommendations}
-                    onChange={(e) => setRecommendations(e.target.value)}
-                    rows={3}
-                    className="resize-none"
-                  />
-                </div>
-              </div>
-            </div>
+            <ConclusionForm
+              conclusion={conclusion}
+              recommendations={recommendations}
+              onConclusionChange={setConclusion}
+              onRecommendationsChange={setRecommendations}
+            />
           )}
         </CardContent>
       </Card>
 
       {/* Navigation */}
-      <div className="flex justify-between mt-6">
-        <Button
-          variant="outline"
-          onClick={goBack}
-          disabled={currentStep === 1}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {t("previous")}
-        </Button>
-
-        <div className="flex gap-2">
-          {currentStep === 2 && (
-            <>
-              <Button
-                variant="outline"
-                onClick={() => handleSave("draft")}
-                disabled={updateMutation.isPending}
-              >
-                <Save className="mr-2 h-4 w-4" />
-                {t("save_draft")}
-              </Button>
-              <Button
-                onClick={() => handleSave("completed")}
-                disabled={updateMutation.isPending}
-              >
-                <CheckCircle2 className="mr-2 h-4 w-4" />
-                {t("save_complete")}
-              </Button>
-            </>
-          )}
-          {currentStep < 2 && (
-            <Button onClick={goNext}>
-              {t("next")}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          )}
-        </div>
-      </div>
+      <WizardNavigation
+        currentStep={currentStep}
+        totalSteps={2}
+        isSubmitting={updateMutation.isPending}
+        onBack={goBack}
+        onNext={goNext}
+        onSaveDraft={() => handleSave("draft")}
+        onSaveComplete={() => handleSave("completed")}
+        showSaveButtons={true}
+      />
     </div>
   )
 }

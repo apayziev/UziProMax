@@ -45,11 +45,7 @@ import {
 } from "@/types/medical"
 
 // Import form components
-import { AbdominalForm } from "@/components/ExaminationForms/AbdominalForm"
-import { GynecologyForm } from "@/components/ExaminationForms/GynecologyForm"
-import { ObstetricsForm } from "@/components/ExaminationForms/ObstetricsForm"
-import { BreastForm } from "@/components/ExaminationForms/BreastForm"
-import { ThyroidForm } from "@/components/ExaminationForms/ThyroidForm"
+import { ExaminationFormRenderer } from "@/components/ExaminationForms"
 
 // Helper to format patient name
 const formatPatientName = (patient: Patient | null | undefined) => {
@@ -258,32 +254,7 @@ function NewExaminationPage() {
     return acc
   }, {} as Record<string, Array<{ key: string; name: string; name_ru: string; category: string }>>)
 
-  // Render form based on template type
-  const renderMeasurementsForm = () => {
-    if (!templateType) return null
-
-    const category = TEMPLATE_TYPES[templateType]?.category
-    const props = {
-      data: examinationData,
-      onChange: setExaminationData,
-      language: language as "uz" | "ru",
-    }
-
-    switch (category) {
-      case "abdominal":
-        return <AbdominalForm {...props} />
-      case "gynecology":
-        return <GynecologyForm {...props} templateType={templateType} />
-      case "obstetrics":
-        return <ObstetricsForm {...props} templateType={templateType} />
-      case "breast":
-        return <BreastForm {...props} />
-      case "thyroid":
-        return <ThyroidForm {...props} />
-      default:
-        return <div className="text-muted-foreground text-center py-10">Form not available</div>
-    }
-  }
+  // Render form based on template type - now using shared component
 
   // Step translations
   const stepTitles: Record<string, { uz: string; ru: string }> = {
@@ -558,7 +529,13 @@ function NewExaminationPage() {
                 </div>
               </div>
 
-              {renderMeasurementsForm()}
+              {templateType && (
+                <ExaminationFormRenderer
+                  templateType={templateType}
+                  data={examinationData}
+                  onChange={setExaminationData}
+                />
+              )}
             </div>
           )}
 

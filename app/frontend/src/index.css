@@ -151,9 +151,19 @@
     display: none !important;
   }
 
+  /* Hide toasts and notifications during print */
+  [data-sonner-toaster],
+  [data-radix-toast-viewport],
+  .toaster,
+  .toast,
+  [role="status"],
+  [aria-live="polite"] {
+    display: none !important;
+  }
+
   /* Reset margins for print */
   @page {
-    margin: 1.5cm;
+    margin: 1cm;
     size: A4;
   }
 
