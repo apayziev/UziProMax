@@ -311,7 +311,7 @@ export function ObstetricsForm({ data, onChange, templateType, language = "ru" }
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <div className="space-y-2">
                 <Label>{t.length} ({t.mm})</Label>
-                <Input type="number" placeholder="25-40" value={data.cervix_length || ""}} onChange={(e) => updateField("cervix_length", e.target.value)} />
+                <Input type="number" placeholder="25-40" value={data.cervix_length || ""} onChange={(e) => updateField("cervix_length", e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label>{t.internalOs}</Label>

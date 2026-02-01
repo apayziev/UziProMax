@@ -57,7 +57,8 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
             {t.uterus}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+            {/* 1-qator: Pozitsiya va o'lchamlar */}
+            <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
               <div className="space-y-2 col-span-2">
                 <Label>{t.position}</Label>
                 <Select value={data.uterus_position || ""} onValueChange={(v) => updateField("uterus_position", v)}>
@@ -70,16 +71,19 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
               </div>
               <div className="space-y-2">
                 <Label>{t.length} ({t.mm})</Label>
-                <Input type="number" placeholder="44-70" className="w-full" value={data.uterus_length || ""} onChange={(e) => updateField("uterus_length", e.target.value)} />
+                <Input type="number" placeholder="44-70" value={data.uterus_length || ""} onChange={(e) => updateField("uterus_length", e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label>{t.width} ({t.mm})</Label>
-                <Input type="number" placeholder="42-60" className="w-full" value={data.uterus_width || ""} onChange={(e) => updateField("uterus_width", e.target.value)} />
+                <Input type="number" placeholder="42-60" value={data.uterus_width || ""} onChange={(e) => updateField("uterus_width", e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label>{t.thickness} ({t.mm})</Label>
-                <Input type="number" placeholder="33-46" className="w-full" value={data.uterus_thickness || ""} onChange={(e) => updateField("uterus_thickness", e.target.value)} />
+                <Input type="number" placeholder="33-46" value={data.uterus_thickness || ""} onChange={(e) => updateField("uterus_thickness", e.target.value)} />
               </div>
+            </div>
+            {/* 2-qator: Sifat ko'rsatkichlari */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
               <div className="space-y-2">
                 <Label>{t.contours}</Label>
                 <Select value={data.uterus_contour || ""} onValueChange={(v) => updateField("uterus_contour", v)}>
@@ -91,7 +95,7 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2 col-span-2">
+              <div className="space-y-2">
                 <Label>{t.myometriumStructure}</Label>
                 <Select value={data.myometrium_structure || ""} onValueChange={(v) => updateField("myometrium_structure", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -102,8 +106,7 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                   </SelectContent>
                 </Select>
               </div>
-              {/* Bachadon bo'shlig'i */}
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.uterineCavity}</Label>
                 <Select value={data.uterine_cavity || ""} onValueChange={(v) => updateField("uterine_cavity", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -127,17 +130,7 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
             <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
               <div className="space-y-2">
                 <Label>{t.thickness} ({t.mm})</Label>
-                <Input type="number" placeholder="5-14" className="w-full" value={data.endometrium_thickness || ""} onChange={(e) => updateField("endometrium_thickness", e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>{t.echostructure}</Label>
-                <Select value={data.endometrium_structure || ""} onValueChange={(v) => updateField("endometrium_structure", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="однородная">{t.homogeneous}</SelectItem>
-                    <SelectItem value="неоднородная">{t.heterogeneous}</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input type="number" placeholder="5-14" value={data.endometrium_thickness || ""} onChange={(e) => updateField("endometrium_thickness", e.target.value)} />
               </div>
               <div className="space-y-2 col-span-1 md:col-span-2">
                 <Label>{t.mcPhase}</Label>
@@ -147,6 +140,16 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                     <SelectItem value="пролиферативная">{t.proliferative}</SelectItem>
                     <SelectItem value="секреторная">{t.secretory}</SelectItem>
                     <SelectItem value="менструальная">{t.menstrual}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>{t.echostructure}</Label>
+                <Select value={data.endometrium_structure || ""} onValueChange={(v) => updateField("endometrium_structure", v)}>
+                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="однородная">{t.homogeneous}</SelectItem>
+                    <SelectItem value="неоднородная">{t.heterogeneous}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -161,6 +164,18 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
+              <div className="space-y-2">
+                <Label>{t.length} ({t.mm})</Label>
+                <Input type="number" value={data.cervix_length || ""} onChange={(e) => updateField("cervix_length", e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t.width} ({t.mm})</Label>
+                <Input type="number" value={data.cervix_width || ""} onChange={(e) => updateField("cervix_width", e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t.endocervix} ({t.mm})</Label>
+                <Input type="number" placeholder="2-8" value={data.endocervix || ""} onChange={(e) => updateField("endocervix", e.target.value)} />
+              </div>
               <div className="space-y-2 col-span-2">
                 <Label>{t.cervixShape}</Label>
                 <Select value={data.cervix_shape || ""} onValueChange={(v) => updateField("cervix_shape", v)}>
@@ -171,18 +186,6 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                     <SelectItem value="неправильная">{t.irregular}</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>{t.length} ({t.mm})</Label>
-                <Input type="number" className="w-full" value={data.cervix_length || ""} onChange={(e) => updateField("cervix_length", e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>{t.width} ({t.mm})</Label>
-                <Input type="number" className="w-full" value={data.cervix_width || ""} onChange={(e) => updateField("cervix_width", e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label>{t.endocervix} ({t.mm})</Label>
-                <Input type="number" placeholder="2-8" className="w-full" value={data.endocervix || ""} onChange={(e) => updateField("endocervix", e.target.value)} />
               </div>
             </div>
           </AccordionContent>
