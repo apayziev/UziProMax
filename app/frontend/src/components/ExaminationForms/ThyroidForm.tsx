@@ -50,7 +50,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
       {/* UMUMIY HAJM - har doim ko'rinadi */}
       <div className="p-4 border rounded-lg bg-muted/30">
         <h3 className="text-base font-semibold mb-3">{t.totalVolumeLymph}</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="space-y-2">
             <Label>{t.totalThyroidVolume} ({t.ml})</Label>
             <Input type="text" value={totalVolume} readOnly className="bg-muted font-semibold" />
@@ -104,7 +104,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
                 <Label>{t.volume} ({t.ml})</Label>
                 <Input type="text" value={rightVolume} readOnly className="bg-muted" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.contours}</Label>
                 <Select value={data.right_contours || ""} onValueChange={(v) => updateField("right_contours", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -115,7 +115,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.echogenicity}</Label>
                 <Select value={data.right_echogenicity || ""} onValueChange={(v) => updateField("right_echogenicity", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -127,7 +127,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.structure}</Label>
                 <Select value={data.right_structure || ""} onValueChange={(v) => updateField("right_structure", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -137,7 +137,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.nodules}</Label>
                 <Select value={data.right_nodules || ""} onValueChange={(v) => updateField("right_nodules", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -151,7 +151,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
             {data.right_nodules === "есть" && (
               <div className="mt-4 p-3 border rounded-lg bg-orange-50/50 border-orange-200">
                 <h4 className="font-medium mb-3 text-orange-700">{t.rightNodule}</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                   <div className="space-y-2">
                     <Label className="text-xs">{t.size} ({t.mm})</Label>
                     <Input placeholder={t.lengthWidthThickness} value={data.right_nodule_size || ""} onChange={(e) => updateField("right_nodule_size", e.target.value)} className="h-9" />
@@ -204,7 +204,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
             {t.leftLobe} {leftVolume && <span className="ml-2 text-sm font-normal text-muted-foreground">({leftVolume} {t.ml})</span>}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
               <div className="space-y-2">
                 <Label>{t.length} ({t.mm})</Label>
                 <Input type="number" placeholder="40-60" value={data.left_length || ""} onChange={(e) => updateField("left_length", e.target.value)} />
@@ -221,7 +221,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
                 <Label>{t.volume} ({t.ml})</Label>
                 <Input type="text" value={leftVolume} readOnly className="bg-muted" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.contours}</Label>
                 <Select value={data.left_contours || ""} onValueChange={(v) => updateField("left_contours", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -232,7 +232,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.echogenicity}</Label>
                 <Select value={data.left_echogenicity || ""} onValueChange={(v) => updateField("left_echogenicity", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -244,7 +244,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.structure}</Label>
                 <Select value={data.left_structure || ""} onValueChange={(v) => updateField("left_structure", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -254,7 +254,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.nodules}</Label>
                 <Select value={data.left_nodules || ""} onValueChange={(v) => updateField("left_nodules", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -268,7 +268,7 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
             {data.left_nodules === "есть" && (
               <div className="mt-4 p-3 border rounded-lg bg-orange-50/50 border-orange-200">
                 <h4 className="font-medium mb-3 text-orange-700">{t.leftNodule}</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                   <div className="space-y-2">
                     <Label className="text-xs">{t.size} ({t.mm})</Label>
                     <Input placeholder={t.lengthWidthThickness} value={data.left_nodule_size || ""} onChange={(e) => updateField("left_nodule_size", e.target.value)} className="h-9" />
@@ -321,12 +321,12 @@ export function ThyroidForm({ data, onChange, language = "ru" }: ThyroidFormProp
             {t.isthmus}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
               <div className="space-y-2">
                 <Label>{t.thickness} ({t.mm})</Label>
                 <Input type="number" placeholder="4-5" value={data.isthmus_thickness || ""} onChange={(e) => updateField("isthmus_thickness", e.target.value)} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-1 md:col-span-2">
                 <Label>{t.structure}</Label>
                 <Select value={data.isthmus_structure || ""} onValueChange={(v) => updateField("isthmus_structure", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>

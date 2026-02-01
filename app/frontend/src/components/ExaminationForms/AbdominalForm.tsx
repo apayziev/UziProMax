@@ -41,7 +41,7 @@ export function AbdominalForm({ data, onChange, language = "ru" }: AbdominalForm
             {t.liver}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
               <div className="space-y-2">
                 <Label>{t.kvrRight} ({t.mm})</Label>
                 <Input type="number" placeholder="150-160" value={data.liver_kvr_right || ""} onChange={(e) => updateField("liver_kvr_right", e.target.value)} />
@@ -54,7 +54,7 @@ export function AbdominalForm({ data, onChange, language = "ru" }: AbdominalForm
                 <Label>{t.pzr} ({t.mm})</Label>
                 <Input type="number" placeholder="< 125" value={data.liver_pzr || ""} onChange={(e) => updateField("liver_pzr", e.target.value)} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.contours}</Label>
                 <Select value={data.liver_contour || ""} onValueChange={(v) => updateField("liver_contour", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -65,7 +65,7 @@ export function AbdominalForm({ data, onChange, language = "ru" }: AbdominalForm
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.echostructure}</Label>
                 <Select value={data.liver_echostructure || ""} onValueChange={(v) => updateField("liver_echostructure", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -76,7 +76,7 @@ export function AbdominalForm({ data, onChange, language = "ru" }: AbdominalForm
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.echogenicity}</Label>
                 <Select value={data.liver_echogenicity || ""} onValueChange={(v) => updateField("liver_echogenicity", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -90,7 +90,7 @@ export function AbdominalForm({ data, onChange, language = "ru" }: AbdominalForm
             </div>
             
             {/* Tomirlar */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 pt-4 border-t">
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-3 mt-4 pt-4 border-t">
               <div className="space-y-2">
                 <Label>{t.portalVein} ({t.mm})</Label>
                 <Input type="number" placeholder="7-14" value={data.portal_vein || ""} onChange={(e) => updateField("portal_vein", e.target.value)} />
@@ -113,7 +113,7 @@ export function AbdominalForm({ data, onChange, language = "ru" }: AbdominalForm
             {t.gallbladder}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="space-y-2">
                 <Label>{t.size} ({t.mm})</Label>
                 <Input placeholder={t.lengthWidth} value={data.gallbladder_size || ""} onChange={(e) => updateField("gallbladder_size", e.target.value)} />
@@ -122,7 +122,7 @@ export function AbdominalForm({ data, onChange, language = "ru" }: AbdominalForm
                 <Label>{t.wallThickness} ({t.mm})</Label>
                 <Input type="number" placeholder="1-2" value={data.gallbladder_wall || ""} onChange={(e) => updateField("gallbladder_wall", e.target.value)} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.content}</Label>
                 <Select value={data.gallbladder_content || ""} onValueChange={(v) => updateField("gallbladder_content", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -144,7 +144,7 @@ export function AbdominalForm({ data, onChange, language = "ru" }: AbdominalForm
             {t.pancreas}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
               <div className="space-y-2">
                 <Label>{t.head} ({t.mm})</Label>
                 <Input type="number" placeholder="11-32" value={data.pancreas_head || ""} onChange={(e) => updateField("pancreas_head", e.target.value)} />
@@ -162,7 +162,7 @@ export function AbdominalForm({ data, onChange, language = "ru" }: AbdominalForm
                 <Input type="number" placeholder="< 3-4" value={data.pancreas_duct || ""} onChange={(e) => updateField("pancreas_duct", e.target.value)} />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-2 gap-3 mt-4">
               <div className="space-y-2">
                 <Label>{t.contours}</Label>
                 <Select value={data.pancreas_contour || ""} onValueChange={(v) => updateField("pancreas_contour", v)}>
@@ -194,10 +194,10 @@ export function AbdominalForm({ data, onChange, language = "ru" }: AbdominalForm
             {t.spleen}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
               <div className="space-y-2">
                 <Label>{t.length} ({t.mm})</Label>
-                <Input type="number" placeholder="90-125" value={data.spleen_length || ""} onChange={(e) => updateField("spleen_length", e.target.value)} />
+                <Input type="number" placeholder="90-125" value={data.spleen_length || "" onChange={(e) => updateField("spleen_length", e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label>{t.width} ({t.mm})</Label>

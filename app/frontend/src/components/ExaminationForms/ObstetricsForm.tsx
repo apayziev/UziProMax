@@ -41,7 +41,7 @@ export function ObstetricsForm({ data, onChange, templateType, language = "ru" }
       {/* HOMILADORLIK MA'LUMOTLARI - har doim ko'rinadi */}
       <div className="p-4 border rounded-lg bg-muted/30">
         <h3 className="text-base font-semibold mb-3">{t.pregnancy}</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <div className="space-y-2">
             <Label>{t.lastMenstruation}</Label>
             <DatePicker
@@ -90,7 +90,7 @@ export function ObstetricsForm({ data, onChange, templateType, language = "ru" }
             {t.fetometry}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
               {isFirstTrimester ? (
                 <>
                   <div className="space-y-2">
@@ -150,7 +150,7 @@ export function ObstetricsForm({ data, onChange, templateType, language = "ru" }
             {t.fetalAnatomy}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="space-y-2">
                 <Label>{t.brainStructure}</Label>
                 <Select value={data.brain_structure || ""} onValueChange={(v) => updateField("brain_structure", v)}>
@@ -221,7 +221,7 @@ export function ObstetricsForm({ data, onChange, templateType, language = "ru" }
             {t.placenta}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               <div className="space-y-2">
                 <Label>{t.location}</Label>
                 <Select value={data.placenta_location || ""} onValueChange={(v) => updateField("placenta_location", v)}>
@@ -271,7 +271,7 @@ export function ObstetricsForm({ data, onChange, templateType, language = "ru" }
             {t.amnioticFluid}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="space-y-2">
                 <Label>{t.quantity}</Label>
                 <Select value={data.amniotic_fluid || ""} onValueChange={(v) => updateField("amniotic_fluid", v)}>
@@ -308,10 +308,10 @@ export function ObstetricsForm({ data, onChange, templateType, language = "ru" }
             {t.cervix}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <div className="space-y-2">
                 <Label>{t.length} ({t.mm})</Label>
-                <Input type="number" placeholder="25-40" value={data.cervix_length || ""} onChange={(e) => updateField("cervix_length", e.target.value)} />
+                <Input type="number" placeholder="25-40" value={data.cervix_length || ""}} onChange={(e) => updateField("cervix_length", e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label>{t.internalOs}</Label>
@@ -334,7 +334,7 @@ export function ObstetricsForm({ data, onChange, templateType, language = "ru" }
               {t.doppler}
             </AccordionTrigger>
             <AccordionContent className="pt-4">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                 <div className="space-y-2">
                   <Label>{t.mcaSd}</Label>
                   <Input type="number" step="0.01" value={data.mca_sd || ""} onChange={(e) => updateField("mca_sd", e.target.value)} />

@@ -38,7 +38,7 @@ export function BreastForm({ data, onChange, language = "ru" }: BreastFormProps)
       {/* UMUMIY MA'LUMOTLAR - har doim ko'rinadi */}
       <div className="p-4 border rounded-lg bg-muted/30">
         <h3 className="text-base font-semibold mb-3">{t.generalData}</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="space-y-2">
             <Label>{t.complaints}</Label>
             <Select value={data.complaints || ""} onValueChange={(v) => updateField("complaints", v)}>
@@ -70,9 +70,9 @@ export function BreastForm({ data, onChange, language = "ru" }: BreastFormProps)
                 <Label>{t.thickness} ({t.mm})</Label>
                 <Input type="number" value={data.right_thickness || ""} onChange={(e) => updateField("right_thickness", e.target.value)} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.structure}</Label>
-                <Select value={data.right_structure || ""} onValueChange={(v) => updateField("right_structure", v)}>
+                <Select value={data.right_structure || ""}} onValueChange={(v) => updateField("right_structure", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="железистый">{t.glandular}</SelectItem>
@@ -81,9 +81,9 @@ export function BreastForm({ data, onChange, language = "ru" }: BreastFormProps)
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.echogenicity}</Label>
-                <Select value={data.right_echogenicity || ""} onValueChange={(v) => updateField("right_echogenicity", v)}>
+                <Select value={data.right_echogenicity || ""}} onValueChange={(v) => updateField("right_echogenicity", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="обычная">{t.normal}</SelectItem>
@@ -92,9 +92,9 @@ export function BreastForm({ data, onChange, language = "ru" }: BreastFormProps)
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.ducts}</Label>
-                <Select value={data.right_ducts || ""} onValueChange={(v) => updateField("right_ducts", v)}>
+                <Select value={data.right_ducts || ""}} onValueChange={(v) => updateField("right_ducts", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="не расширены">{t.notDilated}</SelectItem>
@@ -102,9 +102,9 @@ export function BreastForm({ data, onChange, language = "ru" }: BreastFormProps)
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.lesions}</Label>
-                <Select value={data.right_lesions || ""} onValueChange={(v) => updateField("right_lesions", v)}>
+                <Select value={data.right_lesions || ""}} onValueChange={(v) => updateField("right_lesions", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="нет">{t.none}</SelectItem>
@@ -157,14 +157,14 @@ export function BreastForm({ data, onChange, language = "ru" }: BreastFormProps)
             {t.leftBreast}
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
               <div className="space-y-2">
                 <Label>{t.thickness} ({t.mm})</Label>
-                <Input type="number" value={data.left_thickness || ""} onChange={(e) => updateField("left_thickness", e.target.value)} />
+                <Input type="number" value={data.left_thickness || ""}} onChange={(e) => updateField("left_thickness", e.target.value)} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.structure}</Label>
-                <Select value={data.left_structure || ""} onValueChange={(v) => updateField("left_structure", v)}>
+                <Select value={data.left_structure || ""}} onValueChange={(v) => updateField("left_structure", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="железистый">{t.glandular}</SelectItem>
@@ -173,9 +173,9 @@ export function BreastForm({ data, onChange, language = "ru" }: BreastFormProps)
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.echogenicity}</Label>
-                <Select value={data.left_echogenicity || ""} onValueChange={(v) => updateField("left_echogenicity", v)}>
+                <Select value={data.left_echogenicity || ""}} onValueChange={(v) => updateField("left_echogenicity", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="обычная">{t.normal}</SelectItem>
@@ -184,7 +184,7 @@ export function BreastForm({ data, onChange, language = "ru" }: BreastFormProps)
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.ducts}</Label>
                 <Select value={data.left_ducts || ""} onValueChange={(v) => updateField("left_ducts", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
@@ -194,7 +194,7 @@ export function BreastForm({ data, onChange, language = "ru" }: BreastFormProps)
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-2">
                 <Label>{t.lesions}</Label>
                 <Select value={data.left_lesions || ""} onValueChange={(v) => updateField("left_lesions", v)}>
                   <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
