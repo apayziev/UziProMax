@@ -1,14 +1,13 @@
-import { FaGithub, FaLinkedinIn } from "react-icons/fa"
-import { FaXTwitter } from "react-icons/fa6"
+import { useLanguage } from "@/hooks/useLanguage"
 
 export function Footer() {
-  const currentYear = new Date().getFullYear()
+  const { t } = useLanguage()
 
   return (
     <footer className="py-4 px-6">
       <div className="flex flex-col items-center justify-center gap-2">
         <p className="text-muted-foreground text-sm">
-          © {currentYear} UziProMax. Barcha huquqlar himoyalangan.
+          {t("copyright")}
         </p>
       </div>
     </footer>

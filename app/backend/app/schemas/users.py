@@ -38,7 +38,8 @@ class UserBase(BaseModel):
             default=None,
         ),
     ]
-    email: Annotated[EmailStr, Field(examples=["user.userson@example.com"])]
+    phone: Annotated[str, Field(min_length=9, max_length=20, examples=["+998901234567"])]
+    email: Annotated[str | None, Field(examples=["user@example.com"], default=None)]
 
 
 class User(TimestampSchema, UserBase, PersistentDeletion):
@@ -55,7 +56,8 @@ class UserRead(BaseModel):
 
     full_name: Annotated[str, Field(min_length=2, max_length=30, examples=["User Userson"], validation_alias="name")]
     username: Annotated[str, Field(min_length=2, max_length=20, pattern=r"^[a-z0-9]+$", examples=["userson"])]
-    email: Annotated[EmailStr, Field(examples=["user.userson@example.com"])]
+    phone: Annotated[str, Field(examples=["+998901234567"])]
+    email: Annotated[str | None, Field(examples=["user@example.com"], default=None)]
     profile_image_url: str
     is_active: bool
     is_superuser: bool

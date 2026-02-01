@@ -27,11 +27,11 @@ async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[AsyncSession, Depends(async_get_db)],
 ) -> dict[str, str]:
-    user = await crud_users.authenticate(db=db, username_or_email=form_data.username, password=form_data.password)
+    user = await crud_users.authenticate(db=db, username_or_phone=form_data.username, password=form_data.password)
     if not user:
-        raise UnauthorizedException("Wrong username, email or password.")
+        raise UnauthorizedException("Telefon raqami yoki parol noto'g'ri.")
     if not user.is_active:
-        raise UnauthorizedException("Inactive user")
+        raise UnauthorizedException("Foydalanuvchi faol emas")
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = await create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)

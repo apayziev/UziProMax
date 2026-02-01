@@ -8,27 +8,34 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar"
 import useAuth from "@/hooks/useAuth"
+import { useLanguage } from "@/hooks/useLanguage"
 import { type Item, Main } from "./Main"
 import { User } from "./User"
 
-const baseItems: Item[] = [
-  { icon: Home, title: "Bosh sahifa", path: "/" },
-  { icon: Users, title: "Bemorlar", path: "/patients" },
-  { icon: Stethoscope, title: "Tekshiruvlar", path: "/examinations" },
-  { icon: FileText, title: "Yangi tekshiruv", path: "/examinations/new" },
-]
-
 export function AppSidebar() {
   const { user: currentUser } = useAuth()
+  const { t } = useLanguage()
+
+  const baseItems: Item[] = [
+    { icon: Home, title: t("home"), path: "/" },
+    { icon: Users, title: t("patients"), path: "/patients" },
+    { icon: Stethoscope, title: t("examinations"), path: "/examinations" },
+    { icon: FileText, title: t("new_examination"), path: "/examinations/new" },
+  ]
 
   const items = currentUser?.is_superuser
-    ? [...baseItems, { icon: Settings, title: "Sozlamalar", path: "/admin" }]
+    ? [...baseItems, { icon: Settings, title: t("settings"), path: "/admin" }]
     : baseItems
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="px-4 py-6 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
-        <Logo variant="responsive" />
+        <div className="flex items-center gap-3">
+          <Logo variant="responsive" />
+          <span className="font-bold text-lg group-data-[collapsible=icon]:hidden" style={{ color: '#3499a1' }}>
+            UziProMax
+          </span>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <Main items={items} />

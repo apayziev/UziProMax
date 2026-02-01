@@ -12,20 +12,20 @@ from .base import BaseCRUD
 class CRUDUser(BaseCRUD[User]):
     """CRUD operations for User model with authentication logic."""
 
-    async def get_by_email(
+    async def get_by_phone(
         self,
         db: AsyncSession,
-        email: str,
+        phone: str,
         is_deleted: bool = False,
     ) -> User | None:
-        """Get user by email address.
+        """Get user by phone number.
 
         Parameters
         ----------
         db : AsyncSession
             The database session.
-        email : str
-            Email address to search for.
+        phone : str
+            Phone number to search for.
         is_deleted : bool, default=False
             Whether to include deleted users.
 
@@ -34,7 +34,7 @@ class CRUDUser(BaseCRUD[User]):
         User | None
             The user if found, None otherwise.
         """
-        return await self.get(db, email=email, is_deleted=is_deleted)
+        return await self.get(db, phone=phone, is_deleted=is_deleted)
 
     async def get_by_username(
         self,
@@ -135,17 +135,17 @@ class CRUDUser(BaseCRUD[User]):
     async def authenticate(
         self,
         db: AsyncSession,
-        username_or_email: str,
+        username_or_phone: str,
         password: str,
     ) -> User | None:
-        """Authenticate a user by username/email and password.
+        """Authenticate a user by username/phone and password.
 
         Parameters
         ----------
         db : AsyncSession
             The database session.
-        username_or_email : str
-            Username or email address.
+        username_or_phone : str
+            Username or phone number.
         password : str
             Plain text password to verify.
 
@@ -154,10 +154,11 @@ class CRUDUser(BaseCRUD[User]):
         User | None
             The user if authentication succeeds, None otherwise.
         """
-        if "@" in username_or_email:
-            db_user = await self.get_by_email(db, email=username_or_email)
+        # Try to find by phone first (if starts with + or contains only digits)
+        if username_or_phone.startswith('+') or username_or_phone.replace(' ', '').isdigit():
+            db_user = await self.get_by_phone(db, phone=username_or_phone)
         else:
-            db_user = await self.get_by_username(db, username=username_or_email)
+            db_user = await self.get_by_username(db, username=username_or_phone)
 
         if db_user is None:
             return None

@@ -14,7 +14,8 @@ class User(BaseModel):
 
     name: Mapped[str | None] = mapped_column(String(30), kw_only=True)
     username: Mapped[str] = mapped_column(String(20), unique=True, index=True, kw_only=True)
-    email: Mapped[str] = mapped_column(String(50), unique=True, index=True, kw_only=True)
+    phone: Mapped[str] = mapped_column(String(20), unique=True, index=True, kw_only=True)
+    email: Mapped[str | None] = mapped_column(String(50), unique=True, index=True, kw_only=True, default=None)
     hashed_password: Mapped[str] = mapped_column(String, kw_only=True)
 
     profile_image_url: Mapped[str] = mapped_column(String, default="https://profileimageurl.com", kw_only=True)

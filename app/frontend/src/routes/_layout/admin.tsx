@@ -8,6 +8,7 @@ import { columns, type UserTableData } from "@/components/Admin/columns"
 import { DataTable } from "@/components/Common/DataTable"
 import PendingUsers from "@/components/Pending/PendingUsers"
 import useAuth from "@/hooks/useAuth"
+import { useLanguage } from "@/hooks/useLanguage"
 
 function getUsersQueryOptions() {
   return {
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/_layout/admin")({
   head: () => ({
     meta: [
       {
-        title: "Admin - FastAPI Cloud",
+        title: "Admin - UziProMax",
       },
     ],
   }),
@@ -48,13 +49,15 @@ function UsersTable() {
 }
 
 function Admin() {
+  const { t } = useLanguage()
+  
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Users</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("users")}</h1>
           <p className="text-muted-foreground">
-            Manage user accounts and permissions
+            {t("manage_users")}
           </p>
         </div>
         <AddUser />

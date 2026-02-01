@@ -17,14 +17,15 @@ import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
 import useAuth, { isLoggedIn } from "@/hooks/useAuth"
+import { useLanguage } from "@/hooks/useLanguage"
 
 const formSchema = z.object({
-  username: z.email(),
+  username: z.string().min(9, { message: "Telefon raqamini kiriting" }),
   password: z
     .string()
-    .min(1, { message: "Password is required" })
-    .min(8, { message: "Password must be at least 8 characters" }),
-}) satisfies z.ZodType<AccessToken>
+    .min(1, { message: "Parol kiritilishi shart" })
+    .min(6, { message: "Parol kamida 6 ta belgidan iborat bo'lishi kerak" }),
+})
 
 type FormData = z.infer<typeof formSchema>
 
@@ -48,6 +49,7 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const { loginMutation } = useAuth()
+  const { t } = useLanguage()
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -72,8 +74,8 @@ function Login() {
         >
           <div className="flex flex-col items-center gap-3 text-center">
             <img src="/assets/images/favicon.png" alt="UziProMax" className="h-20 w-auto rounded-xl lg:hidden" />
-            <h1 className="text-3xl font-bold">Xush kelibsiz!</h1>
-            <p className="text-muted-foreground">Tizimga kirish uchun ma'lumotlaringizni kiriting</p>
+            <h1 className="text-3xl font-bold">{t("welcome")}</h1>
+            <p className="text-muted-foreground">{t("login_subtitle")}</p>
           </div>
 
           <div className="grid gap-5">
@@ -82,12 +84,12 @@ function Login() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base">Email</FormLabel>
+                  <FormLabel className="text-base">{t("phone")}</FormLabel>
                   <FormControl>
                     <Input
-                      data-testid="email-input"
-                      placeholder="foydalanuvchi@example.com"
-                      type="email"
+                      data-testid="phone-input"
+                      placeholder={t("phone_placeholder")}
+                      type="tel"
                       className="h-12 text-base"
                       {...field}
                     />
@@ -103,12 +105,12 @@ function Login() {
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center">
-                    <FormLabel className="text-base">Parol</FormLabel>
+                    <FormLabel className="text-base">{t("password")}</FormLabel>
                   </div>
                   <FormControl>
                     <PasswordInput
                       data-testid="password-input"
-                      placeholder="Parolingizni kiriting"
+                      placeholder={t("password_placeholder")}
                       className="h-12 text-base"
                       {...field}
                     />
@@ -119,7 +121,7 @@ function Login() {
             />
 
             <LoadingButton type="submit" loading={loginMutation.isPending} className="h-12 text-base font-semibold">
-              Kirish
+              {t("login")}
             </LoadingButton>
           </div>
         </form>
