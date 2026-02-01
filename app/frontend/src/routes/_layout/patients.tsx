@@ -40,6 +40,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
+import { useLanguage } from "@/hooks/useLanguage"
 
 import type { Patient, PatientCreate, PatientListResponse } from "@/types/medical"
 
@@ -96,6 +97,7 @@ function PatientsPage() {
   
   const { toast } = useToast()
   const queryClient = useQueryClient()
+  const { t } = useLanguage()
 
   const { data, isLoading } = useQuery({
     queryKey: ["patients", searchQuery, page],
@@ -108,10 +110,10 @@ function PatientsPage() {
       queryClient.invalidateQueries({ queryKey: ["patients"] })
       setIsCreateOpen(false)
       setNewPatient({ full_name: "", gender: "female", phone: "", birth_date: "" })
-      toast({ title: "Muvaffaqiyat!", description: "Yangi bemor qo'shildi" })
+      toast({ title: t("success"), description: t("patient_added") })
     },
     onError: (error: Error) => {
-      toast({ title: "Xatolik", description: error.message, variant: "destructive" })
+      toast({ title: t("error"), description: error.message, variant: "destructive" })
     },
   })
 
@@ -119,13 +121,13 @@ function PatientsPage() {
     mutationFn: deletePatient,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patients"] })
-      toast({ title: "O'chirildi", description: "Bemor o'chirildi" })
+      toast({ title: t("deleted"), description: t("patient_deleted") })
     },
   })
 
   const handleCreate = () => {
     if (!newPatient.full_name.trim()) {
-      toast({ title: "Xatolik", description: "Ism kiritish shart", variant: "destructive" })
+      toast({ title: t("error"), description: t("name_required"), variant: "destructive" })
       return
     }
     createMutation.mutate(newPatient)
@@ -141,26 +143,26 @@ function PatientsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Bemorlar</h1>
-          <p className="text-muted-foreground">Barcha bemorlar ro'yxati</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("patients")}</h1>
+          <p className="text-muted-foreground">{t("all_patients_list")}</p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Yangi bemor
+              {t("add_patient")}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Yangi bemor qo'shish</DialogTitle>
+              <DialogTitle>{t("add_new_patient")}</DialogTitle>
               <DialogDescription>
-                Bemor ma'lumotlarini kiriting
+                {t("enter_patient_info")}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="full_name">To'liq ismi (ФИО) *</Label>
+                <Label htmlFor="full_name">{t("full_name")} *</Label>
                 <Input
                   id="full_name"
                   placeholder="Ivanov Ivan Ivanovich"
@@ -170,7 +172,7 @@ function PatientsPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="gender">Jinsi</Label>
+                  <Label htmlFor="gender">{t("gender")}</Label>
                   <Select
                     value={newPatient.gender}
                     onValueChange={(value: "male" | "female") => 
@@ -178,16 +180,16 @@ function PatientsPage() {
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Tanlang" />
+                      <SelectValue placeholder={t("select")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="female">Ayol</SelectItem>
-                      <SelectItem value="male">Erkak</SelectItem>
+                      <SelectItem value="female">{t("female")}</SelectItem>
+                      <SelectItem value="male">{t("male")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="birth_date">Tug'ilgan sana</Label>
+                  <Label htmlFor="birth_date">{t("birth_date")}</Label>
                   <Input
                     id="birth_date"
                     type="date"
@@ -197,7 +199,7 @@ function PatientsPage() {
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="phone">Telefon</Label>
+                <Label htmlFor="phone">{t("phone_number")}</Label>
                 <Input
                   id="phone"
                   placeholder="+998 90 123 45 67"
@@ -208,10 +210,10 @@ function PatientsPage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
-                Bekor qilish
+                {t("cancel")}
               </Button>
               <Button onClick={handleCreate} disabled={createMutation.isPending}>
-                {createMutation.isPending ? "Saqlanmoqda..." : "Saqlash"}
+                {createMutation.isPending ? t("saving") : t("save")}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -225,7 +227,7 @@ function PatientsPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Ism yoki telefon bo'yicha qidirish..."
+                placeholder={t("search_by_name_phone")}
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => {
@@ -243,24 +245,24 @@ function PatientsPage() {
         <CardContent className="pt-6">
           {isLoading ? (
             <div className="flex items-center justify-center py-10">
-              <div className="text-muted-foreground">Yuklanmoqda...</div>
+              <div className="text-muted-foreground">{t("loading")}</div>
             </div>
           ) : data?.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10">
               <User className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Bemorlar topilmadi</p>
+              <p className="text-muted-foreground">{t("no_patients")}</p>
             </div>
           ) : (
             <>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Ism</TableHead>
-                    <TableHead>Jinsi</TableHead>
-                    <TableHead>Tug'ilgan sana</TableHead>
-                    <TableHead>Telefon</TableHead>
-                    <TableHead>Tekshiruvlar</TableHead>
-                    <TableHead>Ro'yxatga olingan</TableHead>
+                    <TableHead>{t("name")}</TableHead>
+                    <TableHead>{t("gender")}</TableHead>
+                    <TableHead>{t("birth_date")}</TableHead>
+                    <TableHead>{t("phone_number")}</TableHead>
+                    <TableHead>{t("examinations")}</TableHead>
+                    <TableHead>{t("registered")}</TableHead>
                     <TableHead className="w-[70px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -270,7 +272,7 @@ function PatientsPage() {
                       <TableCell className="font-medium">{patient.full_name}</TableCell>
                       <TableCell>
                         <Badge variant={patient.gender === "female" ? "default" : "secondary"}>
-                          {patient.gender === "female" ? "Ayol" : "Erkak"}
+                          {patient.gender === "female" ? t("female") : t("male")}
                         </Badge>
                       </TableCell>
                       <TableCell>{formatDate(patient.birth_date)}</TableCell>
@@ -290,13 +292,13 @@ function PatientsPage() {
                             <DropdownMenuItem asChild>
                               <Link to={`/examinations/new?patient_id=${patient.id}`}>
                                 <FileText className="mr-2 h-4 w-4" />
-                                Yangi tekshiruv
+                                {t("new_examination")}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link to={`/patients/${patient.id}`}>
                                 <Edit className="mr-2 h-4 w-4" />
-                                Tahrirlash
+                                {t("edit")}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem
@@ -304,7 +306,7 @@ function PatientsPage() {
                               onClick={() => deleteMutation.mutate(patient.id)}
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
-                              O'chirish
+                              {t("delete")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -318,7 +320,7 @@ function PatientsPage() {
               {data && data.pages > 1 && (
                 <div className="flex items-center justify-between px-2 py-4">
                   <p className="text-sm text-muted-foreground">
-                    Jami: {data.total} ta bemor
+                    {t("total")}: {data.total} {t("patients_count")}
                   </p>
                   <div className="flex gap-2">
                     <Button
@@ -327,7 +329,7 @@ function PatientsPage() {
                       onClick={() => setPage(page - 1)}
                       disabled={page === 1}
                     >
-                      Oldingi
+                      {t("previous")}
                     </Button>
                     <Button
                       variant="outline"
@@ -335,7 +337,7 @@ function PatientsPage() {
                       onClick={() => setPage(page + 1)}
                       disabled={page >= data.pages}
                     >
-                      Keyingi
+                      {t("next")}
                     </Button>
                   </div>
                 </div>

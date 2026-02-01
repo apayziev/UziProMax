@@ -30,6 +30,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
+import { useLanguage } from "@/hooks/useLanguage"
 
 import { TEMPLATE_TYPES, type ExaminationListResponse } from "@/types/medical"
 
@@ -69,6 +70,7 @@ function ExaminationsPage() {
   
   const { toast } = useToast()
   const queryClient = useQueryClient()
+  const { t, language } = useLanguage()
 
   const { data, isLoading } = useQuery({
     queryKey: ["examinations", page, templateFilter, statusFilter],
@@ -79,22 +81,22 @@ function ExaminationsPage() {
     mutationFn: deleteExamination,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["examinations"] })
-      toast({ title: "O'chirildi", description: "Tekshiruv o'chirildi" })
+      toast({ title: t("deleted"), description: t("examination_deleted") })
     },
   })
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("uz-UZ")
+    return new Date(date).toLocaleDateString(language === "ru" ? "ru-RU" : "uz-UZ")
   }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "draft":
-        return <Badge variant="secondary">Qoralama</Badge>
+        return <Badge variant="secondary">{t("draft")}</Badge>
       case "completed":
-        return <Badge variant="default">Tugallangan</Badge>
+        return <Badge variant="default">{t("completed")}</Badge>
       case "printed":
-        return <Badge variant="outline">Chop etilgan</Badge>
+        return <Badge variant="outline">{t("printed")}</Badge>
       default:
         return <Badge>{status}</Badge>
     }
@@ -105,13 +107,13 @@ function ExaminationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Tekshiruvlar</h1>
-          <p className="text-muted-foreground">Barcha UZI tekshiruvlar ro'yxati</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("examinations")}</h1>
+          <p className="text-muted-foreground">{t("all_examinations_list")}</p>
         </div>
         <Link to="/examinations/new">
           <Button>
             <FileText className="mr-2 h-4 w-4" />
-            Yangi tekshiruv
+            {t("new_examination")}
           </Button>
         </Link>
       </div>
@@ -123,13 +125,13 @@ function ExaminationsPage() {
             <div className="w-[200px]">
               <Select value={templateFilter} onValueChange={setTemplateFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Shablon turi" />
+                  <SelectValue placeholder={t("template_type")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Barcha shablonlar</SelectItem>
+                  <SelectItem value="all">{t("all_templates")}</SelectItem>
                   {Object.entries(TEMPLATE_TYPES).map(([key, value]) => (
                     <SelectItem key={key} value={key}>
-                      {value.name_ru}
+                      {language === "ru" ? value.name_ru : value.name_uz}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -138,13 +140,13 @@ function ExaminationsPage() {
             <div className="w-[180px]">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Holat" />
+                  <SelectValue placeholder={t("status")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Barcha holatlar</SelectItem>
-                  <SelectItem value="draft">Qoralama</SelectItem>
-                  <SelectItem value="completed">Tugallangan</SelectItem>
-                  <SelectItem value="printed">Chop etilgan</SelectItem>
+                  <SelectItem value="all">{t("all_statuses")}</SelectItem>
+                  <SelectItem value="draft">{t("draft")}</SelectItem>
+                  <SelectItem value="completed">{t("completed")}</SelectItem>
+                  <SelectItem value="printed">{t("printed")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -157,23 +159,23 @@ function ExaminationsPage() {
         <CardContent className="pt-6">
           {isLoading ? (
             <div className="flex items-center justify-center py-10">
-              <div className="text-muted-foreground">Yuklanmoqda...</div>
+              <div className="text-muted-foreground">{t("loading")}</div>
             </div>
           ) : data?.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10">
               <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Tekshiruvlar topilmadi</p>
+              <p className="text-muted-foreground">{t("no_examinations")}</p>
             </div>
           ) : (
             <>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Sana</TableHead>
-                    <TableHead>Bemor</TableHead>
-                    <TableHead>Tekshiruv turi</TableHead>
-                    <TableHead>Holat</TableHead>
-                    <TableHead>Yaratilgan</TableHead>
+                    <TableHead>{t("date")}</TableHead>
+                    <TableHead>{t("patient")}</TableHead>
+                    <TableHead>{t("examination_type")}</TableHead>
+                    <TableHead>{t("status")}</TableHead>
+                    <TableHead>{t("created")}</TableHead>
                     <TableHead className="w-[70px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -189,7 +191,7 @@ function ExaminationsPage() {
                       <TableCell>{exam.patient_name || "-"}</TableCell>
                       <TableCell>
                         <Badge variant="outline">
-                          {TEMPLATE_TYPES[exam.template_type]?.name_ru || exam.template_type}
+                          {TEMPLATE_TYPES[exam.template_type]?.[language === "ru" ? "name_ru" : "name_uz"] || exam.template_type}
                         </Badge>
                       </TableCell>
                       <TableCell>{getStatusBadge(exam.status)}</TableCell>
@@ -207,13 +209,13 @@ function ExaminationsPage() {
                             <DropdownMenuItem asChild>
                               <Link to={`/examinations/${exam.id}`}>
                                 <Eye className="mr-2 h-4 w-4" />
-                                Ko'rish
+                                {t("view")}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link to={`/examinations/${exam.id}/print`}>
                                 <Printer className="mr-2 h-4 w-4" />
-                                Chop etish
+                                {t("print")}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem
@@ -221,7 +223,7 @@ function ExaminationsPage() {
                               onClick={() => deleteMutation.mutate(exam.id)}
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
-                              O'chirish
+                              {t("delete")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -235,7 +237,7 @@ function ExaminationsPage() {
               {data && data.pages > 1 && (
                 <div className="flex items-center justify-between px-2 py-4">
                   <p className="text-sm text-muted-foreground">
-                    Jami: {data.total} ta tekshiruv
+                    {t("total")}: {data.total} {t("examinations_count")}
                   </p>
                   <div className="flex gap-2">
                     <Button
@@ -244,7 +246,7 @@ function ExaminationsPage() {
                       onClick={() => setPage(page - 1)}
                       disabled={page === 1}
                     >
-                      Oldingi
+                      {t("previous")}
                     </Button>
                     <Button
                       variant="outline"
@@ -252,7 +254,7 @@ function ExaminationsPage() {
                       onClick={() => setPage(page + 1)}
                       disabled={page >= data.pages}
                     >
-                      Keyingi
+                      {t("next")}
                     </Button>
                   </div>
                 </div>
