@@ -1,0 +1,169 @@
+name: CI
+
+# CI temporarily disabled
+# on:
+#   push:
+#     branches: [main, master]
+#   pull_request:
+#     branches: [main, master]
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "backend/pyproject.toml"
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+      - name: Run Ruff
+        run: uv run ruff check .
+
+  type-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "backend/pyproject.toml"
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+      - name: Run mypy
+        run: uv run mypy app
+        env:
+          ENVIRONMENT: local
+          SECRET_KEY: test-secret-key-for-testing-only
+
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "backend/pyproject.toml"
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+      - name: Run tests
+        run: uv run pytest
+        env:
+          ENVIRONMENT: local
+          SECRET_KEY: test-secret-key-for-testing-only
+
+  frontend-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          # Database
+          POSTGRES_SERVER=localhost
+          POSTGRES_PORT=5432
+          POSTGRES_DB=fastnew
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=changethis
+
+          # Redis
+          REDIS_HOST=localhost
+          REDIS_PORT=6379
+
+          # Backend
+          SECRET_KEY=test-secret-key-for-ci-only
+          ENVIRONMENT=local
+
+          # Admin credentials
+          ADMIN_NAME=admin
+          ADMIN_EMAIL=admin@example.com
+          ADMIN_USERNAME=admin
+          ADMIN_PASSWORD=Change-me2
+
+          # CORS
+          CORS_ORIGINS=["http://localhost:3000", "http://localhost:8000", "http://localhost:5173"]
+
+          # Frontend
+          VITE_API_URL=http://localhost:8000
+
+          # Logs (prevent permission issues in CI)
+          LOG_DIR=/tmp
+          EOF
+
+      - name: Start backend services
+        run: docker compose -f docker-compose.local.yml up -d
+
+      - name: Wait for backend to be ready
+        run: |
+          echo "Waiting for backend health check..."
+          timeout 120 bash -c 'until curl -f http://localhost:8000/api/v1/health; do sleep 2; done' || {
+            echo "Health check failed! Showing container status and logs..."
+            docker ps -a
+            echo "=== API Container Logs ==="
+            docker compose -f docker-compose.local.yml logs api
+            echo "=== Worker Container Logs ==="
+            docker compose -f docker-compose.local.yml logs worker
+            echo "=== Database Container Logs ==="
+            docker compose -f docker-compose.local.yml logs db
+            echo "=== Redis Container Logs ==="
+            docker compose -f docker-compose.local.yml logs redis
+            exit 1
+          }
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Build Playwright test image
+        run: |
+          docker build -t playwright-tests -f frontend/Dockerfile.playwright ./frontend
+
+      - name: Run Playwright tests
+        run: |
+          docker run --network="host" \
+            -e VITE_API_URL=http://localhost:8000 \
+            -e ADMIN_EMAIL=admin@example.com \
+            -e ADMIN_PASSWORD=Change-me2 \
+            playwright-tests npx playwright test --reporter=list
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/test-results/
+          retention-days: 7
+
+      - name: Stop services
+        if: always()
+        run: docker compose -f docker-compose.local.yml down
