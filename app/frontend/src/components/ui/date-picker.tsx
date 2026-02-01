@@ -1,12 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { format } from "date-fns"
+import { format, parse, isValid } from "date-fns"
 import { ru } from "date-fns/locale"
 import { Calendar as CalendarIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Calendar } from "@/components/ui/calendar"
 import {
   Popover,
@@ -26,19 +27,21 @@ interface DatePickerProps {
   onChange?: (date: Date | null) => void
   placeholder?: string
   language?: "uz" | "ru"
-  showAge?: boolean
   className?: string
 }
 
 export function DatePicker({
   value,
   onChange,
-  placeholder = "Sanani tanlang",
+  placeholder,
   language = "uz",
-  showAge = false,
   className,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false)
+  const [inputValue, setInputValue] = React.useState("")
+  
+  // Default placeholder based on language
+  const displayPlaceholder = placeholder || (language === "ru" ? "дд.мм.гггг" : "kun.oy.yil")
   
   // Parse date if string
   const date = React.useMemo(() => {
@@ -47,15 +50,14 @@ export function DatePicker({
     return new Date(value)
   }, [value])
 
-  // Calculate age
-  const age = React.useMemo(() => {
-    if (!date || !showAge) return null
-    const today = new Date()
-    let years = today.getFullYear() - date.getFullYear()
-    const m = today.getMonth() - date.getMonth()
-    if (m < 0 || (m === 0 && today.getDate() < date.getDate())) years--
-    return years
-  }, [date, showAge])
+  // Sync input value with date
+  React.useEffect(() => {
+    if (date && isValid(date)) {
+      setInputValue(format(date, "dd.MM.yyyy"))
+    } else {
+      setInputValue("")
+    }
+  }, [date])
 
   // Year/month navigation state
   const [viewDate, setViewDate] = React.useState(date || new Date())
@@ -75,32 +77,77 @@ export function DatePicker({
 
   const locale = language === "ru" ? ru : undefined
 
+  // Handle manual input
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/[^\d.]/g, "")
+    
+    // Auto-add dots for formatting dd.MM.yyyy
+    if (val.length === 2 && inputValue.length < 2) {
+      val += "."
+    } else if (val.length === 5 && inputValue.length < 5) {
+      val += "."
+    }
+    
+    // Limit length
+    if (val.length > 10) val = val.slice(0, 10)
+    
+    setInputValue(val)
+    
+    // Try to parse when complete
+    if (val.length === 10) {
+      const parsed = parse(val, "dd.MM.yyyy", new Date())
+      if (isValid(parsed) && parsed.getFullYear() >= 1900 && parsed.getFullYear() <= new Date().getFullYear()) {
+        onChange?.(parsed)
+        setViewDate(parsed)
+      }
+    }
+  }
+
+  const handleInputBlur = () => {
+    // On blur, try to parse or reset
+    if (inputValue.length === 10) {
+      const parsed = parse(inputValue, "dd.MM.yyyy", new Date())
+      if (isValid(parsed) && parsed.getFullYear() >= 1900 && parsed.getFullYear() <= new Date().getFullYear()) {
+        onChange?.(parsed)
+      } else {
+        // Invalid date - reset to previous value
+        if (date && isValid(date)) {
+          setInputValue(format(date, "dd.MM.yyyy"))
+        } else {
+          setInputValue("")
+        }
+      }
+    } else if (inputValue.length > 0 && inputValue.length < 10) {
+      // Incomplete - reset
+      if (date && isValid(date)) {
+        setInputValue(format(date, "dd.MM.yyyy"))
+      } else {
+        setInputValue("")
+      }
+    } else if (inputValue.length === 0) {
+      onChange?.(null)
+    }
+  }
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn(
-            "w-full justify-start text-left font-normal",
-            !date && "text-muted-foreground",
-            className
-          )}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? (
-            <span>
-              {format(date, "dd.MM.yyyy", { locale })}
-              {age !== null && (
-                <span className="ml-2 text-muted-foreground">
-                  ({age} {language === "ru" ? "лет" : "yosh"})
-                </span>
-              )}
-            </span>
-          ) : (
-            <span>{placeholder}</span>
-          )}
-        </Button>
-      </PopoverTrigger>
+    <div className={cn("flex gap-1", className)}>
+      <Input
+        value={inputValue}
+        onChange={handleInputChange}
+        onBlur={handleInputBlur}
+        placeholder={displayPlaceholder}
+        className="flex-1"
+      />
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            className="shrink-0"
+          >
+            <CalendarIcon className="h-4 w-4" />
+          </Button>
+        </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <div className="flex items-center justify-between gap-2 p-3 border-b">
           <Select
@@ -164,6 +211,7 @@ export function DatePicker({
           }}
         />
       </PopoverContent>
-    </Popover>
+      </Popover>
+    </div>
   )
 }

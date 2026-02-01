@@ -148,5 +148,5 @@ async def delete_patient(
     if not patient:
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
     
-    await crud_patient.delete(db=db, instance=patient)
+    await crud_patient.delete(db=db, id=patient.id)
     return Message(message="Bemor muvaffaqiyatli o'chirildi")

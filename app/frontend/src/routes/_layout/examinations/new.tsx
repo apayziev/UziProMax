@@ -28,13 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useLanguage } from "@/hooks/useLanguage"
@@ -747,24 +741,28 @@ function NewExaminationPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>{language === "ru" ? "Пол" : "Jinsi"}</Label>
-                <Select
+                <ToggleGroup
+                  type="single"
                   value={newPatient.gender}
-                  onValueChange={(value: "male" | "female") => 
-                    setNewPatient({ ...newPatient, gender: value })
-                  }
+                  onValueChange={(value: "male" | "female") => {
+                    if (value) setNewPatient({ ...newPatient, gender: value })
+                  }}
+                  variant="outline"
+                  className="w-full"
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="female">
-                      {language === "ru" ? "Женский" : "Ayol"}
-                    </SelectItem>
-                    <SelectItem value="male">
-                      {language === "ru" ? "Мужской" : "Erkak"}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  <ToggleGroupItem 
+                    value="female" 
+                    className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  >
+                    {language === "ru" ? "Женский" : "Ayol"}
+                  </ToggleGroupItem>
+                  <ToggleGroupItem 
+                    value="male" 
+                    className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  >
+                    {language === "ru" ? "Мужской" : "Erkak"}
+                  </ToggleGroupItem>
+                </ToggleGroup>
               </div>
               <div className="space-y-2">
                 <Label>
@@ -790,7 +788,6 @@ function NewExaminationPage() {
                       ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
                       : null 
                   })}
-                  placeholder={language === "ru" ? "Выберите дату" : "Sanani tanlang"}
                   language={language as "uz" | "ru"}
                 />
               </div>
