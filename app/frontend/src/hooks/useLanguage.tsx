@@ -137,6 +137,18 @@ const translations: Record<Language, Record<string, string>> = {
     "of": "dan",
     "logout": "Chiqish",
     "profile": "Profil",
+    
+    // User Settings
+    "user_settings": "Foydalanuvchi sozlamalari",
+    "manage_account_settings": "Hisob sozlamalari va afzalliklarni boshqaring",
+    "my_profile": "Mening profilim",
+    "change_password": "Parol",
+    "danger_zone": "Xavfli zona",
+    "user_info": "Foydalanuvchi ma'lumotlari",
+    "first_name": "Ism",
+    "last_name": "Familiya",
+    "middle_name": "Otasining ismi",
+    "info_updated": "Ma'lumotlar muvaffaqiyatli yangilandi",
   },
   ru: {
     // Login page
@@ -266,7 +278,17 @@ const translations: Record<Language, Record<string, string>> = {
     "of": "из",
     "logout": "Выход",
     "profile": "Профиль",
-  },
+    
+    // User Settings
+    "user_settings": "Настройки пользователя",
+    "manage_account_settings": "Управление настройками аккаунта и предпочтениями",
+    "my_profile": "Мой профиль",
+    "change_password": "Пароль",
+    "danger_zone": "Опасная зона",    "user_info": "Информация о пользователе",
+    "first_name": "Имя",
+    "last_name": "Фамилия",
+    "middle_name": "Отчество",
+    "info_updated": "Данные успешно обновлены",  },
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)

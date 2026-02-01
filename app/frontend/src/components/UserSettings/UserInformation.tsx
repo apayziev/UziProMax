@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import useAuth from "@/hooks/useAuth"
 import useCustomToast from "@/hooks/useCustomToast"
+import { useLanguage } from "@/hooks/useLanguage"
 import { cn } from "@/lib/utils"
 import { handleError } from "@/utils"
 
@@ -34,6 +35,7 @@ const UserInformation = () => {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const [editMode, setEditMode] = useState(false)
   const { user: currentUser } = useAuth()
+  const { t } = useLanguage()
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -54,7 +56,7 @@ const UserInformation = () => {
     mutationFn: (data: UserUpdate) =>
       UsersService.updateUserMe({ requestBody: data }),
     onSuccess: () => {
-      showSuccessToast("Ma'lumotlar muvaffaqiyatli yangilandi")
+      showSuccessToast(t("info_updated"))
       toggleEditMode()
     },
     onError: handleError.bind(showErrorToast),
@@ -87,7 +89,7 @@ const UserInformation = () => {
 
   return (
     <div className="max-w-md">
-      <h3 className="text-lg font-semibold py-4">Foydalanuvchi ma'lumotlari</h3>
+      <h3 className="text-lg font-semibold py-4">{t("user_info")}</h3>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -99,7 +101,7 @@ const UserInformation = () => {
             render={({ field }) =>
               editMode ? (
                 <FormItem>
-                  <FormLabel>Ism</FormLabel>
+                  <FormLabel>{t("first_name")}</FormLabel>
                   <FormControl>
                     <Input type="text" {...field} />
                   </FormControl>
@@ -107,7 +109,7 @@ const UserInformation = () => {
                 </FormItem>
               ) : (
                 <FormItem>
-                  <FormLabel>Ism</FormLabel>
+                  <FormLabel>{t("first_name")}</FormLabel>
                   <p
                     className={cn(
                       "py-2 truncate max-w-sm",
@@ -127,7 +129,7 @@ const UserInformation = () => {
             render={({ field }) =>
               editMode ? (
                 <FormItem>
-                  <FormLabel>Familiya</FormLabel>
+                  <FormLabel>{t("last_name")}</FormLabel>
                   <FormControl>
                     <Input type="text" {...field} />
                   </FormControl>
@@ -135,7 +137,7 @@ const UserInformation = () => {
                 </FormItem>
               ) : (
                 <FormItem>
-                  <FormLabel>Familiya</FormLabel>
+                  <FormLabel>{t("last_name")}</FormLabel>
                   <p
                     className={cn(
                       "py-2 truncate max-w-sm",
@@ -155,7 +157,7 @@ const UserInformation = () => {
             render={({ field }) =>
               editMode ? (
                 <FormItem>
-                  <FormLabel>Otasining ismi</FormLabel>
+                  <FormLabel>{t("middle_name")}</FormLabel>
                   <FormControl>
                     <Input type="text" {...field} value={field.value ?? ""} />
                   </FormControl>
@@ -163,7 +165,7 @@ const UserInformation = () => {
                 </FormItem>
               ) : (
                 <FormItem>
-                  <FormLabel>Otasining ismi</FormLabel>
+                  <FormLabel>{t("middle_name")}</FormLabel>
                   <p
                     className={cn(
                       "py-2 truncate max-w-sm",
@@ -185,7 +187,7 @@ const UserInformation = () => {
                   loading={mutation.isPending}
                   disabled={!form.formState.isDirty}
                 >
-                  Save
+                  {t("save")}
                 </LoadingButton>
                 <Button
                   type="button"
@@ -193,12 +195,12 @@ const UserInformation = () => {
                   onClick={onCancel}
                   disabled={mutation.isPending}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
               </>
             ) : (
               <Button type="button" onClick={toggleEditMode}>
-                Edit
+                {t("edit")}
               </Button>
             )}
           </div>
