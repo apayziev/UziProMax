@@ -7,9 +7,14 @@ import { http, HttpResponse } from "msw"
 // Test ma'lumotlari
 const mockUsers = [
   {
-    id: 1,
+    id: "1",
     phone_number: "+998901234567",
-    full_name: "Атамурадова Малика",
+    first_name: "Малика",
+    last_name: "Атамурадова",
+    middle_name: "Азизовна",
+    username: "malika",
+    phone: "+998901234567",
+    profile_image_url: "",
     is_active: true,
     is_superuser: true,
     role: "admin",
@@ -204,7 +209,7 @@ export const handlers = [
     let filtered = [...mockPatients]
     if (search) {
       filtered = mockPatients.filter(p => 
-        p.full_name.toLowerCase().includes(search) ||
+        `${p.last_name} ${p.first_name} ${p.middle_name}`.toLowerCase().includes(search) ||
         p.phone.includes(search)
       )
     }
@@ -284,10 +289,11 @@ export const handlers = [
   http.post("/api/v1/examinations", async ({ request }) => {
     const data = await request.json() as Record<string, unknown>
     const patient = mockPatients.find(p => p.id === data.patient_id)
+    const patientName = patient ? `${patient.last_name} ${patient.first_name} ${patient.middle_name}` : "Unknown"
     const newExam = {
       id: mockExaminations.length + 1,
       ...data,
-      patient_name: patient?.full_name || "Unknown",
+      patient_name: patientName,
       status: "draft",
       created_at: new Date().toISOString(),
     }
