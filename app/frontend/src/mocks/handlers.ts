@@ -146,7 +146,7 @@ export const handlers = [
 
   http.get("/api/v1/users", () => {
     return HttpResponse.json({
-      data: mockUsers,
+      items: mockUsers,
       count: mockUsers.length,
     })
   }),
@@ -174,7 +174,7 @@ export const handlers = [
     }
 
     return HttpResponse.json({
-      data: filtered,
+      items: filtered,
       count: filtered.length,
     })
   }),
@@ -232,7 +232,7 @@ export const handlers = [
     }
 
     return HttpResponse.json({
-      data: filtered,
+      items: filtered,
       count: filtered.length,
     })
   }),
