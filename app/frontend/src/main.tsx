@@ -64,14 +64,17 @@ async function enableMocking() {
   console.log("🔶 Mock API enabled")
   const { worker } = await import("./mocks/browser")
   
-  // GitHub Pages uchun service worker path
+  // GitHub Pages uchun service worker path va scope
   const basePath = import.meta.env.BASE_URL || "/"
   const serviceWorkerUrl = `${basePath}mockServiceWorker.js`
   
   return worker.start({
-    onUnhandledRequest: "bypass", // Mock bo'lmagan so'rovlarni o'tkazib yuborish
+    onUnhandledRequest: "bypass",
     serviceWorker: {
       url: serviceWorkerUrl,
+      options: {
+        scope: basePath,
+      },
     },
   })
 }
