@@ -187,7 +187,7 @@ export const handlers = [
 
   http.get("/api/v1/users", () => {
     return HttpResponse.json({
-      items: mockUsers,
+      data: mockUsers,
       count: mockUsers.length,
     })
   }),
