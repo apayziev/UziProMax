@@ -470,48 +470,228 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
             </AccordionTrigger>
             <AccordionContent className="pt-4">
               <div className="space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  <div className="space-y-2">
-                    <Label>{t.localization}</Label>
-                    <Select value={data.cyst_location || ""} onValueChange={(v) => updateField("cyst_location", v)}>
-                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="правый придаток">{t.rightOvary}</SelectItem>
-                        <SelectItem value="левый придаток">{t.leftOvary}</SelectItem>
-                        <SelectItem value="оба придатка">Оба придатка</SelectItem>
-                      </SelectContent>
-                    </Select>
+                {/* O'ng tuxumdon kistasi */}
+                <div className="p-3 border rounded-lg bg-purple-100/50">
+                  <h4 className="font-medium text-sm mb-3 text-purple-800">{t.rightOvaryCyst}</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.cystType}</Label>
+                      <Select value={data.right_cyst_type || ""} onValueChange={(v) => updateField("right_cyst_type", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="фолликулярная киста">{t.follicularCyst}</SelectItem>
+                          <SelectItem value="киста желтого тела">{t.corpusLuteumCyst}</SelectItem>
+                          <SelectItem value="эндометриоидная киста">{t.endometrioidCyst}</SelectItem>
+                          <SelectItem value="дермоидная киста">{t.dermoidCyst}</SelectItem>
+                          <SelectItem value="муцинозная кистома">{t.mucinousCystoma}</SelectItem>
+                          <SelectItem value="серозная кистома">{t.seromasCystoma}</SelectItem>
+                          <SelectItem value="параовариальная киста">{t.paraovarianCyst}</SelectItem>
+                          <SelectItem value="многокамерная киста">{t.multiChamber}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.size} ({t.mm})</Label>
+                      <Input placeholder="56.7x45.3" value={data.right_cyst_size || ""} onChange={(e) => updateField("right_cyst_size", e.target.value)} className="h-9" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.contours}</Label>
+                      <Select value={data.right_cyst_contours || ""} onValueChange={(v) => updateField("right_cyst_contours", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ровные, четкие">{t.smooth}</SelectItem>
+                          <SelectItem value="неровные">{t.uneven}</SelectItem>
+                          <SelectItem value="нечеткие">{t.unclear}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.wallThickness} ({t.mm})</Label>
+                      <Input type="number" placeholder="2.3" value={data.right_cyst_wall_thickness || ""} onChange={(e) => updateField("right_cyst_wall_thickness", e.target.value)} className="h-9" />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label>{t.size} ({t.mm})</Label>
-                    <Input placeholder="30x25x20" value={data.cyst_size || ""} onChange={(e) => updateField("cyst_size", e.target.value)} />
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.cystWall}</Label>
+                      <Select value={data.right_cyst_wall || ""} onValueChange={(v) => updateField("right_cyst_wall", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="тонкостенная">{t.thinWalled}</SelectItem>
+                          <SelectItem value="утолщена гиперэхогенно">{t.thickWalled} {t.hyperechoicWall}</SelectItem>
+                          <SelectItem value="гладкая">гладкая</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.massContent}</Label>
+                      <Select value={data.right_cyst_content || ""} onValueChange={(v) => updateField("right_cyst_content", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="однородное">{t.homogeneousContent}</SelectItem>
+                          <SelectItem value="неоднородное">{t.heterogeneousContent}</SelectItem>
+                          <SelectItem value="с линейными эхоструктурами">{t.withLinearEchos}</SelectItem>
+                          <SelectItem value="с кровоизлиянием">{t.withBloodClots}</SelectItem>
+                          <SelectItem value="с сосочковыми разрастаниями">{t.withSolidPapillary}</SelectItem>
+                          <SelectItem value="с дисперсной взвесью">{t.withDisperseSuspension}</SelectItem>
+                          <SelectItem value="анэхогенное">{t.anechoicContent}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.vascularization}</Label>
+                      <Select value={data.right_cyst_vasc || ""} onValueChange={(v) => updateField("right_cyst_vasc", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="кровоток не определяется">{t.noFlow}</SelectItem>
+                          <SelectItem value="единичные цветовые пятна">{t.singleColorSpots}</SelectItem>
+                          <SelectItem value="периферический кровоток">{t.peripheralFlow}</SelectItem>
+                          <SelectItem value="богатая васкуляризация">{t.richVascularization}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label>{t.massContent}</Label>
-                    <Select value={data.cyst_content || ""} onValueChange={(v) => updateField("cyst_content", v)}>
-                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="анэхогенное">{t.anechoicContent}</SelectItem>
-                        <SelectItem value="с перегородками">{t.withSeptations}</SelectItem>
-                        <SelectItem value="с солидным компонентом">{t.withSolidComponent}</SelectItem>
-                        <SelectItem value="смешанное">{t.mixed}</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.compression}</Label>
+                      <Select value={data.right_cyst_compression || ""} onValueChange={(v) => updateField("right_cyst_compression", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="безболезненная">{t.painless}</SelectItem>
+                          <SelectItem value="незначительно болезненная">{t.slightlyPainful}</SelectItem>
+                          <SelectItem value="болезненная">{t.painful}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.additionalInfo}</Label>
+                      <Input placeholder={language === "ru" ? "акустическая тень, спайки..." : "akustik soya, bitishmalar..."} value={data.right_cyst_additional || ""} onChange={(e) => updateField("right_cyst_additional", e.target.value)} className="h-9" />
+                    </div>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label>{t.oradsClassification}</Label>
-                  <Select value={data.cyst_orads || ""} onValueChange={(v) => updateField("cyst_orads", v)}>
-                    <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="O-RADS 1">{t.orads1}</SelectItem>
-                      <SelectItem value="O-RADS 2">{t.orads2}</SelectItem>
-                      <SelectItem value="O-RADS 2-3">O-RADS 2-3</SelectItem>
-                      <SelectItem value="O-RADS 3">{t.orads3}</SelectItem>
-                      <SelectItem value="O-RADS 4">{t.orads4}</SelectItem>
-                      <SelectItem value="O-RADS 5">{t.orads5}</SelectItem>
-                    </SelectContent>
-                  </Select>
+
+                {/* Chap tuxumdon kistasi */}
+                <div className="p-3 border rounded-lg bg-purple-100/50">
+                  <h4 className="font-medium text-sm mb-3 text-purple-800">{t.leftOvaryCyst}</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.cystType}</Label>
+                      <Select value={data.left_cyst_type || ""} onValueChange={(v) => updateField("left_cyst_type", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="фолликулярная киста">{t.follicularCyst}</SelectItem>
+                          <SelectItem value="киста желтого тела">{t.corpusLuteumCyst}</SelectItem>
+                          <SelectItem value="эндометриоидная киста">{t.endometrioidCyst}</SelectItem>
+                          <SelectItem value="дермоидная киста">{t.dermoidCyst}</SelectItem>
+                          <SelectItem value="муцинозная кистома">{t.mucinousCystoma}</SelectItem>
+                          <SelectItem value="серозная кистома">{t.seromasCystoma}</SelectItem>
+                          <SelectItem value="параовариальная киста">{t.paraovarianCyst}</SelectItem>
+                          <SelectItem value="многокамерная киста">{t.multiChamber}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.size} ({t.mm})</Label>
+                      <Input placeholder="51.2x48.2x50.4" value={data.left_cyst_size || ""} onChange={(e) => updateField("left_cyst_size", e.target.value)} className="h-9" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.contours}</Label>
+                      <Select value={data.left_cyst_contours || ""} onValueChange={(v) => updateField("left_cyst_contours", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ровные, четкие">{t.smooth}</SelectItem>
+                          <SelectItem value="неровные">{t.uneven}</SelectItem>
+                          <SelectItem value="нечеткие">{t.unclear}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.wallThickness} ({t.mm})</Label>
+                      <Input type="number" placeholder="1.2" value={data.left_cyst_wall_thickness || ""} onChange={(e) => updateField("left_cyst_wall_thickness", e.target.value)} className="h-9" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.cystWall}</Label>
+                      <Select value={data.left_cyst_wall || ""} onValueChange={(v) => updateField("left_cyst_wall", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="тонкостенная">{t.thinWalled}</SelectItem>
+                          <SelectItem value="утолщена гиперэхогенно">{t.thickWalled} {t.hyperechoicWall}</SelectItem>
+                          <SelectItem value="гладкая">гладкая</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.massContent}</Label>
+                      <Select value={data.left_cyst_content || ""} onValueChange={(v) => updateField("left_cyst_content", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="однородное">{t.homogeneousContent}</SelectItem>
+                          <SelectItem value="неоднородное">{t.heterogeneousContent}</SelectItem>
+                          <SelectItem value="с линейными эхоструктурами">{t.withLinearEchos}</SelectItem>
+                          <SelectItem value="с кровоизлиянием">{t.withBloodClots}</SelectItem>
+                          <SelectItem value="с сосочковыми разрастаниями">{t.withSolidPapillary}</SelectItem>
+                          <SelectItem value="с дисперсной взвесью">{t.withDisperseSuspension}</SelectItem>
+                          <SelectItem value="анэхогенное">{t.anechoicContent}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.vascularization}</Label>
+                      <Select value={data.left_cyst_vasc || ""} onValueChange={(v) => updateField("left_cyst_vasc", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="кровоток не определяется">{t.noFlow}</SelectItem>
+                          <SelectItem value="единичные цветовые пятна">{t.singleColorSpots}</SelectItem>
+                          <SelectItem value="периферический кровоток">{t.peripheralFlow}</SelectItem>
+                          <SelectItem value="богатая васкуляризация">{t.richVascularization}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.compression}</Label>
+                      <Select value={data.left_cyst_compression || ""} onValueChange={(v) => updateField("left_cyst_compression", v)}>
+                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="безболезненная">{t.painless}</SelectItem>
+                          <SelectItem value="незначительно болезненная">{t.slightlyPainful}</SelectItem>
+                          <SelectItem value="болезненная">{t.painful}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">{t.additionalInfo}</Label>
+                      <Input placeholder={language === "ru" ? "акустическая тень, спайки..." : "akustik soya, bitishmalar..."} value={data.left_cyst_additional || ""} onChange={(e) => updateField("left_cyst_additional", e.target.value)} className="h-9" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Umumiy tasnif */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>{t.oradsClassification}</Label>
+                    <Select value={data.cyst_orads || ""} onValueChange={(v) => updateField("cyst_orads", v)}>
+                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="O-RADS 1">{t.orads1}</SelectItem>
+                        <SelectItem value="O-RADS 2">{t.orads2}</SelectItem>
+                        <SelectItem value="O-RADS 2-3">O-RADS 2-3</SelectItem>
+                        <SelectItem value="O-RADS 3">{t.orads3}</SelectItem>
+                        <SelectItem value="O-RADS 4">{t.orads4}</SelectItem>
+                        <SelectItem value="O-RADS 5">{t.orads5}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t.cystDiagnosis}</Label>
+                    <Input 
+                      placeholder={language === "ru" ? "фолликулярная киста справа, киста желтого тела слева..." : "o'ngda follikulyar kista, chapda sariq tana kistasi..."} 
+                      value={data.cyst_diagnosis || ""} 
+                      onChange={(e) => updateField("cyst_diagnosis", e.target.value)} 
+                    />
+                  </div>
                 </div>
               </div>
             </AccordionContent>

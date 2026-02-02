@@ -211,6 +211,65 @@ export function getGynecologyTranslations(language: Language) {
     anechoicContent: language === "ru" ? "анэхогенное" : "anexogen",
     withSeptations: language === "ru" ? "с перегородками" : "to'siqli",
     withSolidComponent: language === "ru" ? "с солидным компонентом" : "qattiq komponentli",
+    
+    // Kista turlari
+    cystType: language === "ru" ? "Тип кисты" : "Kista turi",
+    follicularCyst: language === "ru" ? "Фолликулярная киста" : "Follikulyar kista",
+    corpusLuteumCyst: language === "ru" ? "Киста желтого тела" : "Sariq tana kistasi",
+    endometrioidCyst: language === "ru" ? "Эндометриоидная киста" : "Endometrioid kista",
+    dermoidCyst: language === "ru" ? "Дермоидная киста" : "Dermoid kista",
+    mucinousCystoma: language === "ru" ? "Муцинозная кистома" : "Mutsionoz kistoma",
+    seromasCystoma: language === "ru" ? "Серозная кистома" : "Seroz kistoma",
+    paraovarianCyst: language === "ru" ? "Параовариальная киста" : "Paraovariyal kista",
+    multiChamber: language === "ru" ? "Многокамерная киста" : "Ko'p kamerali kista",
+    
+    // Kista xususiyatlari
+    cystWall: language === "ru" ? "Стенка кисты" : "Kista devori",
+    wallThickness: language === "ru" ? "Толщина стенки" : "Devor qalinligi",
+    thinWalled: language === "ru" ? "тонкостенная" : "yupqa devorli",
+    thickWalled: language === "ru" ? "утолщена" : "qalinlashgan",
+    wallEchogenicity: language === "ru" ? "Эхогенность стенки" : "Devor exogenligi",
+    hyperechoicWall: language === "ru" ? "гиперэхогенная" : "giperexogen",
+    isoechoicWall: language === "ru" ? "изоэхогенная" : "izoexogen",
+    
+    // Kista tarkibi
+    contentHomogeneity: language === "ru" ? "Однородность содержимого" : "Tarkib bir xilligi",
+    homogeneousContent: language === "ru" ? "однородное" : "bir xil",
+    heterogeneousContent: language === "ru" ? "неоднородное" : "har xil",
+    withLinearEchos: language === "ru" ? "с мелкими линейными эхоструктурами" : "mayda chiziqli exotuzilmalar bilan",
+    withAcousticShadow: language === "ru" ? "с акустической тенью" : "akustik soya bilan",
+    withBloodClots: language === "ru" ? "с кровоизлиянием" : "qon quyilishi bilan",
+    withSolidPapillary: language === "ru" ? "с сосочковыми разрастаниями" : "so'rg'ichsimon o'simtalar bilan",
+    withDisperseSuspension: language === "ru" ? "с дисперсной взвесью" : "dispersli aralashma bilan",
+    
+    // Lokalizatsiya
+    cystLocalization: language === "ru" ? "Локализация кисты" : "Kista joylashuvi",
+    medialPosition: language === "ru" ? "медиальное, позади матки" : "medial, bachadon orqasida",
+    lateralPosition: language === "ru" ? "латеральное, сбоку от матки" : "lateral, bachadon yonida",
+    fixedLocation: language === "ru" ? "фиксированная локализация" : "qotib qolgan joylashuv",
+    
+    // CDC va qon oqimi
+    vascularization: language === "ru" ? "Васкуляризация (ЦДК)" : "Vaskulyarizatsiya (CDC)",
+    peripheralFlow: language === "ru" ? "периферический кровоток" : "periferik qon oqimi",
+    centralFlow: language === "ru" ? "центральный кровоток" : "markaziy qon oqimi",
+    noFlow: language === "ru" ? "кровоток не определяется" : "qon oqimi aniqlanmaydi",
+    singleColorSpots: language === "ru" ? "единичные цветовые пятна" : "yakka rangli dog'lar",
+    richVascularization: language === "ru" ? "богатая васкуляризация" : "boy vaskulyarizatsiya",
+    
+    // Qo'shimcha belgilar
+    adhesions: language === "ru" ? "Спайки" : "Bitishmalar",
+    withAdhesions: language === "ru" ? "с признаками спаек" : "bitishmalar belgilari bilan",
+    noAdhesions: language === "ru" ? "без признаков спаек" : "bitishmalarsiz",
+    compression: language === "ru" ? "Компрессия" : "Kompressiya",
+    painless: language === "ru" ? "безболезненная" : "og'riqsiz",
+    slightlyPainful: language === "ru" ? "незначительно болезненная" : "biroz og'riqli",
+    painful: language === "ru" ? "болезненная" : "og'riqli",
+    
+    // O'ng/Chap kista
+    rightOvaryCyst: language === "ru" ? "КИСТА ПРАВОГО ЯИЧНИКА" : "O'NG TUXUMDON KISTASI",
+    leftOvaryCyst: language === "ru" ? "КИСТА ЛЕВОГО ЯИЧНИКА" : "CHAP TUXUMDON KISTASI",
+    cystDescription: language === "ru" ? "Описание кисты" : "Kista tavsifi",
+    cystDiagnosis: language === "ru" ? "Предварительный диагноз" : "Dastlabki tashxis",
   }
 }
 

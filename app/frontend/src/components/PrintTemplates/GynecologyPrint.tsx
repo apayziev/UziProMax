@@ -127,15 +127,47 @@ export function GynecologyPrint({ data }: GynecologyPrintProps) {
       )}
 
       {/* Kista - O-RADS */}
-      {(data.cyst_location || data.cyst_size || data.cyst_orads) && (
+      {(data.right_cyst_type || data.left_cyst_type || data.cyst_orads) && (
         <div>
-          <h4 className="font-bold text-primary">ОБРАЗОВАНИЕ В ПРИДАТКАХ:</h4>
-          <p>
-            {data.cyst_location && `Локализация: ${data.cyst_location}. `}
-            {data.cyst_size && `Размеры: ${data.cyst_size} мм. `}
-            {data.cyst_content && `Содержимое: ${data.cyst_content}. `}
-            {data.cyst_orads && `Классификация: ${data.cyst_orads}.`}
-          </p>
+          <h4 className="font-bold text-primary">КИСТОЗНЫЕ ОБРАЗОВАНИЯ В ПРИДАТКАХ:</h4>
+          
+          {/* O'ng tuxumdon kistasi */}
+          {data.right_cyst_type && (
+            <p>
+              <span className="font-semibold">Правый яичник:</span> увеличен за счёт в проекции яичника лоцируется{" "}
+              {data.right_cyst_type}. Размеры: {data.right_cyst_size || "___"} мм,{" "}
+              контуры {data.right_cyst_contours || "ровные, четкие"}.{" "}
+              Стенка {data.right_cyst_wall || "тонкостенная"}
+              {data.right_cyst_wall_thickness && `, толщина ${data.right_cyst_wall_thickness} мм`}.{" "}
+              Содержимое {data.right_cyst_content || "однородное"}.{" "}
+              {data.right_cyst_vasc && `При ЦДК ${data.right_cyst_vasc}. `}
+              {data.right_cyst_additional && `${data.right_cyst_additional}. `}
+              Компрессия {data.right_cyst_compression || "безболезненная"}.
+            </p>
+          )}
+          
+          {/* Chap tuxumdon kistasi */}
+          {data.left_cyst_type && (
+            <p>
+              <span className="font-semibold">Левый яичник:</span> увеличен за счёт в проекции яичника лоцируется{" "}
+              {data.left_cyst_type}. Размеры: {data.left_cyst_size || "___"} мм,{" "}
+              контуры {data.left_cyst_contours || "ровные, четкие"}.{" "}
+              Стенка {data.left_cyst_wall || "тонкостенная"}
+              {data.left_cyst_wall_thickness && `, толщина ${data.left_cyst_wall_thickness} мм`}.{" "}
+              Содержимое {data.left_cyst_content || "однородное"}.{" "}
+              {data.left_cyst_vasc && `При ЦДК ${data.left_cyst_vasc}. `}
+              {data.left_cyst_additional && `${data.left_cyst_additional}. `}
+              Компрессия {data.left_cyst_compression || "безболезненная"}.
+            </p>
+          )}
+          
+          {/* Tasnif */}
+          {(data.cyst_orads || data.cyst_diagnosis) && (
+            <p className="font-semibold mt-1">
+              {data.cyst_orads && `Классификация: ${data.cyst_orads}. `}
+              {data.cyst_diagnosis && `(${data.cyst_diagnosis})`}
+            </p>
+          )}
         </div>
       )}
     </div>
