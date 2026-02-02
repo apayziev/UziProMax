@@ -23,7 +23,7 @@ export function PrintHeader({ examination }: PrintHeaderProps) {
   return (
     <div className="text-center mb-4 print:mb-3">
       <div className="flex justify-center mb-1">
-        <img src="/assets/images/favicon.png" alt="UziProMax" className="h-14 w-auto print:h-10" />
+        <img src={`${import.meta.env.BASE_URL || "/"}assets/images/favicon.png`} alt="UziProMax" className="h-14 w-auto print:h-10" />
       </div>
       <h2 className="text-lg font-bold uppercase print:text-base">ПРОТОКОЛ УЗИ</h2>
       <p className="text-base font-semibold print:text-sm">{templateInfo?.name_ru || examination.template_type}</p>

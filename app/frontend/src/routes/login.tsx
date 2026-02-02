@@ -73,7 +73,7 @@ function Login() {
           className="flex flex-col gap-6"
         >
           <div className="flex flex-col items-center gap-3 text-center">
-            <img src="/assets/images/favicon.png" alt="UziProMax" className="h-20 w-auto rounded-xl lg:hidden" />
+            <img src={`${import.meta.env.BASE_URL || "/"}assets/images/favicon.png`} alt="UziProMax" className="h-20 w-auto rounded-xl lg:hidden" />
             <h1 className="text-3xl font-bold">{t("welcome")}</h1>
             <p className="text-muted-foreground">{t("login_subtitle")}</p>
           </div>

@@ -13,7 +13,8 @@ export function Logo({
   className,
   asLink = true,
 }: LogoProps) {
-  const logoSrc = "/assets/images/favicon.png"
+  const basePath = import.meta.env.BASE_URL || "/"
+  const logoSrc = `${basePath}assets/images/favicon.png`
 
   const content =
     variant === "responsive" ? (
