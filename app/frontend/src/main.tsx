@@ -21,9 +21,11 @@ OpenAPI.TOKEN = async () => {
 
 const handleApiError = (error: Error) => {
   if (error instanceof ApiError) {
-    if (error.status === 401 && !error.url.includes("/login/access-token") && window.location.pathname !== "/login") {
+    const basePath = import.meta.env.BASE_URL || "/"
+    const loginPath = `${basePath}login`.replace("//", "/")
+    if (error.status === 401 && !error.url.includes("/login/access-token") && !window.location.pathname.includes("/login")) {
       localStorage.removeItem("access_token")
-      window.location.href = "/login"
+      window.location.href = loginPath
     }
   }
 }
@@ -36,7 +38,13 @@ const queryClient = new QueryClient({
   }),
 })
 
-const router = createRouter({ routeTree })
+// GitHub Pages uchun basepath
+const basePath = import.meta.env.BASE_URL || "/"
+
+const router = createRouter({ 
+  routeTree,
+  basepath: basePath,
+})
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router
