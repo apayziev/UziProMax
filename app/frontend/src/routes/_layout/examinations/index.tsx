@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { FileText, Calendar, MoreHorizontal, Eye, Printer, Trash2 } from "lucide-react"
+import { FileText, Calendar, MoreHorizontal, Eye, Trash2 } from "lucide-react"
 import { Link } from "@tanstack/react-router"
 
 import { Button } from "@/components/ui/button"
@@ -113,7 +113,7 @@ function ExaminationsPage() {
           <h1 className="text-3xl font-bold tracking-tight">{t("examinations")}</h1>
           <p className="text-muted-foreground">{t("all_examinations_list")}</p>
         </div>
-        <Link to="/examinations/new">
+        <Link to="/examinations/new" search={{ patient_id: undefined }}>
           <Button>
             <FileText className="mr-2 h-4 w-4" />
             {t("new_examination")}
@@ -210,10 +210,6 @@ function ExaminationsPage() {
                         </div>
                       </TableCell>
                       <TableCell>{exam.patient_name || "-"}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {exam.patient_birth_date ? formatDate(exam.patient_birth_date) : "-"}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">{exam.patient_phone || "-"}</TableCell>
                       <TableCell>
                         <Badge variant="outline">
                           {TEMPLATE_TYPES[exam.template_type]?.[language === "ru" ? "name_ru" : "name"] || exam.template_type}
@@ -229,15 +225,9 @@ function ExaminationsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link to={`/examinations/${exam.id}`}>
+                              <Link to="/examinations/$id" params={{ id: String(exam.id) }}>
                                 <Eye className="mr-2 h-4 w-4" />
                                 {t("view")}
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link to={`/examinations/${exam.id}/print`}>
-                                <Printer className="mr-2 h-4 w-4" />
-                                {t("print")}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem

@@ -43,15 +43,34 @@ declare module "@tanstack/react-router" {
   }
 }
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <LanguageProvider>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-          <Toaster richColors closeButton />
-        </QueryClientProvider>
-      </LanguageProvider>
-    </ThemeProvider>
-  </StrictMode>,
-)
+// MSW Mock API - faqat development/testing uchun
+async function enableMocking() {
+  // GitHub Pages yoki VITE_ENABLE_MOCK=true bo'lganda mock yoqiladi
+  const isGitHubPages = window.location.hostname.includes("github.io")
+  const isMockEnabled = import.meta.env.VITE_ENABLE_MOCK === "true"
+  
+  if (!isGitHubPages && !isMockEnabled) {
+    return
+  }
+
+  console.log("🔶 Mock API enabled")
+  const { worker } = await import("./mocks/browser")
+  return worker.start({
+    onUnhandledRequest: "bypass", // Mock bo'lmagan so'rovlarni o'tkazib yuborish
+  })
+}
+
+enableMocking().then(() => {
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <LanguageProvider>
+          <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+            <Toaster richColors closeButton />
+          </QueryClientProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </StrictMode>,
+  )
+})

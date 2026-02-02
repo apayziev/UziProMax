@@ -1,4 +1,4 @@
-import { Home, Users, FileText, Settings, Stethoscope } from "lucide-react"
+import { Home, Users, Settings, Stethoscope } from "lucide-react"
 
 import { Logo } from "@/components/Common/Logo"
 import {
