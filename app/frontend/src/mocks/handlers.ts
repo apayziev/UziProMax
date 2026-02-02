@@ -113,7 +113,7 @@ const generateToken = () => "mock_access_token_" + Date.now()
 
 export const handlers = [
   // ==================== AUTH ====================
-  http.post("/api/v1/auth/login", async ({ request }) => {
+  http.post("/api/v1/login/access-token", async ({ request }) => {
     const formData = await request.formData()
     const username = formData.get("username")
     const password = formData.get("password")
@@ -132,13 +132,16 @@ export const handlers = [
     )
   }),
 
-  http.post("/api/v1/auth/test-token", () => {
-    return HttpResponse.json(mockUsers[0])
-  }),
-
   // ==================== USERS ====================
   http.get("/api/v1/users/me", () => {
     return HttpResponse.json(mockUsers[0])
+  }),
+
+  http.get("/api/v1/users", () => {
+    return HttpResponse.json({
+      data: mockUsers,
+      count: mockUsers.length,
+    })
   }),
 
   http.patch("/api/v1/users/me", async ({ request }) => {
