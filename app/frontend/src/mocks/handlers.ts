@@ -115,17 +115,24 @@ export const handlers = [
   // ==================== AUTH ====================
   http.post("/api/v1/login/access-token", async ({ request }) => {
     const formData = await request.formData()
-    const username = formData.get("username")
-    const password = formData.get("password")
+    const username = formData.get("username")?.toString() || ""
+    const password = formData.get("password")?.toString() || ""
 
-    // Test credentials: +998901234567 / test123
-    if (username === "+998901234567" && password === "test123") {
+    console.log("🔐 Login attempt:", { username, password })
+
+    // Test credentials (telefon raqam turli formatda bo'lishi mumkin)
+    const validPhones = ["+998901234567", "998901234567", "901234567"]
+    const isValidPhone = validPhones.some(p => username.includes(p.replace(/\D/g, "")) || p.includes(username.replace(/\D/g, "")))
+    
+    if (isValidPhone && password === "test123") {
+      console.log("✅ Login successful")
       return HttpResponse.json({
         access_token: generateToken(),
         token_type: "bearer",
       })
     }
 
+    console.log("❌ Login failed")
     return new HttpResponse(
       JSON.stringify({ detail: "Noto'g'ri telefon raqam yoki parol" }),
       { status: 401 }
