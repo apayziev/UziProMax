@@ -8,8 +8,8 @@ import { http, HttpResponse } from "msw"
 const mockUsers = [
   {
     id: 1,
-    email: "admin@test.com",
-    full_name: "Test Admin",
+    phone_number: "+998901234567",
+    full_name: "Атамурадова Малика",
     is_active: true,
     is_superuser: true,
     role: "admin",
@@ -118,8 +118,8 @@ export const handlers = [
     const username = formData.get("username")
     const password = formData.get("password")
 
-    // Test credentials: admin@test.com / test123
-    if (username === "admin@test.com" && password === "test123") {
+    // Test credentials: +998901234567 / test123
+    if (username === "+998901234567" && password === "test123") {
       return HttpResponse.json({
         access_token: generateToken(),
         token_type: "bearer",
@@ -127,7 +127,7 @@ export const handlers = [
     }
 
     return new HttpResponse(
-      JSON.stringify({ detail: "Incorrect email or password" }),
+      JSON.stringify({ detail: "Noto'g'ri telefon raqam yoki parol" }),
       { status: 401 }
     )
   }),
