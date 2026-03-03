@@ -14,7 +14,6 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutPatientsRouteImport } from './routes/_layout/patients'
-import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 import { Route as LayoutExaminationsIndexRouteImport } from './routes/_layout/examinations/index'
 import { Route as LayoutExaminationsNewRouteImport } from './routes/_layout/examinations/new'
@@ -45,11 +44,6 @@ const LayoutPatientsRoute = LayoutPatientsRouteImport.update({
   path: '/patients',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutItemsRoute = LayoutItemsRouteImport.update({
-  id: '/items',
-  path: '/items',
-  getParentRoute: () => LayoutRoute,
-} as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -78,21 +72,19 @@ const LayoutExaminationsEditIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof LayoutIndexRoute
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
-  '/items': typeof LayoutItemsRoute
   '/patients': typeof LayoutPatientsRoute
   '/settings': typeof LayoutSettingsRoute
-  '/': typeof LayoutIndexRoute
   '/examinations/$id': typeof LayoutExaminationsIdRoute
   '/examinations/new': typeof LayoutExaminationsNewRoute
-  '/examinations': typeof LayoutExaminationsIndexRoute
+  '/examinations/': typeof LayoutExaminationsIndexRoute
   '/examinations/edit/$id': typeof LayoutExaminationsEditIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
-  '/items': typeof LayoutItemsRoute
   '/patients': typeof LayoutPatientsRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
@@ -106,7 +98,6 @@ export interface FileRoutesById {
   '/_layout': typeof LayoutRouteWithChildren
   '/login': typeof LoginRoute
   '/_layout/admin': typeof LayoutAdminRoute
-  '/_layout/items': typeof LayoutItemsRoute
   '/_layout/patients': typeof LayoutPatientsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
@@ -118,21 +109,19 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/login'
     | '/admin'
-    | '/items'
     | '/patients'
     | '/settings'
-    | '/'
     | '/examinations/$id'
     | '/examinations/new'
-    | '/examinations'
+    | '/examinations/'
     | '/examinations/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/admin'
-    | '/items'
     | '/patients'
     | '/settings'
     | '/'
@@ -145,7 +134,6 @@ export interface FileRouteTypes {
     | '/_layout'
     | '/login'
     | '/_layout/admin'
-    | '/_layout/items'
     | '/_layout/patients'
     | '/_layout/settings'
     | '/_layout/'
@@ -172,7 +160,7 @@ declare module '@tanstack/react-router' {
     '/_layout': {
       id: '/_layout'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -197,13 +185,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutPatientsRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/items': {
-      id: '/_layout/items'
-      path: '/items'
-      fullPath: '/items'
-      preLoaderRoute: typeof LayoutItemsRouteImport
-      parentRoute: typeof LayoutRoute
-    }
     '/_layout/admin': {
       id: '/_layout/admin'
       path: '/admin'
@@ -214,7 +195,7 @@ declare module '@tanstack/react-router' {
     '/_layout/examinations/': {
       id: '/_layout/examinations/'
       path: '/examinations'
-      fullPath: '/examinations'
+      fullPath: '/examinations/'
       preLoaderRoute: typeof LayoutExaminationsIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
@@ -244,7 +225,6 @@ declare module '@tanstack/react-router' {
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
-  LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutPatientsRoute: typeof LayoutPatientsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
@@ -256,7 +236,6 @@ interface LayoutRouteChildren {
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
-  LayoutItemsRoute: LayoutItemsRoute,
   LayoutPatientsRoute: LayoutPatientsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
