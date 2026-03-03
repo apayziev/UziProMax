@@ -11,12 +11,23 @@ from pydantic import (
 from .base import PersistentDeletion, TimestampSchema
 
 
+def _empty_to_none(v: str | None) -> str | None:
+    """Convert empty strings to None."""
+    if v is not None and isinstance(v, str) and v.strip() == "":
+        return None
+    return v
+
+
 class UserBase(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     first_name: Annotated[str, Field(min_length=2, max_length=50, examples=["Aziz"])]
     last_name: Annotated[str, Field(min_length=2, max_length=50, examples=["Karimov"])]
-    middle_name: Annotated[str | None, Field(min_length=2, max_length=50, examples=["Toshmatovich"], default=None)]
+    middle_name: Annotated[
+        str | None,
+        BeforeValidator(_empty_to_none),
+        Field(min_length=2, max_length=50, examples=["Toshmatovich"], default=None),
+    ]
     username: Annotated[
         str | None,
         Field(
@@ -44,7 +55,11 @@ class UserRead(BaseModel):
 
     first_name: Annotated[str, Field(min_length=2, max_length=50, examples=["Aziz"])]
     last_name: Annotated[str, Field(min_length=2, max_length=50, examples=["Karimov"])]
-    middle_name: Annotated[str | None, Field(min_length=2, max_length=50, examples=["Toshmatovich"], default=None)]
+    middle_name: Annotated[
+        str | None,
+        BeforeValidator(_empty_to_none),
+        Field(min_length=2, max_length=50, examples=["Toshmatovich"], default=None),
+    ]
     username: Annotated[str, Field(min_length=2, max_length=20, pattern=r"^[a-z0-9]+$", examples=["userson"])]
     phone: Annotated[str, Field(examples=["+998901234567"])]
     profile_image_url: str
@@ -72,7 +87,11 @@ class UserUpdate(BaseModel):
 
     first_name: Annotated[str | None, Field(min_length=2, max_length=50, examples=["Aziz"], default=None)]
     last_name: Annotated[str | None, Field(min_length=2, max_length=50, examples=["Karimov"], default=None)]
-    middle_name: Annotated[str | None, Field(min_length=2, max_length=50, examples=["Toshmatovich"], default=None)]
+    middle_name: Annotated[
+        str | None,
+        BeforeValidator(_empty_to_none),
+        Field(min_length=2, max_length=50, examples=["Toshmatovich"], default=None),
+    ]
     username: Annotated[
         str | None, Field(min_length=2, max_length=20, pattern=r"^[a-z0-9]+$", examples=["userberg"], default=None)
     ]
