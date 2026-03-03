@@ -8,14 +8,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class AppSettings(BaseSettings):
     """Application metadata settings."""
 
-    APP_NAME: str = "FastAPI Fullstack Boilerplate"
-    APP_DESCRIPTION: str | None = (
-        "A production-ready FastAPI boilerplate with authentication, database, and async task queue."
-    )
+    APP_NAME: str = "UziProMax"
+    APP_DESCRIPTION: str | None = "UZI tekshiruvlari uchun tibbiy tizim"
     APP_VERSION: str | None = "0.1.0"
     LICENSE_NAME: str | None = "MIT"
-    CONTACT_NAME: str | None = "Olimbek Nizomov"
-    CONTACT_EMAIL: str | None = "nizomov.olimbek@gmail.com"
+    CONTACT_NAME: str | None = None
+    CONTACT_EMAIL: str | None = None
 
 
 class CryptSettings(BaseSettings):
@@ -59,37 +57,6 @@ class FirstUserSettings(BaseSettings):
     ADMIN_PASSWORD: str = "!Ch4ng3Th1sP4ssW0rd!"
 
 
-class RedisSettings(BaseSettings):
-    """
-    Redis configuration used for caching, queues, and rate limiting.
-    By default, everything uses the same Redis instance.
-    """
-
-    REDIS_HOST: str = "localhost"
-    REDIS_PORT: int = 6379
-
-    # To use separate Redis instances for different features, you can add
-    # separate URLs here (e.g., REDIS_CACHE_URL, REDIS_QUEUE_URL) and
-    # update the initialization logic in 'app/core/setup.py'.
-
-    # Feature Toggles
-    ENABLE_REDIS_QUEUE: bool = True
-    ENABLE_REDIS_RATE_LIMIT: bool = True
-
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def REDIS_URL(self) -> str:
-        """Construct Redis connection URL."""
-        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}"
-
-
-class DefaultRateLimitSettings(BaseSettings):
-    """Default rate limiting configuration values."""
-
-    DEFAULT_RATE_LIMIT_LIMIT: int = 10
-    DEFAULT_RATE_LIMIT_PERIOD: int = 3600
-
-
 class EnvironmentOption(str, Enum):
     """Environment types for the application."""
 
@@ -117,8 +84,6 @@ class Settings(
     DatabaseSettings,
     CryptSettings,
     FirstUserSettings,
-    RedisSettings,
-    DefaultRateLimitSettings,
     EnvironmentSettings,
     CORSSettings,
 ):

@@ -1,8 +1,8 @@
 [project]
-name = "fastapi-fullstack-boilerplate"
+name = "uzipromax"
 version = "0.1.0"
-description = "FastAPI Fullstack starter with production-ready defaults, optional modules, and clear docs."
-authors = [{ name = "Olimbek Nizomov", email = "nizomov.olimbek@gmail.com" }]
+description = "UZI tekshiruvlari uchun tibbiy tizim"
+authors = [{ name = "UziProMax Team" }]
 license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.11, <3.14"
@@ -20,8 +20,6 @@ dependencies = [
     "greenlet>=2.0.2",
     "httpx>=0.26.0",
     "pydantic-settings>=2.0.3",
-    "redis>=5.0.1",
-    "arq>=0.25.0",
     "bcrypt>=4.1.1",
     "gunicorn>=23.0.0",
 ]
@@ -33,7 +31,6 @@ dev = [
     "pytest-asyncio>=1.0.0",
     "faker>=26.0.0",
     "mypy>=1.16.0",
-    "types-redis>=4.6.0",
     "ruff>=0.11.13",
     "pre-commit>=4.3.0",
     "aiosqlite>=0.22.1",

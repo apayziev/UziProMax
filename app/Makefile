@@ -3,7 +3,6 @@
 PYTHON := backend/.venv/bin/python
 export PYTHONPATH := backend
 APP_MODULE := app.main:app
-WORKER_SETTINGS := app.core.worker.WorkerSettings
 
 .PHONY: help
 help: ## Show this help message
@@ -25,10 +24,6 @@ install: ## Install dependencies using uv
 .PHONY: run
 run: ## Run the FastAPI application locally with reload
 	uv --project backend run uvicorn app.main:app --reload
-
-.PHONY: worker
-worker: ## Run the ARQ background worker
-	uv --project backend run arq $(WORKER_SETTINGS)
 
 .PHONY: test
 test: ## Run tests using pytest

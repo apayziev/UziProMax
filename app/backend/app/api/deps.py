@@ -1,22 +1,18 @@
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request
-from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import async_get_db
 from app.core.exceptions import ForbiddenException, UnauthorizedException
 from app.core.logger import logging
 from app.core.security import TokenType, oauth2_scheme, verify_token
-from app.core.utils.cache import async_get_redis
 from app.crud import crud_users
 from app.models.user import User
 
 logger = logging.getLogger(__name__)
 
-# --- Dependency Type Aliases for Cleaner Routes ---
 SessionDep = Annotated[AsyncSession, Depends(async_get_db)]
-RedisDep = Annotated[Redis, Depends(async_get_redis)]
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: SessionDep) -> User:

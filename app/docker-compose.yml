@@ -14,17 +14,6 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:7-alpine
-    restart: always
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   api:
     build:
       context: .
@@ -35,26 +24,8 @@ services:
       - "8000"
     environment:
       POSTGRES_SERVER: db
-      REDIS_HOST: redis
     depends_on:
       db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
-  worker:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    command: arq app.core.worker.WorkerSettings
-    restart: always
-    environment:
-      POSTGRES_SERVER: db
-      REDIS_HOST: redis
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
         condition: service_healthy
 
   frontend:
@@ -92,4 +63,3 @@ services:
 
 volumes:
   postgres_data:
-  redis_data:
