@@ -1,7 +1,4 @@
-# In src/app/tasks/__init__.py
-from .sample_tasks import sample_background_task
+# Background tasks
+# Add your custom tasks here
 
-# Collect them into one list
-all_tasks = [
-    sample_background_task,
-]
+all_tasks: list = []

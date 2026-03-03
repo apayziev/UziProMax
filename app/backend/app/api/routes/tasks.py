@@ -13,6 +13,7 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 @router.post("/task", response_model=Job, status_code=201, dependencies=[Depends(RateLimit(limit=10, period=60))])
 async def create_task(
+    task_name: str,
     message: str,
     current_user: CurrentUser,
 ) -> dict[str, str]:
@@ -20,7 +21,7 @@ async def create_task(
     if queue.pool is None:
         raise HTTPException(status_code=503, detail="Queue is not available")
 
-    job = await queue.pool.enqueue_job("sample_background_task", message)
+    job = await queue.pool.enqueue_job(task_name, message)
     if job is None:
         raise HTTPException(status_code=500, detail="Failed to create task")
 
