@@ -29,7 +29,6 @@ test("Log In button is visible", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Log In" })).toBeVisible()
 })
 
-
 test("Log in with valid email and password ", async ({ page }) => {
   await page.goto("/login")
 
@@ -59,7 +58,9 @@ test("Log in with invalid password", async ({ page }) => {
   await fillForm(page, firstSuperuser, password)
   await page.getByRole("button", { name: "Log In" }).click()
 
-  await expect(page.getByText("Wrong username, email or password.")).toBeVisible()
+  await expect(
+    page.getByText("Wrong username, email or password."),
+  ).toBeVisible()
 })
 
 // Log out

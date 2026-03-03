@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Logo } from "@/components/Common/Logo"
+import { useLanguage } from "@/hooks/useLanguage"
 import { Footer } from "./Footer"
 import { LanguageSwitcher } from "./LanguageSwitcher"
-import { useLanguage } from "@/hooks/useLanguage"
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -54,16 +54,19 @@ function AnimatedText() {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   const { language } = useLanguage()
-  
-  const tagline = language === "uz" 
-    ? "Ultratovush tekshiruvlari uchun professional tizim"
-    : "Профессиональная система ультразвуковых исследований"
+
+  const tagline =
+    language === "uz"
+      ? "Ultratovush tekshiruvlari uchun professional tizim"
+      : "Профессиональная система ультразвуковых исследований"
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="bg-primary/10 relative hidden lg:flex lg:flex-col lg:items-center lg:justify-center gap-6">
         <Logo variant="full" className="h-48" asLink={false} />
-        <h1 className="text-4xl font-bold text-center text-foreground">UziProMax</h1>
+        <h1 className="text-4xl font-bold text-center text-foreground">
+          UziProMax
+        </h1>
         <AnimatedText />
         <p className="text-lg text-foreground/70 text-center max-w-md px-4">
           {tagline}

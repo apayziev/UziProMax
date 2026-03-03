@@ -1,7 +1,6 @@
 // Helper to create users for testing using admin credentials
-import { OpenAPI, UsersService } from "../../src/client"
+import { LoginService, OpenAPI, UsersService } from "../../src/client"
 import { firstSuperuser, firstSuperuserPassword } from "../config"
-import { LoginService } from "../../src/client"
 
 OpenAPI.BASE = `${process.env.VITE_API_URL}`
 
@@ -19,11 +18,11 @@ export const createUser = async ({
       password: firstSuperuserPassword,
     },
   })
-  
+
   // Set the token for the next request
   const previousToken = OpenAPI.TOKEN
   OpenAPI.TOKEN = loginResponse.access_token
-  
+
   try {
     const user = await UsersService.createUser({
       requestBody: {

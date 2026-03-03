@@ -8,6 +8,8 @@
       "!**/node_modules/**/*",
       "!**/src/components/ui/**/*",
       "!**/src/routeTree.gen.ts",
+      "!**/src/client/**/*",
+      "!**/src/index.css",
       "!**/playwright.config.ts",
       "!**/playwright-report"
     ]
@@ -32,6 +34,11 @@
     "formatter": {
       "quoteStyle": "double",
       "semicolons": "asNeeded"
+    }
+  },
+  "css": {
+    "parser": {
+      "cssModules": true
     }
   }
 }

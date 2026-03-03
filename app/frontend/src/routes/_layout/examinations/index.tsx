@@ -1,10 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { createFileRoute, Link } from "@tanstack/react-router"
+import { Calendar, Eye, FileText, MoreHorizontal, Trash2 } from "lucide-react"
 import { useState } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { FileText, Calendar, MoreHorizontal, Eye, Trash2 } from "lucide-react"
-import { Link } from "@tanstack/react-router"
-
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Table,
   TableBody,
@@ -13,18 +19,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useLanguage } from "@/hooks/useLanguage"
 
-import { TEMPLATE_TYPES, type ExaminationListResponse } from "@/types/medical"
+import { type ExaminationListResponse, TEMPLATE_TYPES } from "@/types/medical"
 
 export const Route = createFileRoute("/_layout/examinations/")({
   component: ExaminationsPage,
@@ -34,14 +32,17 @@ export const Route = createFileRoute("/_layout/examinations/")({
 async function fetchExaminations(
   page: number,
   templateType?: string,
-  status?: string
+  status?: string,
 ): Promise<ExaminationListResponse> {
   const params = new URLSearchParams({ page: String(page), per_page: "20" })
-  if (templateType && templateType !== "all") params.set("template_type", templateType)
+  if (templateType && templateType !== "all")
+    params.set("template_type", templateType)
   if (status && status !== "all") params.set("status", status)
-  
+
   const response = await fetch(`/api/v1/examinations?${params}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
   })
   if (!response.ok) throw new Error("Failed to fetch examinations")
   return response.json()
@@ -50,7 +51,9 @@ async function fetchExaminations(
 async function deleteExamination(id: number): Promise<void> {
   const response = await fetch(`/api/v1/examinations/${id}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
   })
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
@@ -63,7 +66,7 @@ function ExaminationsPage() {
   const [page, setPage] = useState(1)
   const [templateFilter, setTemplateFilter] = useState<string>("all")
   const [statusFilter, setStatusFilter] = useState<string>("all")
-  
+
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const { t, language } = useLanguage()
@@ -80,16 +83,18 @@ function ExaminationsPage() {
       toast({ title: t("deleted"), description: t("examination_deleted") })
     },
     onError: (error: Error) => {
-      toast({ 
-        title: t("error"), 
+      toast({
+        title: t("error"),
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       })
     },
   })
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString(language === "ru" ? "ru-RU" : "uz-UZ")
+    return new Date(date).toLocaleDateString(
+      language === "ru" ? "ru-RU" : "uz-UZ",
+    )
   }
 
   const getStatusBadge = (status: string) => {
@@ -110,7 +115,9 @@ function ExaminationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("examinations")}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("examinations")}
+          </h1>
           <p className="text-muted-foreground">{t("all_examinations_list")}</p>
         </div>
         <Link to="/examinations/new" search={{ patient_id: undefined }}>
@@ -126,7 +133,10 @@ function ExaminationsPage() {
         <Button
           variant={templateFilter === "all" ? "default" : "outline"}
           size="sm"
-          onClick={() => { setTemplateFilter("all"); setPage(1) }}
+          onClick={() => {
+            setTemplateFilter("all")
+            setPage(1)
+          }}
         >
           {t("all")}
         </Button>
@@ -135,7 +145,10 @@ function ExaminationsPage() {
             key={key}
             variant={templateFilter === key ? "default" : "outline"}
             size="sm"
-            onClick={() => { setTemplateFilter(key); setPage(1) }}
+            onClick={() => {
+              setTemplateFilter(key)
+              setPage(1)
+            }}
           >
             {language === "ru" ? value.name_ru : value.name}
           </Button>
@@ -144,31 +157,43 @@ function ExaminationsPage() {
 
       {/* Status Filter */}
       <div className="flex gap-2">
-        <Badge 
-          variant={statusFilter === "all" ? "default" : "outline"} 
+        <Badge
+          variant={statusFilter === "all" ? "default" : "outline"}
           className="cursor-pointer px-3 py-1"
-          onClick={() => { setStatusFilter("all"); setPage(1) }}
+          onClick={() => {
+            setStatusFilter("all")
+            setPage(1)
+          }}
         >
           {t("all")}
         </Badge>
-        <Badge 
-          variant={statusFilter === "draft" ? "secondary" : "outline"} 
+        <Badge
+          variant={statusFilter === "draft" ? "secondary" : "outline"}
           className="cursor-pointer px-3 py-1"
-          onClick={() => { setStatusFilter("draft"); setPage(1) }}
+          onClick={() => {
+            setStatusFilter("draft")
+            setPage(1)
+          }}
         >
           {t("draft")}
         </Badge>
-        <Badge 
-          variant={statusFilter === "completed" ? "default" : "outline"} 
+        <Badge
+          variant={statusFilter === "completed" ? "default" : "outline"}
           className="cursor-pointer px-3 py-1"
-          onClick={() => { setStatusFilter("completed"); setPage(1) }}
+          onClick={() => {
+            setStatusFilter("completed")
+            setPage(1)
+          }}
         >
           {t("completed")}
         </Badge>
-        <Badge 
-          variant={statusFilter === "printed" ? "outline" : "outline"} 
+        <Badge
+          variant={statusFilter === "printed" ? "outline" : "outline"}
           className={`cursor-pointer px-3 py-1 ${statusFilter === "printed" ? "bg-muted" : ""}`}
-          onClick={() => { setStatusFilter("printed"); setPage(1) }}
+          onClick={() => {
+            setStatusFilter("printed")
+            setPage(1)
+          }}
         >
           {t("printed")}
         </Badge>
@@ -212,7 +237,9 @@ function ExaminationsPage() {
                       <TableCell>{exam.patient_name || "-"}</TableCell>
                       <TableCell>
                         <Badge variant="outline">
-                          {TEMPLATE_TYPES[exam.template_type]?.[language === "ru" ? "name_ru" : "name"] || exam.template_type}
+                          {TEMPLATE_TYPES[exam.template_type]?.[
+                            language === "ru" ? "name_ru" : "name"
+                          ] || exam.template_type}
                         </Badge>
                       </TableCell>
                       <TableCell>{getStatusBadge(exam.status)}</TableCell>
@@ -225,7 +252,10 @@ function ExaminationsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link to="/examinations/$id" params={{ id: String(exam.id) }}>
+                              <Link
+                                to="/examinations/$id"
+                                params={{ id: String(exam.id) }}
+                              >
                                 <Eye className="mr-2 h-4 w-4" />
                                 {t("view")}
                               </Link>

@@ -4,6 +4,8 @@ from collections.abc import AsyncGenerator, Generator
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy import JSON
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.pool import StaticPool
@@ -23,12 +25,20 @@ from sqlalchemy.pool import StaticPool
 # It seems direct attribute access failed.
 # Alternative: Define a compilation hook for SQLite to replace "current_timestamp(0)"
 from sqlalchemy.schema import CreateColumn
+from sqlalchemy.sql.type_api import TypeDecorator
 
 from app.core.db import Base, async_get_db
 from app.core.security import create_access_token
 from app.main import app
 
+
 # --- SQLite Compatibility Fixes ---
+# SQLite doesn't support JSONB, so we compile it as JSON
+@compiles(JSONB, "sqlite")
+def compile_jsonb_sqlite(type_, compiler, **kw):
+    return compiler.visit_JSON(JSON())
+
+
 # SQLite doesn't support "current_timestamp(0)", it only supports "CURRENT_TIMESTAMP"
 
 

@@ -5,11 +5,11 @@ Revises: decdec26a909
 Create Date: 2026-02-01 19:36:42.520959
 
 """
-from typing import Sequence, Union
+from collections.abc import Sequence
+from typing import Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = 'b7094dda36fe'
@@ -21,22 +21,22 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     # First, populate last_name and first_name from full_name for existing records
     op.execute("""
-        UPDATE patient 
-        SET 
+        UPDATE patient
+        SET
             last_name = COALESCE(last_name, split_part(full_name, ' ', 1)),
             first_name = COALESCE(first_name, split_part(full_name, ' ', 2)),
-            middle_name = COALESCE(middle_name, 
-                CASE WHEN array_length(string_to_array(full_name, ' '), 1) > 2 
-                THEN split_part(full_name, ' ', 3) 
+            middle_name = COALESCE(middle_name,
+                CASE WHEN array_length(string_to_array(full_name, ' '), 1) > 2
+                THEN split_part(full_name, ' ', 3)
                 ELSE NULL END
             )
         WHERE last_name IS NULL OR first_name IS NULL
     """)
-    
+
     # Set default values for any remaining nulls
     op.execute("UPDATE patient SET last_name = 'Unknown' WHERE last_name IS NULL OR last_name = ''")
     op.execute("UPDATE patient SET first_name = 'Unknown' WHERE first_name IS NULL OR first_name = ''")
-    
+
     # Now make columns NOT NULL
     op.alter_column('patient', 'last_name',
                existing_type=sa.VARCHAR(length=50),

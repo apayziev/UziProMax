@@ -2,18 +2,19 @@
 Examination API routes - UZI tekshiruvlar uchun API endpointlar
 """
 from datetime import date
-from fastapi import APIRouter, HTTPException, Query
 from typing import Any
+
+from fastapi import APIRouter, HTTPException, Query
 
 from app.api.deps import CurrentUser, SessionDep
 from app.crud import crud_examination, crud_patient
+from app.schemas.common import Message
 from app.schemas.examination import (
     ExaminationCreate,
-    ExaminationUpdate,
-    ExaminationRead,
     ExaminationList,
+    ExaminationRead,
+    ExaminationUpdate,
 )
-from app.schemas.common import Message
 from app.schemas.template import TEMPLATE_TYPES
 
 router = APIRouter()
@@ -33,7 +34,7 @@ async def get_examinations(
 ) -> Any:
     """
     Tekshiruvlar ro'yxatini olish
-    
+
     - **patient_id**: Bemor bo'yicha filter
     - **template_type**: Shablon turi bo'yicha filter
     - **date_from/date_to**: Sana oralig'i
@@ -49,7 +50,7 @@ async def get_examinations(
         page=page,
         per_page=per_page
     )
-    
+
     items = []
     for exam in examinations:
         item = ExaminationList.model_validate(exam)
@@ -66,7 +67,7 @@ async def get_examinations(
             item.patient_birth_date = None
         item.template_name = TEMPLATE_TYPES.get(exam.template_type, {}).get("name_ru", exam.template_type)
         items.append(item)
-    
+
     return {
         "items": items,
         "total": total,
@@ -89,17 +90,17 @@ async def create_examination(
     patient = await crud_patient.get_by_id(db, examination_in.patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
-    
+
     # Validate template type
     if examination_in.template_type not in TEMPLATE_TYPES:
         raise HTTPException(status_code=400, detail="Noto'g'ri shablon turi")
-    
+
     examination = await crud_examination.create(
         db=db,
         examination_in=examination_in,
         doctor_id=current_user.id
     )
-    
+
     result = ExaminationRead.model_validate(examination)
     patient_name = f"{patient.last_name} {patient.first_name}"
     if patient.middle_name:
@@ -108,7 +109,7 @@ async def create_examination(
     doctor_name = f"{current_user.first_name} {current_user.last_name}"
     result.doctor_name = doctor_name
     result.template_name = TEMPLATE_TYPES.get(examination.template_type, {}).get("name_ru")
-    
+
     return result
 
 
@@ -122,7 +123,7 @@ async def get_recent_examinations(
     Oxirgi tekshiruvlar
     """
     examinations = await crud_examination.get_recent(db=db, limit=limit)
-    
+
     items = []
     for exam in examinations:
         item = ExaminationList.model_validate(exam)
@@ -134,7 +135,7 @@ async def get_recent_examinations(
             item.patient_name = None
         item.template_name = TEMPLATE_TYPES.get(exam.template_type, {}).get("name_ru", exam.template_type)
         items.append(item)
-    
+
     return items
 
 
@@ -153,11 +154,11 @@ async def get_statistics(
         date_from=date_from,
         date_to=date_to
     )
-    
+
     # Add today's count
     today_count = await crud_examination.get_today_count(db=db)
     stats["today"] = today_count
-    
+
     return stats
 
 
@@ -185,7 +186,7 @@ async def get_examination(
     examination = await crud_examination.get_by_id(db=db, examination_id=examination_id)
     if not examination:
         raise HTTPException(status_code=404, detail="Tekshiruv topilmadi")
-    
+
     result = ExaminationRead.model_validate(examination)
     if examination.patient:
         patient_name = f"{examination.patient.last_name} {examination.patient.first_name}"
@@ -199,7 +200,7 @@ async def get_examination(
     else:
         result.doctor_name = None
     result.template_name = TEMPLATE_TYPES.get(examination.template_type, {}).get("name_ru")
-    
+
     return result
 
 
@@ -216,13 +217,13 @@ async def update_examination(
     examination = await crud_examination.get_by_id(db=db, examination_id=examination_id)
     if not examination:
         raise HTTPException(status_code=404, detail="Tekshiruv topilmadi")
-    
+
     examination = await crud_examination.update(
         db=db,
         examination=examination,
         examination_in=examination_in
     )
-    
+
     result = ExaminationRead.model_validate(examination)
     if examination.patient:
         patient_name = f"{examination.patient.last_name} {examination.patient.first_name}"
@@ -236,7 +237,7 @@ async def update_examination(
     else:
         result.doctor_name = None
     result.template_name = TEMPLATE_TYPES.get(examination.template_type, {}).get("name_ru")
-    
+
     return result
 
 
@@ -257,7 +258,7 @@ async def update_examination_status(
     )
     if not examination:
         raise HTTPException(status_code=404, detail="Tekshiruv topilmadi")
-    
+
     return {"message": "Holat yangilandi", "status": status}
 
 
@@ -273,7 +274,7 @@ async def delete_examination(
     examination = await crud_examination.get_by_id(db=db, examination_id=examination_id)
     if not examination:
         raise HTTPException(status_code=404, detail="Tekshiruv topilmadi")
-    
+
     await crud_examination.delete(db=db, id=examination.id)
     return Message(message="Tekshiruv muvaffaqiyatli o'chirildi")
 
@@ -290,15 +291,15 @@ async def get_examination_for_print(
     examination = await crud_examination.get_by_id(db=db, examination_id=examination_id)
     if not examination:
         raise HTTPException(status_code=404, detail="Tekshiruv topilmadi")
-    
+
     # Update status to printed
     await crud_examination.update_status(db=db, examination_id=examination_id, status="printed")
-    
+
     patient = examination.patient
     patient_name = f"{patient.last_name} {patient.first_name}"
     if patient.middle_name:
         patient_name += f" {patient.middle_name}"
-    
+
     return {
         "examination": ExaminationRead.model_validate(examination),
         "patient": {
@@ -311,7 +312,11 @@ async def get_examination_for_print(
             "phone": patient.phone,
         },
         "doctor": {
-            "name": f"{examination.doctor.first_name} {examination.doctor.last_name}" if examination.doctor else examination.doctor.username,
+            "name": (
+                f"{examination.doctor.first_name} {examination.doctor.last_name}"
+                if examination.doctor
+                else None
+            ),
         },
         "template": TEMPLATE_TYPES.get(examination.template_type, {}),
     }

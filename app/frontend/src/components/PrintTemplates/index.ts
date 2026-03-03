@@ -1,16 +1,16 @@
 // Umumiy layout komponentlari
-export { 
-  PrintHeader, 
-  PatientInfo, 
-  ConclusionSection, 
-  PrintFooter,
-  formatDate,
-  type ExaminationData 
-} from "./PrintLayout"
 
+export { AbdominalPrint } from "./AbdominalPrint"
+export { BreastPrint } from "./BreastPrint"
 // Shaxsiy shablon komponentlari
 export { GynecologyPrint } from "./GynecologyPrint"
-export { AbdominalPrint } from "./AbdominalPrint"
 export { ObstetricsPrint } from "./ObstetricsPrint"
-export { BreastPrint } from "./BreastPrint"
+export {
+  ConclusionSection,
+  type ExaminationData,
+  formatDate,
+  PatientInfo,
+  PrintFooter,
+  PrintHeader,
+} from "./PrintLayout"
 export { ThyroidPrint } from "./ThyroidPrint"

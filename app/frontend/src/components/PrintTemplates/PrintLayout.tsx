@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator"
 import { useLanguage } from "@/hooks/useLanguage"
-import { TEMPLATE_TYPES, type Examination } from "@/types/medical"
+import { type Examination, TEMPLATE_TYPES } from "@/types/medical"
 
 // Format date from YYYY-MM-DD to DD.MM.YYYY
 export const formatDate = (dateStr: string | null | undefined) => {
@@ -23,10 +23,18 @@ export function PrintHeader({ examination }: PrintHeaderProps) {
   return (
     <div className="text-center mb-4 print:mb-3">
       <div className="flex justify-center mb-1">
-        <img src={`${import.meta.env.BASE_URL || "/"}assets/images/favicon.png`} alt="UziProMax" className="h-14 w-auto print:h-10" />
+        <img
+          src={`${import.meta.env.BASE_URL || "/"}assets/images/favicon.png`}
+          alt="UziProMax"
+          className="h-14 w-auto print:h-10"
+        />
       </div>
-      <h2 className="text-lg font-bold uppercase print:text-base">ПРОТОКОЛ УЗИ</h2>
-      <p className="text-base font-semibold print:text-sm">{templateInfo?.name_ru || examination.template_type}</p>
+      <h2 className="text-lg font-bold uppercase print:text-base">
+        ПРОТОКОЛ УЗИ
+      </h2>
+      <p className="text-base font-semibold print:text-sm">
+        {templateInfo?.name_ru || examination.template_type}
+      </p>
       <div className="mt-1 text-xs text-muted-foreground">
         <p>Тел: +998 77 082 66 22 | {t("clinic_address")}</p>
       </div>
@@ -85,7 +93,9 @@ export function ConclusionSection({ examination }: ConclusionSectionProps) {
       {examination.recommendations && (
         <div className="mt-3">
           <h4 className="font-bold text-primary">РЕКОМЕНДАЦИИ:</h4>
-          <p className="mt-1 whitespace-pre-wrap">{examination.recommendations}</p>
+          <p className="mt-1 whitespace-pre-wrap">
+            {examination.recommendations}
+          </p>
         </div>
       )}
     </>
@@ -102,11 +112,14 @@ export function PrintFooter({ examination }: PrintFooterProps) {
       <div className="flex justify-between items-end">
         <div>
           <p className="text-muted-foreground text-xs italic">
-            Заключение УЗИ не является диагнозом. Проконсультируйтесь со специалистом.
+            Заключение УЗИ не является диагнозом. Проконсультируйтесь со
+            специалистом.
           </p>
         </div>
         <div className="text-right">
-          <p className="font-semibold">Врач УЗД: {examination.doctor_name || "_____________________"}</p>
+          <p className="font-semibold">
+            Врач УЗД: {examination.doctor_name || "_____________________"}
+          </p>
         </div>
       </div>
     </div>
@@ -114,4 +127,7 @@ export function PrintFooter({ examination }: PrintFooterProps) {
 }
 
 // Umumiy data turi
-export type ExaminationData = Record<string, string | number | boolean | null | undefined>
+export type ExaminationData = Record<
+  string,
+  string | number | boolean | null | undefined
+>

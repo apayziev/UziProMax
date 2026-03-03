@@ -1,4 +1,4 @@
-import { Home, Users, Settings, Stethoscope } from "lucide-react"
+import { Home, Settings, Stethoscope, Users } from "lucide-react"
 
 import { Logo } from "@/components/Common/Logo"
 import {
@@ -31,7 +31,10 @@ export function AppSidebar() {
       <SidebarHeader className="px-4 py-6 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
         <div className="flex items-center gap-3">
           <Logo variant="responsive" />
-          <span className="font-bold text-lg group-data-[collapsible=icon]:hidden" style={{ color: '#3499a1' }}>
+          <span
+            className="font-bold text-lg group-data-[collapsible=icon]:hidden"
+            style={{ color: "#3499a1" }}
+          >
             UziProMax
           </span>
         </div>

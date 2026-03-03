@@ -38,7 +38,7 @@ class PatientUpdate(BaseModel):
 class PatientRead(PatientBase):
     """Bemor ma'lumotlarini o'qish"""
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: int
     created_at: datetime
     updated_at: datetime | None = None
@@ -48,7 +48,7 @@ class PatientRead(PatientBase):
 class PatientList(BaseModel):
     """Bemorlar ro'yxati"""
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: int
     last_name: str
     first_name: str

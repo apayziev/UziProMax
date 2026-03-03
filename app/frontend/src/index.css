@@ -127,18 +127,18 @@
 /* Print styles */
 @media print {
   body {
-    background: white !important;
-    color: black !important;
+    background: white;
+    color: black;
     font-size: 12pt;
     line-height: 1.4;
   }
 
   .print\\:hidden {
-    display: none !important;
+    display: none;
   }
 
   .print\\:block {
-    display: block !important;
+    display: block;
   }
 
   /* Hide navigation and sidebars */
@@ -148,7 +148,7 @@
   footer,
   .sidebar,
   [data-sidebar] {
-    display: none !important;
+    display: none;
   }
 
   /* Hide toasts and notifications during print */
@@ -158,7 +158,7 @@
   .toast,
   [role="status"],
   [aria-live="polite"] {
-    display: none !important;
+    display: none;
   }
 
   /* Reset margins for print */
@@ -169,8 +169,8 @@
 
   /* Ensure content fits */
   .container {
-    max-width: 100% !important;
-    padding: 0 !important;
+    max-width: 100%;
+    padding: 0;
   }
 }
 

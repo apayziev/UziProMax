@@ -11,7 +11,8 @@ export function ObstetricsPrint({ data }: ObstetricsPrintProps) {
       <div>
         <h4 className="font-bold text-primary">БЕРЕМЕННОСТЬ:</h4>
         <p>
-          {data.gestational_weeks && `Срок: ${data.gestational_weeks} нед ${data.gestational_days || 0} дн. `}
+          {data.gestational_weeks &&
+            `Срок: ${data.gestational_weeks} нед ${data.gestational_days || 0} дн. `}
           {data.fetus_count && `Количество плодов: ${data.fetus_count}. `}
           {data.presentation && `Предлежание: ${data.presentation}.`}
         </p>
@@ -40,9 +41,12 @@ export function ObstetricsPrint({ data }: ObstetricsPrintProps) {
           <h4 className="font-bold text-primary">ПЛАЦЕНТА:</h4>
           <p>
             Расположение: {data.placenta_location}.
-            {data.placenta_thickness && ` Толщина: ${data.placenta_thickness} мм.`}
-            {data.placenta_grade && ` Степень зрелости: ${data.placenta_grade}.`}
-            {data.placenta_structure && ` Структура: ${data.placenta_structure}.`}
+            {data.placenta_thickness &&
+              ` Толщина: ${data.placenta_thickness} мм.`}
+            {data.placenta_grade &&
+              ` Степень зрелости: ${data.placenta_grade}.`}
+            {data.placenta_structure &&
+              ` Структура: ${data.placenta_structure}.`}
           </p>
         </div>
       )}
@@ -52,8 +56,7 @@ export function ObstetricsPrint({ data }: ObstetricsPrintProps) {
         <div>
           <h4 className="font-bold text-primary">ОКОЛОПЛОДНЫЕ ВОДЫ:</h4>
           <p>
-            {data.amniotic_fluid}.
-            {data.afi && ` ИАЖ: ${data.afi} мм.`}
+            {data.amniotic_fluid}.{data.afi && ` ИАЖ: ${data.afi} мм.`}
           </p>
         </div>
       )}

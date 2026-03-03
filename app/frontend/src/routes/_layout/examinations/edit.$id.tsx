@@ -1,26 +1,19 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { useState, useEffect } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { 
-  ArrowLeft,
-  Stethoscope,
-  ClipboardList,
-} from "lucide-react"
-import { Link } from "@tanstack/react-router"
-
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
+import { ArrowLeft, ClipboardList, Stethoscope } from "lucide-react"
+import { useEffect, useState } from "react"
+import {
+  ConclusionForm,
+  ExaminationFormRenderer,
+  WizardNavigation,
+  type WizardStep,
+  WizardStepper,
+} from "@/components/ExaminationForms"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useLanguage } from "@/hooks/useLanguage"
-
-import { TEMPLATE_TYPES, type Examination } from "@/types/medical"
-import { 
-  ExaminationFormRenderer, 
-  ConclusionForm, 
-  WizardStepper, 
-  WizardNavigation,
-  type WizardStep 
-} from "@/components/ExaminationForms"
+import { type Examination, TEMPLATE_TYPES } from "@/types/medical"
 
 export const Route = createFileRoute("/_layout/examinations/edit/$id")({
   component: EditExaminationPage,
@@ -29,7 +22,9 @@ export const Route = createFileRoute("/_layout/examinations/edit/$id")({
 // API functions
 async function getExamination(id: number): Promise<Examination> {
   const response = await fetch(`/api/v1/examinations/${id}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
   })
   if (!response.ok) throw new Error("Failed to fetch examination")
   return response.json()
@@ -66,9 +61,11 @@ function EditExaminationPage() {
 
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1)
-  
+
   // Form state
-  const [examinationData, setExaminationData] = useState<Record<string, any>>({})
+  const [examinationData, setExaminationData] = useState<Record<string, any>>(
+    {},
+  )
   const [conclusion, setConclusion] = useState("")
   const [recommendations, setRecommendations] = useState("")
   const [isInitialized, setIsInitialized] = useState(false)
@@ -91,14 +88,19 @@ function EditExaminationPage() {
 
   // Update examination mutation
   const updateMutation = useMutation({
-    mutationFn: (data: Partial<Examination>) => updateExamination(Number(id), data),
+    mutationFn: (data: Partial<Examination>) =>
+      updateExamination(Number(id), data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["examination", id] })
       toast({ title: t("success"), description: t("examination_saved") })
       navigate({ to: "/examinations/$id", params: { id: String(data.id) } })
     },
     onError: (error: Error) => {
-      toast({ title: t("error"), description: error.message, variant: "destructive" })
+      toast({
+        title: t("error"),
+        description: error.message,
+        variant: "destructive",
+      })
     },
   })
 
@@ -136,16 +138,18 @@ function EditExaminationPage() {
             </Button>
           </Link>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold">{t("edit")}: {templateInfo?.name || examination.template_type}</h1>
+            <h1 className="text-2xl font-bold">
+              {t("edit")}: {templateInfo?.name || examination.template_type}
+            </h1>
             <p className="text-muted-foreground">{examination.patient_name}</p>
           </div>
         </div>
 
         {/* Progress steps */}
-        <WizardStepper 
-          steps={STEPS} 
-          currentStep={currentStep} 
-          onStepClick={setCurrentStep} 
+        <WizardStepper
+          steps={STEPS}
+          currentStep={currentStep}
+          onStepClick={setCurrentStep}
         />
       </div>
 
@@ -159,7 +163,9 @@ function EditExaminationPage() {
                 <h2 className="text-xl font-semibold">
                   {templateInfo?.name || examination.template_type}
                 </h2>
-                <p className="text-muted-foreground">{t("enter_measurements")}</p>
+                <p className="text-muted-foreground">
+                  {t("enter_measurements")}
+                </p>
               </div>
               <ExaminationFormRenderer
                 templateType={examination.template_type}

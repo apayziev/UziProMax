@@ -1,28 +1,25 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { ArrowLeft, Printer, Edit, CheckCircle } from "lucide-react"
-import { Link } from "@tanstack/react-router"
-
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { createFileRoute, Link } from "@tanstack/react-router"
+import { ArrowLeft, CheckCircle, Edit, Printer } from "lucide-react"
+import {
+  AbdominalPrint,
+  BreastPrint,
+  ConclusionSection,
+  formatDate,
+  GynecologyPrint,
+  ObstetricsPrint,
+  PatientInfo,
+  PrintFooter,
+  PrintHeader,
+  ThyroidPrint,
+} from "@/components/PrintTemplates"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/hooks/use-toast"
 import { useLanguage } from "@/hooks/useLanguage"
-
-import { TEMPLATE_TYPES, type Examination } from "@/types/medical"
-import {
-  PrintHeader,
-  PatientInfo,
-  ConclusionSection,
-  PrintFooter,
-  formatDate,
-  GynecologyPrint,
-  AbdominalPrint,
-  ObstetricsPrint,
-  BreastPrint,
-  ThyroidPrint,
-} from "@/components/PrintTemplates"
+import { type Examination, TEMPLATE_TYPES } from "@/types/medical"
 
 export const Route = createFileRoute("/_layout/examinations/$id")({
   component: ExaminationDetailPage,
@@ -30,7 +27,9 @@ export const Route = createFileRoute("/_layout/examinations/$id")({
 
 async function getExamination(id: number): Promise<Examination> {
   const response = await fetch(`/api/v1/examinations/${id}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
   })
   if (!response.ok) throw new Error("Failed to fetch examination")
   return response.json()
@@ -121,10 +120,15 @@ function ExaminationDetailPage() {
               {templateInfo?.name_ru || examination.template_type}
             </h1>
             <p className="text-muted-foreground">
-              {examination.patient_name} • {formatDate(examination.examination_date)}
+              {examination.patient_name} •{" "}
+              {formatDate(examination.examination_date)}
             </p>
           </div>
-          <Badge variant={statusColors[examination.status as keyof typeof statusColors]}>
+          <Badge
+            variant={
+              statusColors[examination.status as keyof typeof statusColors]
+            }
+          >
             {statusLabels[examination.status as keyof typeof statusLabels]}
           </Badge>
           <div className="flex gap-2">
@@ -138,7 +142,10 @@ function ExaminationDetailPage() {
                 {t("ready")}
               </Button>
             )}
-            <Link to="/examinations/edit/$id" params={{ id: String(examination.id) }}>
+            <Link
+              to="/examinations/edit/$id"
+              params={{ id: String(examination.id) }}
+            >
               <Button variant="outline">
                 <Edit className="mr-2 h-4 w-4" />
                 {t("edit")}
@@ -198,16 +205,20 @@ function PrintContent({ examination, forPrint = false }: PrintContentProps) {
   }
 
   return (
-    <div className={forPrint ? "p-4 pt-2 text-sm leading-relaxed print:p-2 print:pt-0 min-h-[calc(100vh-2cm)] flex flex-col" : ""}>
+    <div
+      className={
+        forPrint
+          ? "p-4 pt-2 text-sm leading-relaxed print:p-2 print:pt-0 min-h-[calc(100vh-2cm)] flex flex-col"
+          : ""
+      }
+    >
       <PrintHeader examination={examination} />
       <PatientInfo examination={examination} />
-      
+
       <Separator className="my-4 print:my-2" />
 
       {/* Tekshiruv ma'lumotlari */}
-      <div className="text-sm leading-relaxed">
-        {renderExaminationData()}
-      </div>
+      <div className="text-sm leading-relaxed">{renderExaminationData()}</div>
 
       <ConclusionSection examination={examination} />
 

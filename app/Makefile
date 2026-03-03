@@ -9,9 +9,18 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: setup
-setup: ## Run initial setup (install, env, migrations, pre-commit)
-	./scripts/setup.sh
+setup: ## Run initial setup (install, env, migrations, superuser, hooks)
+	@echo "🚀 Starting local setup..."
+	@command -v uv >/dev/null 2>&1 || { echo "❌ 'uv' is not installed. Install: https://github.com/astral-sh/uv"; exit 1; }
+	@[ -f .env ] || cp .env.example .env && echo "📝 Created .env from .env.example"
+	@echo "📦 Installing backend dependencies..."
+	@uv --project backend sync
+	@echo "⚙️ Running database migrations..."
+	@cd backend && uv run alembic upgrade head
+	@echo "👤 Creating superuser..."
+	@cd backend && uv run python -m app.commands.create_first_superuser || true
 	@make install-hooks
+	@echo "✅ Setup complete! Run 'make run' or 'make docker-local'"
 
 .PHONY: install-hooks
 install-hooks: ## Install git hooks (pre-commit)
@@ -101,4 +110,17 @@ clean: ## Clean up temporary files
 
 .PHONY: generate-client
 generate-client: ## Generate the frontend client from the backend OpenAPI spec
-	./scripts/generate-client.sh
+	@cd backend && uv run python -c "import app.main; import json; print(json.dumps(app.main.app.openapi()))" > ../frontend/openapi.json
+	@cd frontend && npm run generate-client && npx biome format --write ./src/client
+
+.PHONY: deploy
+deploy: ## Deploy to production server (run on server)
+	@echo "=== UziProMax Deployment ==="
+	git pull origin main
+	docker compose -f docker-compose.prod.yml pull
+	docker compose -f docker-compose.prod.yml up -d
+	@sleep 10
+	@curl -sf http://localhost/api/v1/health > /dev/null && echo "✅ Health check passed!" || (echo "❌ Health check failed!" && docker compose -f docker-compose.prod.yml logs --tail=50 && exit 1)
+	docker image prune -f
+	@echo "=== Deployment Complete ==="
+	docker compose -f docker-compose.prod.yml ps

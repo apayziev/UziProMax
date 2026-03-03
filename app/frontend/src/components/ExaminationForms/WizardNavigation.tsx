@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Save, CheckCircle2 } from "lucide-react"
+import { ArrowLeft, ArrowRight, CheckCircle2, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/hooks/useLanguage"
 
@@ -31,11 +31,7 @@ export function WizardNavigation({
 
   return (
     <div className="flex justify-between mt-6">
-      <Button
-        variant="outline"
-        onClick={onBack}
-        disabled={isFirstStep}
-      >
+      <Button variant="outline" onClick={onBack} disabled={isFirstStep}>
         <ArrowLeft className="mr-2 h-4 w-4" />
         {t("previous")}
       </Button>
@@ -54,10 +50,7 @@ export function WizardNavigation({
               </Button>
             )}
             {onSaveComplete && (
-              <Button
-                onClick={onSaveComplete}
-                disabled={isSubmitting}
-              >
+              <Button onClick={onSaveComplete} disabled={isSubmitting}>
                 <CheckCircle2 className="mr-2 h-4 w-4" />
                 {t("save_complete")}
               </Button>

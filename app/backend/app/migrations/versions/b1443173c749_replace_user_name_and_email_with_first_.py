@@ -5,11 +5,11 @@ Revises: b7094dda36fe
 Create Date: 2026-02-02 00:08:23.243894
 
 """
-from typing import Sequence, Union
+from collections.abc import Sequence
+from typing import Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = 'b1443173c749'
@@ -24,29 +24,29 @@ def upgrade() -> None:
     op.add_column('user', sa.Column('first_name', sa.String(length=50), nullable=True))
     op.add_column('user', sa.Column('last_name', sa.String(length=50), nullable=True))
     op.add_column('user', sa.Column('middle_name', sa.String(length=50), nullable=True))
-    
+
     # Step 2: Migrate existing data from name to first_name/last_name
     op.execute("""
-        UPDATE "user" 
+        UPDATE "user"
         SET first_name = COALESCE(SPLIT_PART(name, ' ', 1), username),
             last_name = COALESCE(NULLIF(SPLIT_PART(name, ' ', 2), ''), 'User')
         WHERE first_name IS NULL OR last_name IS NULL
     """)
-    
+
     # Step 3: Set default values for any remaining nulls
     op.execute("""
-        UPDATE "user" 
+        UPDATE "user"
         SET first_name = username WHERE first_name IS NULL
     """)
     op.execute("""
-        UPDATE "user" 
+        UPDATE "user"
         SET last_name = 'User' WHERE last_name IS NULL
     """)
-    
+
     # Step 4: Make first_name and last_name non-nullable
     op.alter_column('user', 'first_name', nullable=False)
     op.alter_column('user', 'last_name', nullable=False)
-    
+
     # Step 5: Drop old columns and index
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_column('user', 'name')

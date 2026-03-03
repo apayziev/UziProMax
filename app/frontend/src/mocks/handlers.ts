@@ -2,7 +2,7 @@
  * MSW Mock API Handlers
  * Backend yo'q bo'lganda frontend test qilish uchun
  */
-import { http, HttpResponse } from "msw"
+import { HttpResponse, http } from "msw"
 
 // Test ma'lumotlari
 const mockUsers = [
@@ -132,7 +132,8 @@ const mockExaminations = [
     template_type: "gynecology_cyst",
     examination_date: "2024-01-22",
     status: "completed",
-    conclusion: "Кистозное образование в правом придатке O-RADS 2-3. Фолликулярная киста справа, киста желтого тела слева.",
+    conclusion:
+      "Кистозное образование в правом придатке O-RADS 2-3. Фолликулярная киста справа, киста желтого тела слева.",
     recommendations: "Консультация гинеколога. Контрольное УЗИ через 10 дней.",
     doctor_name: "Атамурадова М.А.",
     examination_data: {
@@ -150,7 +151,7 @@ const mockExaminations = [
 ]
 
 // Token yaratish
-const generateToken = () => "mock_access_token_" + Date.now()
+const generateToken = () => `mock_access_token_${Date.now()}`
 
 export const handlers = [
   // ==================== AUTH ====================
@@ -163,8 +164,12 @@ export const handlers = [
 
     // Test credentials (telefon raqam turli formatda bo'lishi mumkin)
     const validPhones = ["+998901234567", "998901234567", "901234567"]
-    const isValidPhone = validPhones.some(p => username.includes(p.replace(/\D/g, "")) || p.includes(username.replace(/\D/g, "")))
-    
+    const isValidPhone = validPhones.some(
+      (p) =>
+        username.includes(p.replace(/\D/g, "")) ||
+        p.includes(username.replace(/\D/g, "")),
+    )
+
     if (isValidPhone && password === "test123") {
       console.log("✅ Login successful")
       return HttpResponse.json({
@@ -176,7 +181,7 @@ export const handlers = [
     console.log("❌ Login failed")
     return new HttpResponse(
       JSON.stringify({ detail: "Noto'g'ri telefon raqam yoki parol" }),
-      { status: 401 }
+      { status: 401 },
     )
   }),
 
@@ -193,7 +198,7 @@ export const handlers = [
   }),
 
   http.patch("/api/v1/users/me", async ({ request }) => {
-    const data = await request.json() as Record<string, unknown>
+    const data = (await request.json()) as Record<string, unknown>
     return HttpResponse.json({ ...mockUsers[0], ...data })
   }),
 
@@ -205,12 +210,14 @@ export const handlers = [
   http.get("/api/v1/patients", ({ request }) => {
     const url = new URL(request.url)
     const search = url.searchParams.get("search")?.toLowerCase()
-    
+
     let filtered = [...mockPatients]
     if (search) {
-      filtered = mockPatients.filter(p => 
-        `${p.last_name} ${p.first_name} ${p.middle_name}`.toLowerCase().includes(search) ||
-        p.phone.includes(search)
+      filtered = mockPatients.filter(
+        (p) =>
+          `${p.last_name} ${p.first_name} ${p.middle_name}`
+            .toLowerCase()
+            .includes(search) || p.phone.includes(search),
       )
     }
 
@@ -221,7 +228,7 @@ export const handlers = [
   }),
 
   http.get("/api/v1/patients/:id", ({ params }) => {
-    const patient = mockPatients.find(p => p.id === Number(params.id))
+    const patient = mockPatients.find((p) => p.id === Number(params.id))
     if (!patient) {
       return new HttpResponse(null, { status: 404 })
     }
@@ -229,19 +236,19 @@ export const handlers = [
   }),
 
   http.post("/api/v1/patients", async ({ request }) => {
-    const data = await request.json() as Record<string, unknown>
+    const data = (await request.json()) as Record<string, unknown>
     const newPatient = {
       id: mockPatients.length + 1,
       ...data,
       created_at: new Date().toISOString(),
     }
-    mockPatients.push(newPatient as typeof mockPatients[0])
+    mockPatients.push(newPatient as (typeof mockPatients)[0])
     return HttpResponse.json(newPatient, { status: 201 })
   }),
 
   http.put("/api/v1/patients/:id", async ({ params, request }) => {
-    const data = await request.json() as Record<string, unknown>
-    const index = mockPatients.findIndex(p => p.id === Number(params.id))
+    const data = (await request.json()) as Record<string, unknown>
+    const index = mockPatients.findIndex((p) => p.id === Number(params.id))
     if (index === -1) {
       return new HttpResponse(null, { status: 404 })
     }
@@ -250,7 +257,7 @@ export const handlers = [
   }),
 
   http.delete("/api/v1/patients/:id", ({ params }) => {
-    const index = mockPatients.findIndex(p => p.id === Number(params.id))
+    const index = mockPatients.findIndex((p) => p.id === Number(params.id))
     if (index === -1) {
       return new HttpResponse(null, { status: 404 })
     }
@@ -266,10 +273,10 @@ export const handlers = [
 
     let filtered = [...mockExaminations]
     if (patientId) {
-      filtered = filtered.filter(e => e.patient_id === Number(patientId))
+      filtered = filtered.filter((e) => e.patient_id === Number(patientId))
     }
     if (status) {
-      filtered = filtered.filter(e => e.status === status)
+      filtered = filtered.filter((e) => e.status === status)
     }
 
     return HttpResponse.json({
@@ -279,7 +286,7 @@ export const handlers = [
   }),
 
   http.get("/api/v1/examinations/:id", ({ params }) => {
-    const exam = mockExaminations.find(e => e.id === Number(params.id))
+    const exam = mockExaminations.find((e) => e.id === Number(params.id))
     if (!exam) {
       return new HttpResponse(null, { status: 404 })
     }
@@ -287,9 +294,11 @@ export const handlers = [
   }),
 
   http.post("/api/v1/examinations", async ({ request }) => {
-    const data = await request.json() as Record<string, unknown>
-    const patient = mockPatients.find(p => p.id === data.patient_id)
-    const patientName = patient ? `${patient.last_name} ${patient.first_name} ${patient.middle_name}` : "Unknown"
+    const data = (await request.json()) as Record<string, unknown>
+    const patient = mockPatients.find((p) => p.id === data.patient_id)
+    const patientName = patient
+      ? `${patient.last_name} ${patient.first_name} ${patient.middle_name}`
+      : "Unknown"
     const newExam = {
       id: mockExaminations.length + 1,
       ...data,
@@ -297,13 +306,13 @@ export const handlers = [
       status: "draft",
       created_at: new Date().toISOString(),
     }
-    mockExaminations.push(newExam as typeof mockExaminations[0])
+    mockExaminations.push(newExam as (typeof mockExaminations)[0])
     return HttpResponse.json(newExam, { status: 201 })
   }),
 
   http.put("/api/v1/examinations/:id", async ({ params, request }) => {
-    const data = await request.json() as Record<string, unknown>
-    const index = mockExaminations.findIndex(e => e.id === Number(params.id))
+    const data = (await request.json()) as Record<string, unknown>
+    const index = mockExaminations.findIndex((e) => e.id === Number(params.id))
     if (index === -1) {
       return new HttpResponse(null, { status: 404 })
     }
@@ -312,7 +321,7 @@ export const handlers = [
   }),
 
   http.delete("/api/v1/examinations/:id", ({ params }) => {
-    const index = mockExaminations.findIndex(e => e.id === Number(params.id))
+    const index = mockExaminations.findIndex((e) => e.id === Number(params.id))
     if (index === -1) {
       return new HttpResponse(null, { status: 404 })
     }

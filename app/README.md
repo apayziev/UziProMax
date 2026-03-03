@@ -23,10 +23,22 @@ A medical UZI (ultrasound) examination management system.
 
 ## 🚀 Deployment
 
-### Quick Server Setup
+### Server Setup (One-time)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/apayziev/UziProMax/main/scripts/server-setup.sh | bash
+# Install Docker
+curl -fsSL https://get.docker.com | sh
+
+# Clone repo
+git clone https://github.com/apayziev/UziProMax.git /opt/uzipromax
+cd /opt/uzipromax/app
+
+# Configure environment
+cp .env.example .env
+nano .env  # Set POSTGRES_PASSWORD, SECRET_KEY
+
+# Start services
+docker compose -f docker-compose.prod.yml up -d
 ```
 
 ### GitHub Secrets (Required)
@@ -57,7 +69,7 @@ Add these to your repository secrets (`Settings → Secrets → Actions`):
 ```bash
 ssh root@your-server
 cd /opt/uzipromax/app
-./scripts/deploy.sh
+make deploy
 ```
 
 ---

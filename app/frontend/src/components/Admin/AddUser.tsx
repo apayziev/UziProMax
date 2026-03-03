@@ -33,17 +33,23 @@ import { handleError } from "@/utils"
 
 const formSchema = z
   .object({
-    first_name: z.string().min(2, { message: "Ism kamida 2 ta belgidan iborat bo'lishi kerak" }).max(50),
-    last_name: z.string().min(2, { message: "Familiya kamida 2 ta belgidan iborat bo'lishi kerak" }).max(50),
+    first_name: z
+      .string()
+      .min(2, { message: "Ism kamida 2 ta belgidan iborat bo'lishi kerak" })
+      .max(50),
+    last_name: z
+      .string()
+      .min(2, {
+        message: "Familiya kamida 2 ta belgidan iborat bo'lishi kerak",
+      })
+      .max(50),
     middle_name: z.string().max(50).optional(),
     phone: z.string().min(9, { message: "Telefon raqami noto'g'ri" }).max(20),
     password: z
       .string()
       .min(1, { message: "Parol kiritilishi shart" })
       .min(8, { message: "Parol kamida 8 ta belgidan iborat bo'lishi kerak" }),
-    confirm_password: z
-      .string()
-      .min(1, { message: "Parolni tasdiqlang" }),
+    confirm_password: z.string().min(1, { message: "Parolni tasdiqlang" }),
     is_superuser: z.boolean(),
     is_active: z.boolean(),
   })
@@ -160,7 +166,11 @@ const AddUser = () => {
                   <FormItem>
                     <FormLabel>Otasining ismi</FormLabel>
                     <FormControl>
-                      <Input placeholder="Otasining ismi" type="text" {...field} />
+                      <Input
+                        placeholder="Otasining ismi"
+                        type="text"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

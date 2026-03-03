@@ -1,19 +1,19 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { useState } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Plus, Search, User, MoreHorizontal, Edit, Trash2, FileText } from "lucide-react"
-import { Link } from "@tanstack/react-router"
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+  Edit,
+  FileText,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Trash2,
+  User,
+} from "lucide-react"
+import { useState } from "react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { DatePicker } from "@/components/ui/date-picker"
 import {
   Dialog,
   DialogContent,
@@ -29,27 +29,43 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { Badge } from "@/components/ui/badge"
-import { DatePicker } from "@/components/ui/date-picker"
-import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useLanguage } from "@/hooks/useLanguage"
 
-import type { Patient, PatientCreate, PatientUpdate, PatientListResponse } from "@/types/medical"
+import type {
+  Patient,
+  PatientCreate,
+  PatientListResponse,
+  PatientUpdate,
+} from "@/types/medical"
 
 export const Route = createFileRoute("/_layout/patients")({
   component: PatientsPage,
 })
 
 // API functions
-async function fetchPatients(query: string, page: number): Promise<PatientListResponse> {
+async function fetchPatients(
+  query: string,
+  page: number,
+): Promise<PatientListResponse> {
   const params = new URLSearchParams({ page: String(page), per_page: "20" })
   if (query) params.set("query", query)
-  
+
   const response = await fetch(`/api/v1/patients?${params}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
   })
   if (!response.ok) throw new Error("Failed to fetch patients")
   return response.json()
@@ -74,12 +90,20 @@ async function createPatient(data: PatientCreate): Promise<Patient> {
 async function deletePatient(id: number): Promise<void> {
   const response = await fetch(`/api/v1/patients/${id}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
   })
   if (!response.ok) throw new Error("Failed to delete patient")
 }
 
-async function updatePatient({ id, data }: { id: number; data: PatientUpdate }): Promise<Patient> {
+async function updatePatient({
+  id,
+  data,
+}: {
+  id: number
+  data: PatientUpdate
+}): Promise<Patient> {
   const response = await fetch(`/api/v1/patients/${id}`, {
     method: "PUT",
     headers: {
@@ -109,7 +133,7 @@ function PatientsPage() {
     phone: "+998",
     birth_date: "",
   })
-  
+
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const { t, language } = useLanguage()
@@ -124,18 +148,22 @@ function PatientsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patients"] })
       setIsCreateOpen(false)
-      setNewPatient({ 
+      setNewPatient({
         last_name: "",
         first_name: "",
         middle_name: "",
-        gender: "female", 
-        phone: "+998", 
+        gender: "female",
+        phone: "+998",
         birth_date: "",
       })
       toast({ title: t("success"), description: t("patient_added") })
     },
     onError: (error: Error) => {
-      toast({ title: t("error"), description: error.message, variant: "destructive" })
+      toast({
+        title: t("error"),
+        description: error.message,
+        variant: "destructive",
+      })
     },
   })
 
@@ -153,10 +181,18 @@ function PatientsPage() {
       queryClient.invalidateQueries({ queryKey: ["patients"] })
       setIsEditOpen(false)
       setEditingPatient(null)
-      toast({ title: t("success"), description: language === "ru" ? "Пациент обновлен" : "Bemor yangilandi" })
+      toast({
+        title: t("success"),
+        description:
+          language === "ru" ? "Пациент обновлен" : "Bemor yangilandi",
+      })
     },
     onError: (error: Error) => {
-      toast({ title: t("error"), description: error.message, variant: "destructive" })
+      toast({
+        title: t("error"),
+        description: error.message,
+        variant: "destructive",
+      })
     },
   })
 
@@ -167,12 +203,18 @@ function PatientsPage() {
 
   const handleUpdate = () => {
     if (!editingPatient) return
-    
-    if (!editingPatient.last_name?.trim() || !editingPatient.first_name?.trim()) {
-      toast({ 
-        title: t("error"), 
-        description: language === "ru" ? "Введите имя и фамилию" : "Ism va familiyani kiriting", 
-        variant: "destructive" 
+
+    if (
+      !editingPatient.last_name?.trim() ||
+      !editingPatient.first_name?.trim()
+    ) {
+      toast({
+        title: t("error"),
+        description:
+          language === "ru"
+            ? "Введите имя и фамилию"
+            : "Ism va familiyani kiriting",
+        variant: "destructive",
       })
       return
     }
@@ -191,10 +233,13 @@ function PatientsPage() {
 
   const handleCreate = () => {
     if (!newPatient.last_name?.trim() || !newPatient.first_name?.trim()) {
-      toast({ 
-        title: t("error"), 
-        description: language === "ru" ? "Введите имя и фамилию" : "Ism va familiyani kiriting", 
-        variant: "destructive" 
+      toast({
+        title: t("error"),
+        description:
+          language === "ru"
+            ? "Введите имя и фамилию"
+            : "Ism va familiyani kiriting",
+        variant: "destructive",
       })
       return
     }
@@ -226,19 +271,30 @@ function PatientsPage() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[550px]">
             <DialogHeader>
-              <DialogTitle>{language === "ru" ? "Новый пациент" : "Yangi bemor"}</DialogTitle>
+              <DialogTitle>
+                {language === "ru" ? "Новый пациент" : "Yangi bemor"}
+              </DialogTitle>
               <DialogDescription>
-                {language === "ru" ? "Введите данные пациента" : "Bemor ma'lumotlarini kiriting"}
+                {language === "ru"
+                  ? "Введите данные пациента"
+                  : "Bemor ma'lumotlarini kiriting"}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>{language === "ru" ? "Фамилия *" : "Familiya *"}</Label>
+                  <Label>
+                    {language === "ru" ? "Фамилия *" : "Familiya *"}
+                  </Label>
                   <Input
                     placeholder={language === "ru" ? "Иванов" : "Aliyev"}
                     value={newPatient.last_name || ""}
-                    onChange={(e) => setNewPatient({ ...newPatient, last_name: e.target.value })}
+                    onChange={(e) =>
+                      setNewPatient({
+                        ...newPatient,
+                        last_name: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -246,7 +302,12 @@ function PatientsPage() {
                   <Input
                     placeholder={language === "ru" ? "Иван" : "Ali"}
                     value={newPatient.first_name || ""}
-                    onChange={(e) => setNewPatient({ ...newPatient, first_name: e.target.value })}
+                    onChange={(e) =>
+                      setNewPatient({
+                        ...newPatient,
+                        first_name: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -255,7 +316,12 @@ function PatientsPage() {
                 <Input
                   placeholder={language === "ru" ? "Иванович" : "Valiyevich"}
                   value={newPatient.middle_name || ""}
-                  onChange={(e) => setNewPatient({ ...newPatient, middle_name: e.target.value })}
+                  onChange={(e) =>
+                    setNewPatient({
+                      ...newPatient,
+                      middle_name: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -285,14 +351,14 @@ function PatientsPage() {
                     variant="outline"
                     className="w-full"
                   >
-                    <ToggleGroupItem 
-                      value="female" 
+                    <ToggleGroupItem
+                      value="female"
                       className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                     >
                       {language === "ru" ? "Женский" : "Ayol"}
                     </ToggleGroupItem>
-                    <ToggleGroupItem 
-                      value="male" 
+                    <ToggleGroupItem
+                      value="male"
                       className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                     >
                       {language === "ru" ? "Мужской" : "Erkak"}
@@ -309,7 +375,11 @@ function PatientsPage() {
                           const birth = new Date(newPatient.birth_date)
                           let age = today.getFullYear() - birth.getFullYear()
                           const m = today.getMonth() - birth.getMonth()
-                          if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+                          if (
+                            m < 0 ||
+                            (m === 0 && today.getDate() < birth.getDate())
+                          )
+                            age--
                           return age
                         })()} {language === "ru" ? "лет" : "yosh"})
                       </span>
@@ -317,12 +387,14 @@ function PatientsPage() {
                   </Label>
                   <DatePicker
                     value={newPatient.birth_date}
-                    onChange={(date) => setNewPatient({ 
-                      ...newPatient, 
-                      birth_date: date 
-                        ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-                        : null 
-                    })}
+                    onChange={(date) =>
+                      setNewPatient({
+                        ...newPatient,
+                        birth_date: date
+                          ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+                          : null,
+                      })
+                    }
                     language={language as "uz" | "ru"}
                   />
                 </div>
@@ -332,7 +404,10 @@ function PatientsPage() {
               <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
                 {t("cancel")}
               </Button>
-              <Button onClick={handleCreate} disabled={createMutation.isPending}>
+              <Button
+                onClick={handleCreate}
+                disabled={createMutation.isPending}
+              >
                 {createMutation.isPending ? t("saving") : t("save")}
               </Button>
             </DialogFooter>
@@ -390,17 +465,28 @@ function PatientsPage() {
                   {data?.items.map((patient) => (
                     <TableRow key={patient.id}>
                       <TableCell className="font-medium">
-                        {patient.last_name} {patient.first_name}{patient.middle_name ? ` ${patient.middle_name}` : ''}
+                        {patient.last_name} {patient.first_name}
+                        {patient.middle_name ? ` ${patient.middle_name}` : ""}
                       </TableCell>
                       <TableCell>
-                        <Badge variant={patient.gender === "female" ? "default" : "secondary"}>
-                          {patient.gender === "female" ? t("female") : t("male")}
+                        <Badge
+                          variant={
+                            patient.gender === "female"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {patient.gender === "female"
+                            ? t("female")
+                            : t("male")}
                         </Badge>
                       </TableCell>
                       <TableCell>{formatDate(patient.birth_date)}</TableCell>
                       <TableCell>{patient.phone || "-"}</TableCell>
                       <TableCell>
-                        <Badge variant="outline">{patient.examination_count || 0}</Badge>
+                        <Badge variant="outline">
+                          {patient.examination_count || 0}
+                        </Badge>
                       </TableCell>
                       <TableCell>{formatDate(patient.created_at)}</TableCell>
                       <TableCell>
@@ -412,12 +498,17 @@ function PatientsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link to="/examinations/new" search={{ patient_id: patient.id }}>
+                              <Link
+                                to="/examinations/new"
+                                search={{ patient_id: patient.id }}
+                              >
                                 <FileText className="mr-2 h-4 w-4" />
                                 {t("new_examination")}
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleEdit(patient)}>
+                            <DropdownMenuItem
+                              onClick={() => handleEdit(patient)}
+                            >
                               <Edit className="mr-2 h-4 w-4" />
                               {t("edit")}
                             </DropdownMenuItem>
@@ -471,20 +562,33 @@ function PatientsPage() {
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="sm:max-w-[550px]">
           <DialogHeader>
-            <DialogTitle>{language === "ru" ? "Редактировать пациента" : "Bemorni tahrirlash"}</DialogTitle>
+            <DialogTitle>
+              {language === "ru"
+                ? "Редактировать пациента"
+                : "Bemorni tahrirlash"}
+            </DialogTitle>
             <DialogDescription>
-              {language === "ru" ? "Измените данные пациента" : "Bemor ma'lumotlarini o'zgartiring"}
+              {language === "ru"
+                ? "Измените данные пациента"
+                : "Bemor ma'lumotlarini o'zgartiring"}
             </DialogDescription>
           </DialogHeader>
           {editingPatient && (
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label>{language === "ru" ? "Фамилия *" : "Familiya *"}</Label>
+                  <Label>
+                    {language === "ru" ? "Фамилия *" : "Familiya *"}
+                  </Label>
                   <Input
                     placeholder={language === "ru" ? "Иванов" : "Aliyev"}
                     value={editingPatient.last_name || ""}
-                    onChange={(e) => setEditingPatient({ ...editingPatient, last_name: e.target.value })}
+                    onChange={(e) =>
+                      setEditingPatient({
+                        ...editingPatient,
+                        last_name: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -492,7 +596,12 @@ function PatientsPage() {
                   <Input
                     placeholder={language === "ru" ? "Иван" : "Ali"}
                     value={editingPatient.first_name || ""}
-                    onChange={(e) => setEditingPatient({ ...editingPatient, first_name: e.target.value })}
+                    onChange={(e) =>
+                      setEditingPatient({
+                        ...editingPatient,
+                        first_name: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -501,7 +610,12 @@ function PatientsPage() {
                 <Input
                   placeholder={language === "ru" ? "Иванович" : "Valiyevich"}
                   value={editingPatient.middle_name || ""}
-                  onChange={(e) => setEditingPatient({ ...editingPatient, middle_name: e.target.value })}
+                  onChange={(e) =>
+                    setEditingPatient({
+                      ...editingPatient,
+                      middle_name: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -515,7 +629,10 @@ function PatientsPage() {
                       value = "+998"
                     }
                     if (value.length > 13) value = value.slice(0, 13)
-                    setEditingPatient({ ...editingPatient, phone: value === "+998" ? "" : value })
+                    setEditingPatient({
+                      ...editingPatient,
+                      phone: value === "+998" ? "" : value,
+                    })
                   }}
                 />
               </div>
@@ -526,19 +643,20 @@ function PatientsPage() {
                     type="single"
                     value={editingPatient.gender}
                     onValueChange={(value: "male" | "female") => {
-                      if (value) setEditingPatient({ ...editingPatient, gender: value })
+                      if (value)
+                        setEditingPatient({ ...editingPatient, gender: value })
                     }}
                     variant="outline"
                     className="w-full"
                   >
-                    <ToggleGroupItem 
-                      value="female" 
+                    <ToggleGroupItem
+                      value="female"
                       className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                     >
                       {language === "ru" ? "Женский" : "Ayol"}
                     </ToggleGroupItem>
-                    <ToggleGroupItem 
-                      value="male" 
+                    <ToggleGroupItem
+                      value="male"
                       className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                     >
                       {language === "ru" ? "Мужской" : "Erkak"}
@@ -555,7 +673,11 @@ function PatientsPage() {
                           const birth = new Date(editingPatient.birth_date)
                           let age = today.getFullYear() - birth.getFullYear()
                           const m = today.getMonth() - birth.getMonth()
-                          if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+                          if (
+                            m < 0 ||
+                            (m === 0 && today.getDate() < birth.getDate())
+                          )
+                            age--
                           return age
                         })()} {language === "ru" ? "лет" : "yosh"})
                       </span>
@@ -563,12 +685,14 @@ function PatientsPage() {
                   </Label>
                   <DatePicker
                     value={editingPatient.birth_date}
-                    onChange={(date) => setEditingPatient({ 
-                      ...editingPatient, 
-                      birth_date: date 
-                        ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-                        : null 
-                    })}
+                    onChange={(date) =>
+                      setEditingPatient({
+                        ...editingPatient,
+                        birth_date: date
+                          ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+                          : null,
+                      })
+                    }
                     language={language as "uz" | "ru"}
                   />
                 </div>

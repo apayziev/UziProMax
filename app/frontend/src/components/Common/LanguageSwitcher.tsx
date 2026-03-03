@@ -1,7 +1,11 @@
-import { useLanguage } from "@/hooks/useLanguage"
 import { Button } from "@/components/ui/button"
+import { useLanguage } from "@/hooks/useLanguage"
 
-export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "minimal" }) {
+export function LanguageSwitcher({
+  variant = "default",
+}: {
+  variant?: "default" | "minimal"
+}) {
   const { language, setLanguage } = useLanguage()
 
   const toggleLanguage = () => {
@@ -10,9 +14,9 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
 
   if (variant === "minimal") {
     return (
-      <Button 
-        variant="ghost" 
-        size="sm" 
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={toggleLanguage}
         className="gap-2 font-medium"
       >
@@ -23,9 +27,9 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
   }
 
   return (
-    <Button 
-      variant="outline" 
-      size="sm" 
+    <Button
+      variant="outline"
+      size="sm"
       onClick={toggleLanguage}
       className="gap-2"
     >

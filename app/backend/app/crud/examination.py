@@ -10,8 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models.examination import Examination
-from app.models.patient import Patient
-from app.models.user import User
 from app.schemas.examination import ExaminationCreate, ExaminationUpdate
 
 from .base import BaseCRUD
@@ -59,7 +57,7 @@ class CRUDExamination(BaseCRUD[Examination]):
         """ID bo'yicha tekshiruv olish"""
         query = select(Examination).where(
             Examination.id == examination_id,
-            Examination.is_deleted == False
+            Examination.is_deleted.is_(False)
         )
         if include_relations:
             query = query.options(
@@ -80,11 +78,11 @@ class CRUDExamination(BaseCRUD[Examination]):
         # Base query
         stmt = select(Examination).where(
             Examination.patient_id == patient_id,
-            Examination.is_deleted == False
+            Examination.is_deleted.is_(False)
         )
         count_stmt = select(func.count(Examination.id)).where(
             Examination.patient_id == patient_id,
-            Examination.is_deleted == False
+            Examination.is_deleted.is_(False)
         )
 
         # Get total count
@@ -113,13 +111,13 @@ class CRUDExamination(BaseCRUD[Examination]):
     ) -> tuple[Sequence[Examination], int]:
         """
         Tekshiruvlarni qidirish
-        
+
         Returns:
             tuple: (tekshiruvlar ro'yxati, umumiy soni)
         """
         # Base query
-        stmt = select(Examination).where(Examination.is_deleted == False)
-        count_stmt = select(func.count(Examination.id)).where(Examination.is_deleted == False)
+        stmt = select(Examination).where(Examination.is_deleted.is_(False))
+        count_stmt = select(func.count(Examination.id)).where(Examination.is_deleted.is_(False))
 
         # Filters
         if patient_id:
@@ -165,7 +163,7 @@ class CRUDExamination(BaseCRUD[Examination]):
         result = await db.execute(
             select(Examination)
             .options(selectinload(Examination.patient))
-            .where(Examination.is_deleted == False)
+            .where(Examination.is_deleted.is_(False))
             .order_by(Examination.created_at.desc())
             .limit(limit)
         )
@@ -179,14 +177,14 @@ class CRUDExamination(BaseCRUD[Examination]):
         """Bugungi tekshiruvlar soni"""
         from datetime import date as date_type
         today = date_type.today()
-        
+
         stmt = select(func.count(Examination.id)).where(
             Examination.examination_date == today,
-            Examination.is_deleted == False
+            Examination.is_deleted.is_(False)
         )
         if doctor_id:
             stmt = stmt.where(Examination.doctor_id == doctor_id)
-        
+
         result = await db.execute(stmt)
         return result.scalar() or 0
 
@@ -198,11 +196,11 @@ class CRUDExamination(BaseCRUD[Examination]):
     ) -> dict[str, Any]:
         """Statistika"""
         # Base filter
-        base_filter = [Examination.is_deleted == False]
+        base_filter = [Examination.is_deleted.is_(False)]
         if date_from:
-            base_filter.append(Examination.examination_date >= date_from)
+            base_filter.append(Examination.examination_date >= date_from) # type: ignore[arg-type]
         if date_to:
-            base_filter.append(Examination.examination_date <= date_to)
+            base_filter.append(Examination.examination_date <= date_to) # type: ignore[arg-type]
 
         # Total examinations
         total_result = await db.execute(

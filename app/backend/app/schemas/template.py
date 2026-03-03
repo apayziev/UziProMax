@@ -22,17 +22,17 @@ class TemplateField(BaseModel):
     type: str = Field(..., description="Maydon turi: text, number, select, date, textarea")
     unit: str | None = Field(None, description="O'lchov birligi: мм, см, мл, уд/мин")
     required: bool = Field(False, description="Majburiy maydon")
-    
+
     # Normal qiymatlar (faqat number turi uchun)
     normal_min: float | None = Field(None, description="Minimal normal qiymat")
     normal_max: float | None = Field(None, description="Maksimal normal qiymat")
-    
+
     # Select turi uchun variantlar
     options: list[TemplateFieldOption] | None = None
-    
+
     # Gruppalash uchun
     group: str | None = Field(None, description="Maydonlar guruhi")
-    
+
     # Placeholder
     placeholder: str | None = None
 
@@ -86,7 +86,7 @@ class TemplateUpdate(BaseModel):
 class TemplateRead(TemplateBase):
     """Shablon o'qish"""
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: int
     created_at: datetime
     updated_at: datetime | None = None
@@ -95,7 +95,7 @@ class TemplateRead(TemplateBase):
 class TemplateList(BaseModel):
     """Shablonlar ro'yxati"""
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: int
     code: str
     name: str
@@ -117,7 +117,7 @@ TEMPLATE_CATEGORIES = {
     },
     "obstetrics": {
         "name": "Akusherlik",
-        "name_ru": "Акушерство", 
+        "name_ru": "Акушерство",
         "icon": "baby"
     },
     "abdominal": {

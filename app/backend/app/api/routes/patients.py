@@ -1,18 +1,19 @@
 """
 Patient API routes - Bemorlar uchun API endpointlar
 """
-from fastapi import APIRouter, HTTPException, Query
 from typing import Any
+
+from fastapi import APIRouter, HTTPException, Query
 
 from app.api.deps import CurrentUser, SessionDep
 from app.crud import crud_patient
+from app.schemas.common import Message
 from app.schemas.patient import (
     PatientCreate,
-    PatientUpdate,
-    PatientRead,
     PatientList,
+    PatientRead,
+    PatientUpdate,
 )
-from app.schemas.common import Message
 
 router = APIRouter()
 
@@ -28,7 +29,7 @@ async def get_patients(
 ) -> Any:
     """
     Bemorlar ro'yxatini olish
-    
+
     - **query**: Ism yoki telefon bo'yicha qidirish
     - **gender**: Jins bo'yicha filter (male/female)
     - **page**: Sahifa raqami
@@ -41,7 +42,7 @@ async def get_patients(
         page=page,
         per_page=per_page
     )
-    
+
     return {
         "items": [PatientList.model_validate(p) for p in patients],
         "total": total,
@@ -68,7 +69,7 @@ async def create_patient(
                 status_code=400,
                 detail="Bu telefon raqami bilan bemor mavjud"
             )
-    
+
     patient = await crud_patient.create(db=db, patient_in=patient_in)
     return PatientRead.model_validate(patient)
 
@@ -98,13 +99,13 @@ async def get_patient(
     patient = await crud_patient.get_by_id(db=db, patient_id=patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
-    
+
     # Get examination count
     result = await crud_patient.get_with_examination_count(db, patient_id)
     patient_data = PatientRead.model_validate(patient)
     if result:
         patient_data.examination_count = result["examination_count"]
-    
+
     return patient_data
 
 
@@ -121,7 +122,7 @@ async def update_patient(
     patient = await crud_patient.get_by_id(db=db, patient_id=patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
-    
+
     # Check phone uniqueness
     if patient_in.phone and patient_in.phone != patient.phone:
         existing = await crud_patient.get_by_phone(db, patient_in.phone)
@@ -130,7 +131,7 @@ async def update_patient(
                 status_code=400,
                 detail="Bu telefon raqami bilan boshqa bemor mavjud"
             )
-    
+
     patient = await crud_patient.update(db=db, patient=patient, patient_in=patient_in)
     return PatientRead.model_validate(patient)
 
@@ -147,6 +148,6 @@ async def delete_patient(
     patient = await crud_patient.get_by_id(db=db, patient_id=patient_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Bemor topilmadi")
-    
+
     await crud_patient.delete(db=db, id=patient.id)
     return Message(message="Bemor muvaffaqiyatli o'chirildi")

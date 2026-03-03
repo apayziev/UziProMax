@@ -18,8 +18,8 @@ class CRUDPatient(BaseCRUD[Patient]):
     """CRUD operatsiyalari - Patient model uchun"""
 
     async def create(
-        self, 
-        db: AsyncSession, 
+        self,
+        db: AsyncSession,
         patient_in: PatientCreate
     ) -> Patient:
         """Yangi bemor yaratish"""
@@ -52,7 +52,7 @@ class CRUDPatient(BaseCRUD[Patient]):
         """ID bo'yicha bemor olish"""
         query = select(Patient).where(
             Patient.id == patient_id,
-            Patient.is_deleted == False
+            Patient.is_deleted.is_(False)
         )
         if include_examinations:
             query = query.options(selectinload(Patient.examinations))
@@ -68,7 +68,7 @@ class CRUDPatient(BaseCRUD[Patient]):
         result = await db.execute(
             select(Patient).where(
                 Patient.phone == phone,
-                Patient.is_deleted == False
+                Patient.is_deleted.is_(False)
             )
         )
         return result.scalar_one_or_none()
@@ -83,13 +83,13 @@ class CRUDPatient(BaseCRUD[Patient]):
     ) -> tuple[Sequence[Patient], int]:
         """
         Bemorlarni qidirish
-        
+
         Returns:
             tuple: (bemorlar ro'yxati, umumiy soni)
         """
         # Base query
-        stmt = select(Patient).where(Patient.is_deleted == False)
-        count_stmt = select(func.count(Patient.id)).where(Patient.is_deleted == False)
+        stmt = select(Patient).where(Patient.is_deleted.is_(False))
+        count_stmt = select(func.count(Patient.id)).where(Patient.is_deleted.is_(False))
 
         # Search filter
         if query:
@@ -128,7 +128,7 @@ class CRUDPatient(BaseCRUD[Patient]):
         """Oxirgi qo'shilgan bemorlar"""
         result = await db.execute(
             select(Patient)
-            .where(Patient.is_deleted == False)
+            .where(Patient.is_deleted.is_(False))
             .order_by(Patient.created_at.desc())
             .limit(limit)
         )
@@ -141,14 +141,14 @@ class CRUDPatient(BaseCRUD[Patient]):
     ) -> dict[str, Any] | None:
         """Bemor + tekshiruvlar soni"""
         from app.models.examination import Examination
-        
+
         result = await db.execute(
             select(
                 Patient,
                 func.count(Examination.id).label("examination_count")
             )
             .outerjoin(Examination, Examination.patient_id == Patient.id)
-            .where(Patient.id == patient_id, Patient.is_deleted == False)
+            .where(Patient.id == patient_id, Patient.is_deleted.is_(False))
             .group_by(Patient.id)
         )
         row = result.first()

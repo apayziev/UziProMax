@@ -1,10 +1,10 @@
-import { TEMPLATE_TYPES } from "@/types/medical"
 import { useLanguage } from "@/hooks/useLanguage"
+import { TEMPLATE_TYPES } from "@/types/medical"
 
 import { AbdominalForm } from "./AbdominalForm"
+import { BreastForm } from "./BreastForm"
 import { GynecologyForm } from "./GynecologyForm"
 import { ObstetricsForm } from "./ObstetricsForm"
-import { BreastForm } from "./BreastForm"
 import { ThyroidForm } from "./ThyroidForm"
 
 interface ExaminationFormRendererProps {
@@ -13,15 +13,15 @@ interface ExaminationFormRendererProps {
   onChange: (data: Record<string, any>) => void
 }
 
-export function ExaminationFormRenderer({ 
-  templateType, 
-  data, 
-  onChange 
+export function ExaminationFormRenderer({
+  templateType,
+  data,
+  onChange,
 }: ExaminationFormRendererProps) {
   const { t, language } = useLanguage()
-  
+
   const templateInfo = TEMPLATE_TYPES[templateType]
-  
+
   if (!templateInfo) {
     return (
       <div className="p-4 text-center text-muted-foreground">

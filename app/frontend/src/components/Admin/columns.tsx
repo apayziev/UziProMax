@@ -14,7 +14,13 @@ export const columns: ColumnDef<UserTableData>[] = [
     accessorKey: "first_name",
     header: "F.I.O",
     cell: ({ row }) => {
-      const fullName = [row.original.first_name, row.original.last_name, row.original.middle_name].filter(Boolean).join(" ")
+      const fullName = [
+        row.original.first_name,
+        row.original.last_name,
+        row.original.middle_name,
+      ]
+        .filter(Boolean)
+        .join(" ")
       return (
         <div className="flex items-center gap-2">
           <span

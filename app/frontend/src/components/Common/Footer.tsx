@@ -6,9 +6,7 @@ export function Footer() {
   return (
     <footer className="py-4 px-6">
       <div className="flex flex-col items-center justify-center gap-2">
-        <p className="text-muted-foreground text-sm">
-          {t("copyright")}
-        </p>
+        <p className="text-muted-foreground text-sm">{t("copyright")}</p>
       </div>
     </footer>
   )

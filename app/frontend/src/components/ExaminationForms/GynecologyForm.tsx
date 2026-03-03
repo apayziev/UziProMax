@@ -2,9 +2,16 @@
  * Ginekologiya UZI formasi - Матка, Кисты, Миома
  * DRY + Accordion (yig'iladigan bo'limlar)
  */
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { DatePicker } from "@/components/ui/date-picker"
 import {
   Select,
   SelectContent,
@@ -12,12 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import { getGynecologyTranslations, type Language } from "./translations"
 
 interface GynecologyFormProps {
@@ -27,7 +28,12 @@ interface GynecologyFormProps {
   language?: Language
 }
 
-export function GynecologyForm({ data, onChange, templateType, language = "ru" }: GynecologyFormProps) {
+export function GynecologyForm({
+  data,
+  onChange,
+  templateType,
+  language = "ru",
+}: GynecologyFormProps) {
   const updateField = (field: string, value: any) => {
     onChange({ ...data, [field]: value })
   }
@@ -43,14 +49,25 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
             <Label>{t.lastMenstruation}</Label>
             <DatePicker
               value={data.last_menstruation || null}
-              onChange={(date) => updateField("last_menstruation", date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` : null)}
+              onChange={(date) =>
+                updateField(
+                  "last_menstruation",
+                  date
+                    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+                    : null,
+                )
+              }
               language={language}
             />
           </div>
         </div>
       </div>
 
-      <Accordion type="multiple" defaultValue={["uterus"]} className="space-y-2">
+      <Accordion
+        type="multiple"
+        defaultValue={["uterus"]}
+        className="space-y-2"
+      >
         {/* BACHADON */}
         <AccordionItem value="uterus" className="border rounded-lg px-4">
           <AccordionTrigger className="text-base font-semibold hover:no-underline">
@@ -61,8 +78,13 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
             <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
               <div className="space-y-2 col-span-2">
                 <Label>{t.position}</Label>
-                <Select value={data.uterus_position || ""} onValueChange={(v) => updateField("uterus_position", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                <Select
+                  value={data.uterus_position || ""}
+                  onValueChange={(v) => updateField("uterus_position", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.select} />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="anteflexio">anteflexio</SelectItem>
                     <SelectItem value="retroflexio">retroflexio</SelectItem>
@@ -70,24 +92,52 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>{t.length} ({t.mm})</Label>
-                <Input type="number" placeholder="44-70" value={data.uterus_length || ""} onChange={(e) => updateField("uterus_length", e.target.value)} />
+                <Label>
+                  {t.length} ({t.mm})
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="44-70"
+                  value={data.uterus_length || ""}
+                  onChange={(e) => updateField("uterus_length", e.target.value)}
+                />
               </div>
               <div className="space-y-2">
-                <Label>{t.width} ({t.mm})</Label>
-                <Input type="number" placeholder="42-60" value={data.uterus_width || ""} onChange={(e) => updateField("uterus_width", e.target.value)} />
+                <Label>
+                  {t.width} ({t.mm})
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="42-60"
+                  value={data.uterus_width || ""}
+                  onChange={(e) => updateField("uterus_width", e.target.value)}
+                />
               </div>
               <div className="space-y-2">
-                <Label>{t.thickness} ({t.mm})</Label>
-                <Input type="number" placeholder="33-46" value={data.uterus_thickness || ""} onChange={(e) => updateField("uterus_thickness", e.target.value)} />
+                <Label>
+                  {t.thickness} ({t.mm})
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="33-46"
+                  value={data.uterus_thickness || ""}
+                  onChange={(e) =>
+                    updateField("uterus_thickness", e.target.value)
+                  }
+                />
               </div>
             </div>
             {/* 2-qator: Sifat ko'rsatkichlari */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
               <div className="space-y-2">
                 <Label>{t.contours}</Label>
-                <Select value={data.uterus_contour || ""} onValueChange={(v) => updateField("uterus_contour", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                <Select
+                  value={data.uterus_contour || ""}
+                  onValueChange={(v) => updateField("uterus_contour", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.select} />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ровные, четкие">{t.smooth}</SelectItem>
                     <SelectItem value="неровные">{t.uneven}</SelectItem>
@@ -97,21 +147,35 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
               </div>
               <div className="space-y-2">
                 <Label>{t.myometriumStructure}</Label>
-                <Select value={data.myometrium_structure || ""} onValueChange={(v) => updateField("myometrium_structure", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                <Select
+                  value={data.myometrium_structure || ""}
+                  onValueChange={(v) => updateField("myometrium_structure", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.select} />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="однородная">{t.homogeneous}</SelectItem>
-                    <SelectItem value="неоднородная">{t.heterogeneous}</SelectItem>
+                    <SelectItem value="неоднородная">
+                      {t.heterogeneous}
+                    </SelectItem>
                     <SelectItem value="с узлами">{t.withNodes}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2 col-span-2">
                 <Label>{t.uterineCavity}</Label>
-                <Select value={data.uterine_cavity || ""} onValueChange={(v) => updateField("uterine_cavity", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                <Select
+                  value={data.uterine_cavity || ""}
+                  onValueChange={(v) => updateField("uterine_cavity", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.select} />
+                  </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="не деформирована, не расширена">{t.notDeformed}, {t.notExpanded}</SelectItem>
+                    <SelectItem value="не деформирована, не расширена">
+                      {t.notDeformed}, {t.notExpanded}
+                    </SelectItem>
                     <SelectItem value="деформирована">{t.deformed}</SelectItem>
                     <SelectItem value="расширена">{t.expanded}</SelectItem>
                   </SelectContent>
@@ -129,15 +193,31 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
           <AccordionContent className="pt-4">
             <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
               <div className="space-y-2">
-                <Label>{t.thickness} ({t.mm})</Label>
-                <Input type="number" placeholder="5-14" value={data.endometrium_thickness || ""} onChange={(e) => updateField("endometrium_thickness", e.target.value)} />
+                <Label>
+                  {t.thickness} ({t.mm})
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="5-14"
+                  value={data.endometrium_thickness || ""}
+                  onChange={(e) =>
+                    updateField("endometrium_thickness", e.target.value)
+                  }
+                />
               </div>
               <div className="space-y-2 col-span-1 md:col-span-2">
                 <Label>{t.mcPhase}</Label>
-                <Select value={data.menstrual_phase || ""} onValueChange={(v) => updateField("menstrual_phase", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                <Select
+                  value={data.menstrual_phase || ""}
+                  onValueChange={(v) => updateField("menstrual_phase", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.select} />
+                  </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="пролиферативная">{t.proliferative}</SelectItem>
+                    <SelectItem value="пролиферативная">
+                      {t.proliferative}
+                    </SelectItem>
                     <SelectItem value="секреторная">{t.secretory}</SelectItem>
                     <SelectItem value="менструальная">{t.menstrual}</SelectItem>
                   </SelectContent>
@@ -145,11 +225,18 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
               </div>
               <div className="space-y-2">
                 <Label>{t.echostructure}</Label>
-                <Select value={data.endometrium_structure || ""} onValueChange={(v) => updateField("endometrium_structure", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                <Select
+                  value={data.endometrium_structure || ""}
+                  onValueChange={(v) => updateField("endometrium_structure", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.select} />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="однородная">{t.homogeneous}</SelectItem>
-                    <SelectItem value="неоднородная">{t.heterogeneous}</SelectItem>
+                    <SelectItem value="неоднородная">
+                      {t.heterogeneous}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -165,23 +252,49 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
           <AccordionContent className="pt-4">
             <div className="grid grid-cols-4 md:grid-cols-5 gap-3">
               <div className="space-y-2">
-                <Label>{t.length} ({t.mm})</Label>
-                <Input type="number" value={data.cervix_length || ""} onChange={(e) => updateField("cervix_length", e.target.value)} />
+                <Label>
+                  {t.length} ({t.mm})
+                </Label>
+                <Input
+                  type="number"
+                  value={data.cervix_length || ""}
+                  onChange={(e) => updateField("cervix_length", e.target.value)}
+                />
               </div>
               <div className="space-y-2">
-                <Label>{t.width} ({t.mm})</Label>
-                <Input type="number" value={data.cervix_width || ""} onChange={(e) => updateField("cervix_width", e.target.value)} />
+                <Label>
+                  {t.width} ({t.mm})
+                </Label>
+                <Input
+                  type="number"
+                  value={data.cervix_width || ""}
+                  onChange={(e) => updateField("cervix_width", e.target.value)}
+                />
               </div>
               <div className="space-y-2">
-                <Label>{t.endocervix} ({t.mm})</Label>
-                <Input type="number" placeholder="2-8" value={data.endocervix || ""} onChange={(e) => updateField("endocervix", e.target.value)} />
+                <Label>
+                  {t.endocervix} ({t.mm})
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="2-8"
+                  value={data.endocervix || ""}
+                  onChange={(e) => updateField("endocervix", e.target.value)}
+                />
               </div>
               <div className="space-y-2 col-span-2">
                 <Label>{t.cervixShape}</Label>
-                <Select value={data.cervix_shape || ""} onValueChange={(v) => updateField("cervix_shape", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                <Select
+                  value={data.cervix_shape || ""}
+                  onValueChange={(v) => updateField("cervix_shape", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.select} />
+                  </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="цилиндрическая">{t.cylindrical}</SelectItem>
+                    <SelectItem value="цилиндрическая">
+                      {t.cylindrical}
+                    </SelectItem>
                     <SelectItem value="коническая">{t.conical}</SelectItem>
                     <SelectItem value="неправильная">{t.irregular}</SelectItem>
                   </SelectContent>
@@ -202,56 +315,142 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
               <div className="space-y-3 p-3 border rounded-lg bg-muted/20">
                 <h4 className="font-medium text-sm">{t.rightOvary}</h4>
                 <div className="space-y-2">
-                  <Label className="text-xs">{t.size} ({t.mm})</Label>
-                  <Input placeholder={t.lengthWidthThickness} value={data.ovary_right_size || ""} onChange={(e) => updateField("ovary_right_size", e.target.value)} className="h-9" />
+                  <Label className="text-xs">
+                    {t.size} ({t.mm})
+                  </Label>
+                  <Input
+                    placeholder={t.lengthWidthThickness}
+                    value={data.ovary_right_size || ""}
+                    onChange={(e) =>
+                      updateField("ovary_right_size", e.target.value)
+                    }
+                    className="h-9"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <Label className="text-xs">{t.volume} ({t.ml})</Label>
-                    <Input type="number" value={data.ovary_right_volume || ""} onChange={(e) => updateField("ovary_right_volume", e.target.value)} className="h-9" />
+                    <Label className="text-xs">
+                      {t.volume} ({t.ml})
+                    </Label>
+                    <Input
+                      type="number"
+                      value={data.ovary_right_volume || ""}
+                      onChange={(e) =>
+                        updateField("ovary_right_volume", e.target.value)
+                      }
+                      className="h-9"
+                    />
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs">{t.follicles}</Label>
-                    <Input placeholder={t.diameterCount} value={data.ovary_right_follicles || ""} onChange={(e) => updateField("ovary_right_follicles", e.target.value)} className="h-9" />
+                    <Input
+                      placeholder={t.diameterCount}
+                      value={data.ovary_right_follicles || ""}
+                      onChange={(e) =>
+                        updateField("ovary_right_follicles", e.target.value)
+                      }
+                      className="h-9"
+                    />
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">{t.maxFollicle} ({t.mm})</Label>
-                  <Input type="number" placeholder="Ø" value={data.ovary_right_max_follicle || ""} onChange={(e) => updateField("ovary_right_max_follicle", e.target.value)} className="h-9" />
+                  <Label className="text-xs">
+                    {t.maxFollicle} ({t.mm})
+                  </Label>
+                  <Input
+                    type="number"
+                    placeholder="Ø"
+                    value={data.ovary_right_max_follicle || ""}
+                    onChange={(e) =>
+                      updateField("ovary_right_max_follicle", e.target.value)
+                    }
+                    className="h-9"
+                  />
                 </div>
-                {(templateType === "gynecology_cyst" || templateType === "gynecology_myoma") && (
+                {(templateType === "gynecology_cyst" ||
+                  templateType === "gynecology_myoma") && (
                   <div className="space-y-1">
                     <Label className="text-xs">{t.mass}</Label>
-                    <Input placeholder={t.sizeStructure} value={data.ovary_right_mass || ""} onChange={(e) => updateField("ovary_right_mass", e.target.value)} className="h-9" />
+                    <Input
+                      placeholder={t.sizeStructure}
+                      value={data.ovary_right_mass || ""}
+                      onChange={(e) =>
+                        updateField("ovary_right_mass", e.target.value)
+                      }
+                      className="h-9"
+                    />
                   </div>
                 )}
               </div>
-              
+
               {/* Chap tuxumdon */}
               <div className="space-y-3 p-3 border rounded-lg bg-muted/20">
                 <h4 className="font-medium text-sm">{t.leftOvary}</h4>
                 <div className="space-y-2">
-                  <Label className="text-xs">{t.size} ({t.mm})</Label>
-                  <Input placeholder={t.lengthWidthThickness} value={data.ovary_left_size || ""} onChange={(e) => updateField("ovary_left_size", e.target.value)} className="h-9" />
+                  <Label className="text-xs">
+                    {t.size} ({t.mm})
+                  </Label>
+                  <Input
+                    placeholder={t.lengthWidthThickness}
+                    value={data.ovary_left_size || ""}
+                    onChange={(e) =>
+                      updateField("ovary_left_size", e.target.value)
+                    }
+                    className="h-9"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <Label className="text-xs">{t.volume} ({t.ml})</Label>
-                    <Input type="number" value={data.ovary_left_volume || ""} onChange={(e) => updateField("ovary_left_volume", e.target.value)} className="h-9" />
+                    <Label className="text-xs">
+                      {t.volume} ({t.ml})
+                    </Label>
+                    <Input
+                      type="number"
+                      value={data.ovary_left_volume || ""}
+                      onChange={(e) =>
+                        updateField("ovary_left_volume", e.target.value)
+                      }
+                      className="h-9"
+                    />
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs">{t.follicles}</Label>
-                    <Input placeholder={t.diameterCount} value={data.ovary_left_follicles || ""} onChange={(e) => updateField("ovary_left_follicles", e.target.value)} className="h-9" />
+                    <Input
+                      placeholder={t.diameterCount}
+                      value={data.ovary_left_follicles || ""}
+                      onChange={(e) =>
+                        updateField("ovary_left_follicles", e.target.value)
+                      }
+                      className="h-9"
+                    />
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">{t.maxFollicle} ({t.mm})</Label>
-                  <Input type="number" placeholder="Ø" value={data.ovary_left_max_follicle || ""} onChange={(e) => updateField("ovary_left_max_follicle", e.target.value)} className="h-9" />
+                  <Label className="text-xs">
+                    {t.maxFollicle} ({t.mm})
+                  </Label>
+                  <Input
+                    type="number"
+                    placeholder="Ø"
+                    value={data.ovary_left_max_follicle || ""}
+                    onChange={(e) =>
+                      updateField("ovary_left_max_follicle", e.target.value)
+                    }
+                    className="h-9"
+                  />
                 </div>
-                {(templateType === "gynecology_cyst" || templateType === "gynecology_myoma") && (
+                {(templateType === "gynecology_cyst" ||
+                  templateType === "gynecology_myoma") && (
                   <div className="space-y-1">
                     <Label className="text-xs">{t.mass}</Label>
-                    <Input placeholder={t.sizeStructure} value={data.ovary_left_mass || ""} onChange={(e) => updateField("ovary_left_mass", e.target.value)} className="h-9" />
+                    <Input
+                      placeholder={t.sizeStructure}
+                      value={data.ovary_left_mass || ""}
+                      onChange={(e) =>
+                        updateField("ovary_left_mass", e.target.value)
+                      }
+                      className="h-9"
+                    />
                   </div>
                 )}
               </div>
@@ -268,30 +467,57 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>{t.fallopianTubes}</Label>
-                <Select value={data.fallopian_tubes || ""} onValueChange={(v) => updateField("fallopian_tubes", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                <Select
+                  value={data.fallopian_tubes || ""}
+                  onValueChange={(v) => updateField("fallopian_tubes", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.select} />
+                  </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="не визуализируются">{t.notVisualized}</SelectItem>
-                    <SelectItem value="визуализируются">{t.visualized}</SelectItem>
+                    <SelectItem value="не визуализируются">
+                      {t.notVisualized}
+                    </SelectItem>
+                    <SelectItem value="визуализируются">
+                      {t.visualized}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label>{t.fluidInPelvis}</Label>
-                <Select value={data.fluid_in_pelvis || ""} onValueChange={(v) => updateField("fluid_in_pelvis", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                <Select
+                  value={data.fluid_in_pelvis || ""}
+                  onValueChange={(v) => updateField("fluid_in_pelvis", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.select} />
+                  </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="не визуализируется">{t.notVisualized}</SelectItem>
-                    <SelectItem value="незначительное количество">{t.insignificant}</SelectItem>
-                    <SelectItem value="умеренное количество">{t.moderate}</SelectItem>
-                    <SelectItem value="значительное количество">{t.significant}</SelectItem>
+                    <SelectItem value="не визуализируется">
+                      {t.notVisualized}
+                    </SelectItem>
+                    <SelectItem value="незначительное количество">
+                      {t.insignificant}
+                    </SelectItem>
+                    <SelectItem value="умеренное количество">
+                      {t.moderate}
+                    </SelectItem>
+                    <SelectItem value="значительное количество">
+                      {t.significant}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label>{t.pelvicVeins}</Label>
-                <Select value={data.pelvic_veins || ""} onValueChange={(v) => updateField("pelvic_veins", v)}>
-                  <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                <Select
+                  value={data.pelvic_veins || ""}
+                  onValueChange={(v) => updateField("pelvic_veins", v)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.select} />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="не расширены">{t.notDilated}</SelectItem>
                     <SelectItem value="расширены">{t.dilated}</SelectItem>
@@ -304,7 +530,10 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
 
         {/* Mioma uchun qo'shimcha */}
         {templateType === "gynecology_myoma" && (
-          <AccordionItem value="myoma" className="border rounded-lg px-4 border-orange-200 bg-orange-50/50">
+          <AccordionItem
+            value="myoma"
+            className="border rounded-lg px-4 border-orange-200 bg-orange-50/50"
+          >
             <AccordionTrigger className="text-base font-semibold hover:no-underline text-orange-700">
               {t.myomaNodes}
             </AccordionTrigger>
@@ -314,41 +543,81 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div className="space-y-2">
                     <Label>{t.nodeCount}</Label>
-                    <Input type="number" placeholder="3-4" value={data.myoma_count || ""} onChange={(e) => updateField("myoma_count", e.target.value)} />
+                    <Input
+                      type="number"
+                      placeholder="3-4"
+                      value={data.myoma_count || ""}
+                      onChange={(e) =>
+                        updateField("myoma_count", e.target.value)
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>{t.localization}</Label>
-                    <Select value={data.myoma_location || ""} onValueChange={(v) => updateField("myoma_location", v)}>
-                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                    <Select
+                      value={data.myoma_location || ""}
+                      onValueChange={(v) => updateField("myoma_location", v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t.select} />
+                      </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="передняя стенка">{t.anteriorWall}</SelectItem>
-                        <SelectItem value="задняя стенка">{t.posteriorWall}</SelectItem>
+                        <SelectItem value="передняя стенка">
+                          {t.anteriorWall}
+                        </SelectItem>
+                        <SelectItem value="задняя стенка">
+                          {t.posteriorWall}
+                        </SelectItem>
                         <SelectItem value="дно">{t.fundus}</SelectItem>
-                        <SelectItem value="боковая стенка">{t.lateralWall}</SelectItem>
-                        <SelectItem value="множественная">множественная</SelectItem>
+                        <SelectItem value="боковая стенка">
+                          {t.lateralWall}
+                        </SelectItem>
+                        <SelectItem value="множественная">
+                          множественная
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
                     <Label>{t.nodeEchogenicity}</Label>
-                    <Select value={data.myoma_echogenicity || ""} onValueChange={(v) => updateField("myoma_echogenicity", v)}>
-                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                    <Select
+                      value={data.myoma_echogenicity || ""}
+                      onValueChange={(v) =>
+                        updateField("myoma_echogenicity", v)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t.select} />
+                      </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="гиперэхогенные">{t.hyperechoic}</SelectItem>
-                        <SelectItem value="гипоэхогенные">{t.hypoechoic}</SelectItem>
-                        <SelectItem value="изоэхогенные">{t.isoechoic}</SelectItem>
+                        <SelectItem value="гиперэхогенные">
+                          {t.hyperechoic}
+                        </SelectItem>
+                        <SelectItem value="гипоэхогенные">
+                          {t.hypoechoic}
+                        </SelectItem>
+                        <SelectItem value="изоэхогенные">
+                          {t.isoechoic}
+                        </SelectItem>
                         <SelectItem value="смешанные">{t.mixed}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
                     <Label>{t.nodeShape}</Label>
-                    <Select value={data.myoma_shape || ""} onValueChange={(v) => updateField("myoma_shape", v)}>
-                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                    <Select
+                      value={data.myoma_shape || ""}
+                      onValueChange={(v) => updateField("myoma_shape", v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t.select} />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="округлая">{t.rounded}</SelectItem>
                         <SelectItem value="овальная">овальная</SelectItem>
-                        <SelectItem value="неправильная">{t.irregular}</SelectItem>
+                        <SelectItem value="неправильная">
+                          {t.irregular}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -358,10 +627,17 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   <div className="space-y-2">
                     <Label>{t.nodeContours}</Label>
-                    <Select value={data.myoma_contours || ""} onValueChange={(v) => updateField("myoma_contours", v)}>
-                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                    <Select
+                      value={data.myoma_contours || ""}
+                      onValueChange={(v) => updateField("myoma_contours", v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t.select} />
+                      </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ровные, четкие">{t.smooth}</SelectItem>
+                        <SelectItem value="ровные, четкие">
+                          {t.smooth}
+                        </SelectItem>
                         <SelectItem value="неровные">{t.uneven}</SelectItem>
                         <SelectItem value="нечеткие">{t.unclear}</SelectItem>
                       </SelectContent>
@@ -369,11 +645,20 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                   </div>
                   <div className="space-y-2">
                     <Label>{t.cdkVascularization}</Label>
-                    <Select value={data.myoma_cdk || ""} onValueChange={(v) => updateField("myoma_cdk", v)}>
-                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                    <Select
+                      value={data.myoma_cdk || ""}
+                      onValueChange={(v) => updateField("myoma_cdk", v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t.select} />
+                      </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="аваскулярный">{t.avascular}</SelectItem>
-                        <SelectItem value="периферический">{t.peripheral}</SelectItem>
+                        <SelectItem value="аваскулярный">
+                          {t.avascular}
+                        </SelectItem>
+                        <SelectItem value="периферический">
+                          {t.peripheral}
+                        </SelectItem>
                         <SelectItem value="центральный">{t.central}</SelectItem>
                         <SelectItem value="смешанный">{t.mixedVasc}</SelectItem>
                       </SelectContent>
@@ -381,17 +666,36 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                   </div>
                   <div className="space-y-2">
                     <Label>{t.figoType}</Label>
-                    <Select value={data.myoma_figo || ""} onValueChange={(v) => updateField("myoma_figo", v)}>
-                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                    <Select
+                      value={data.myoma_figo || ""}
+                      onValueChange={(v) => updateField("myoma_figo", v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t.select} />
+                      </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="0">FIGO 0 - submukosal oyoqchada</SelectItem>
-                        <SelectItem value="1">FIGO 1 - submukosal &lt;50%</SelectItem>
-                        <SelectItem value="2">FIGO 2 - submukosal &gt;50%</SelectItem>
-                        <SelectItem value="3">FIGO 3 - intramural (endometriyga tegib)</SelectItem>
+                        <SelectItem value="0">
+                          FIGO 0 - submukosal oyoqchada
+                        </SelectItem>
+                        <SelectItem value="1">
+                          FIGO 1 - submukosal &lt;50%
+                        </SelectItem>
+                        <SelectItem value="2">
+                          FIGO 2 - submukosal &gt;50%
+                        </SelectItem>
+                        <SelectItem value="3">
+                          FIGO 3 - intramural (endometriyga tegib)
+                        </SelectItem>
                         <SelectItem value="4">FIGO 4 - intramural</SelectItem>
-                        <SelectItem value="5">FIGO 5 - subseroz &gt;50%</SelectItem>
-                        <SelectItem value="6">FIGO 6 - subseroz &lt;50%</SelectItem>
-                        <SelectItem value="7">FIGO 7 - subseroz oyoqchada</SelectItem>
+                        <SelectItem value="5">
+                          FIGO 5 - subseroz &gt;50%
+                        </SelectItem>
+                        <SelectItem value="6">
+                          FIGO 6 - subseroz &lt;50%
+                        </SelectItem>
+                        <SelectItem value="7">
+                          FIGO 7 - subseroz oyoqchada
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -399,50 +703,112 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
 
                 {/* 3-qator: Intramural tugunlar o'lchami */}
                 <div className="space-y-2">
-                  <Label>{t.intramuralNode} - {t.nodeSizes}</Label>
-                  <Input 
-                    placeholder={language === "ru" ? "от 2.5х3.9мм до 10.3х7.9мм" : "2.5x3.9mm dan 10.3x7.9mm gacha"} 
-                    value={data.myoma_intramural_sizes || ""} 
-                    onChange={(e) => updateField("myoma_intramural_sizes", e.target.value)} 
+                  <Label>
+                    {t.intramuralNode} - {t.nodeSizes}
+                  </Label>
+                  <Input
+                    placeholder={
+                      language === "ru"
+                        ? "от 2.5х3.9мм до 10.3х7.9мм"
+                        : "2.5x3.9mm dan 10.3x7.9mm gacha"
+                    }
+                    value={data.myoma_intramural_sizes || ""}
+                    onChange={(e) =>
+                      updateField("myoma_intramural_sizes", e.target.value)
+                    }
                   />
                 </div>
 
                 {/* 4-qator: Subseroz tugun */}
                 <div className="p-3 border rounded-lg bg-orange-100/50">
-                  <h4 className="font-medium text-sm mb-3">{t.subserousNode}</h4>
+                  <h4 className="font-medium text-sm mb-3">
+                    {t.subserousNode}
+                  </h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <div className="space-y-2">
                       <Label>{t.nodeLocation}</Label>
-                      <Select value={data.subserous_location || ""} onValueChange={(v) => updateField("subserous_location", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.subserous_location || ""}
+                        onValueChange={(v) =>
+                          updateField("subserous_location", v)
+                        }
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="дно матки">{t.fundus}</SelectItem>
-                          <SelectItem value="передняя стенка">{t.anteriorWall}</SelectItem>
-                          <SelectItem value="задняя стенка">{t.posteriorWall}</SelectItem>
+                          <SelectItem value="передняя стенка">
+                            {t.anteriorWall}
+                          </SelectItem>
+                          <SelectItem value="задняя стенка">
+                            {t.posteriorWall}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>{t.length} ({t.mm})</Label>
-                      <Input type="number" placeholder="65.3" value={data.subserous_length || ""} onChange={(e) => updateField("subserous_length", e.target.value)} className="h-9" />
+                      <Label>
+                        {t.length} ({t.mm})
+                      </Label>
+                      <Input
+                        type="number"
+                        placeholder="65.3"
+                        value={data.subserous_length || ""}
+                        onChange={(e) =>
+                          updateField("subserous_length", e.target.value)
+                        }
+                        className="h-9"
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label>{t.width} ({t.mm})</Label>
-                      <Input type="number" placeholder="5.4" value={data.subserous_width || ""} onChange={(e) => updateField("subserous_width", e.target.value)} className="h-9" />
+                      <Label>
+                        {t.width} ({t.mm})
+                      </Label>
+                      <Input
+                        type="number"
+                        placeholder="5.4"
+                        value={data.subserous_width || ""}
+                        onChange={(e) =>
+                          updateField("subserous_width", e.target.value)
+                        }
+                        className="h-9"
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label>{t.thickness} ({t.mm})</Label>
-                      <Input type="number" placeholder="60.4" value={data.subserous_thickness || ""} onChange={(e) => updateField("subserous_thickness", e.target.value)} className="h-9" />
+                      <Label>
+                        {t.thickness} ({t.mm})
+                      </Label>
+                      <Input
+                        type="number"
+                        placeholder="60.4"
+                        value={data.subserous_thickness || ""}
+                        onChange={(e) =>
+                          updateField("subserous_thickness", e.target.value)
+                        }
+                        className="h-9"
+                      />
                     </div>
                   </div>
                   <div className="mt-2">
                     <Label>{t.figoType}</Label>
-                    <Select value={data.subserous_figo || ""} onValueChange={(v) => updateField("subserous_figo", v)}>
-                      <SelectTrigger className="h-9 mt-1"><SelectValue placeholder={t.select} /></SelectTrigger>
+                    <Select
+                      value={data.subserous_figo || ""}
+                      onValueChange={(v) => updateField("subserous_figo", v)}
+                    >
+                      <SelectTrigger className="h-9 mt-1">
+                        <SelectValue placeholder={t.select} />
+                      </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="5">FIGO 5 - subseroz &gt;50%</SelectItem>
-                        <SelectItem value="6">FIGO 6 - subseroz &lt;50%</SelectItem>
-                        <SelectItem value="7">FIGO 7 - subseroz oyoqchada</SelectItem>
+                        <SelectItem value="5">
+                          FIGO 5 - subseroz &gt;50%
+                        </SelectItem>
+                        <SelectItem value="6">
+                          FIGO 6 - subseroz &lt;50%
+                        </SelectItem>
+                        <SelectItem value="7">
+                          FIGO 7 - subseroz oyoqchada
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -451,10 +817,16 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                 {/* Qo'shimcha tavsif */}
                 <div className="space-y-2">
                   <Label>{t.nodeDescription}</Label>
-                  <Input 
-                    placeholder={language === "ru" ? "Дополнительное описание узлов..." : "Tugunlar haqida qo'shimcha..."} 
-                    value={data.myoma_description || ""} 
-                    onChange={(e) => updateField("myoma_description", e.target.value)} 
+                  <Input
+                    placeholder={
+                      language === "ru"
+                        ? "Дополнительное описание узлов..."
+                        : "Tugunlar haqida qo'shimcha..."
+                    }
+                    value={data.myoma_description || ""}
+                    onChange={(e) =>
+                      updateField("myoma_description", e.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -464,7 +836,10 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
 
         {/* Kista uchun qo'shimcha - O-RADS */}
         {templateType === "gynecology_cyst" && (
-          <AccordionItem value="cyst" className="border rounded-lg px-4 border-purple-200 bg-purple-50/50">
+          <AccordionItem
+            value="cyst"
+            className="border rounded-lg px-4 border-purple-200 bg-purple-50/50"
+          >
             <AccordionTrigger className="text-base font-semibold hover:no-underline text-purple-700">
               {t.ovarianMass}
             </AccordionTrigger>
@@ -472,80 +847,177 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
               <div className="space-y-4">
                 {/* O'ng tuxumdon kistasi */}
                 <div className="p-3 border rounded-lg bg-purple-100/50">
-                  <h4 className="font-medium text-sm mb-3 text-purple-800">{t.rightOvaryCyst}</h4>
+                  <h4 className="font-medium text-sm mb-3 text-purple-800">
+                    {t.rightOvaryCyst}
+                  </h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <div className="space-y-2">
                       <Label className="text-xs">{t.cystType}</Label>
-                      <Select value={data.right_cyst_type || ""} onValueChange={(v) => updateField("right_cyst_type", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.right_cyst_type || ""}
+                        onValueChange={(v) => updateField("right_cyst_type", v)}
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="фолликулярная киста">{t.follicularCyst}</SelectItem>
-                          <SelectItem value="киста желтого тела">{t.corpusLuteumCyst}</SelectItem>
-                          <SelectItem value="эндометриоидная киста">{t.endometrioidCyst}</SelectItem>
-                          <SelectItem value="дермоидная киста">{t.dermoidCyst}</SelectItem>
-                          <SelectItem value="муцинозная кистома">{t.mucinousCystoma}</SelectItem>
-                          <SelectItem value="серозная кистома">{t.seromasCystoma}</SelectItem>
-                          <SelectItem value="параовариальная киста">{t.paraovarianCyst}</SelectItem>
-                          <SelectItem value="многокамерная киста">{t.multiChamber}</SelectItem>
+                          <SelectItem value="фолликулярная киста">
+                            {t.follicularCyst}
+                          </SelectItem>
+                          <SelectItem value="киста желтого тела">
+                            {t.corpusLuteumCyst}
+                          </SelectItem>
+                          <SelectItem value="эндометриоидная киста">
+                            {t.endometrioidCyst}
+                          </SelectItem>
+                          <SelectItem value="дермоидная киста">
+                            {t.dermoidCyst}
+                          </SelectItem>
+                          <SelectItem value="муцинозная кистома">
+                            {t.mucinousCystoma}
+                          </SelectItem>
+                          <SelectItem value="серозная кистома">
+                            {t.seromasCystoma}
+                          </SelectItem>
+                          <SelectItem value="параовариальная киста">
+                            {t.paraovarianCyst}
+                          </SelectItem>
+                          <SelectItem value="многокамерная киста">
+                            {t.multiChamber}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs">{t.size} ({t.mm})</Label>
-                      <Input placeholder="56.7x45.3" value={data.right_cyst_size || ""} onChange={(e) => updateField("right_cyst_size", e.target.value)} className="h-9" />
+                      <Label className="text-xs">
+                        {t.size} ({t.mm})
+                      </Label>
+                      <Input
+                        placeholder="56.7x45.3"
+                        value={data.right_cyst_size || ""}
+                        onChange={(e) =>
+                          updateField("right_cyst_size", e.target.value)
+                        }
+                        className="h-9"
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs">{t.contours}</Label>
-                      <Select value={data.right_cyst_contours || ""} onValueChange={(v) => updateField("right_cyst_contours", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.right_cyst_contours || ""}
+                        onValueChange={(v) =>
+                          updateField("right_cyst_contours", v)
+                        }
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="ровные, четкие">{t.smooth}</SelectItem>
+                          <SelectItem value="ровные, четкие">
+                            {t.smooth}
+                          </SelectItem>
                           <SelectItem value="неровные">{t.uneven}</SelectItem>
                           <SelectItem value="нечеткие">{t.unclear}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs">{t.wallThickness} ({t.mm})</Label>
-                      <Input type="number" placeholder="2.3" value={data.right_cyst_wall_thickness || ""} onChange={(e) => updateField("right_cyst_wall_thickness", e.target.value)} className="h-9" />
+                      <Label className="text-xs">
+                        {t.wallThickness} ({t.mm})
+                      </Label>
+                      <Input
+                        type="number"
+                        placeholder="2.3"
+                        value={data.right_cyst_wall_thickness || ""}
+                        onChange={(e) =>
+                          updateField(
+                            "right_cyst_wall_thickness",
+                            e.target.value,
+                          )
+                        }
+                        className="h-9"
+                      />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
                     <div className="space-y-2">
                       <Label className="text-xs">{t.cystWall}</Label>
-                      <Select value={data.right_cyst_wall || ""} onValueChange={(v) => updateField("right_cyst_wall", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.right_cyst_wall || ""}
+                        onValueChange={(v) => updateField("right_cyst_wall", v)}
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="тонкостенная">{t.thinWalled}</SelectItem>
-                          <SelectItem value="утолщена гиперэхогенно">{t.thickWalled} {t.hyperechoicWall}</SelectItem>
+                          <SelectItem value="тонкостенная">
+                            {t.thinWalled}
+                          </SelectItem>
+                          <SelectItem value="утолщена гиперэхогенно">
+                            {t.thickWalled} {t.hyperechoicWall}
+                          </SelectItem>
                           <SelectItem value="гладкая">гладкая</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs">{t.massContent}</Label>
-                      <Select value={data.right_cyst_content || ""} onValueChange={(v) => updateField("right_cyst_content", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.right_cyst_content || ""}
+                        onValueChange={(v) =>
+                          updateField("right_cyst_content", v)
+                        }
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="однородное">{t.homogeneousContent}</SelectItem>
-                          <SelectItem value="неоднородное">{t.heterogeneousContent}</SelectItem>
-                          <SelectItem value="с линейными эхоструктурами">{t.withLinearEchos}</SelectItem>
-                          <SelectItem value="с кровоизлиянием">{t.withBloodClots}</SelectItem>
-                          <SelectItem value="с сосочковыми разрастаниями">{t.withSolidPapillary}</SelectItem>
-                          <SelectItem value="с дисперсной взвесью">{t.withDisperseSuspension}</SelectItem>
-                          <SelectItem value="анэхогенное">{t.anechoicContent}</SelectItem>
+                          <SelectItem value="однородное">
+                            {t.homogeneousContent}
+                          </SelectItem>
+                          <SelectItem value="неоднородное">
+                            {t.heterogeneousContent}
+                          </SelectItem>
+                          <SelectItem value="с линейными эхоструктурами">
+                            {t.withLinearEchos}
+                          </SelectItem>
+                          <SelectItem value="с кровоизлиянием">
+                            {t.withBloodClots}
+                          </SelectItem>
+                          <SelectItem value="с сосочковыми разрастаниями">
+                            {t.withSolidPapillary}
+                          </SelectItem>
+                          <SelectItem value="с дисперсной взвесью">
+                            {t.withDisperseSuspension}
+                          </SelectItem>
+                          <SelectItem value="анэхогенное">
+                            {t.anechoicContent}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs">{t.vascularization}</Label>
-                      <Select value={data.right_cyst_vasc || ""} onValueChange={(v) => updateField("right_cyst_vasc", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.right_cyst_vasc || ""}
+                        onValueChange={(v) => updateField("right_cyst_vasc", v)}
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="кровоток не определяется">{t.noFlow}</SelectItem>
-                          <SelectItem value="единичные цветовые пятна">{t.singleColorSpots}</SelectItem>
-                          <SelectItem value="периферический кровоток">{t.peripheralFlow}</SelectItem>
-                          <SelectItem value="богатая васкуляризация">{t.richVascularization}</SelectItem>
+                          <SelectItem value="кровоток не определяется">
+                            {t.noFlow}
+                          </SelectItem>
+                          <SelectItem value="единичные цветовые пятна">
+                            {t.singleColorSpots}
+                          </SelectItem>
+                          <SelectItem value="периферический кровоток">
+                            {t.peripheralFlow}
+                          </SelectItem>
+                          <SelectItem value="богатая васкуляризация">
+                            {t.richVascularization}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -553,98 +1025,219 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                   <div className="grid grid-cols-2 gap-3 mt-3">
                     <div className="space-y-2">
                       <Label className="text-xs">{t.compression}</Label>
-                      <Select value={data.right_cyst_compression || ""} onValueChange={(v) => updateField("right_cyst_compression", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.right_cyst_compression || ""}
+                        onValueChange={(v) =>
+                          updateField("right_cyst_compression", v)
+                        }
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="безболезненная">{t.painless}</SelectItem>
-                          <SelectItem value="незначительно болезненная">{t.slightlyPainful}</SelectItem>
-                          <SelectItem value="болезненная">{t.painful}</SelectItem>
+                          <SelectItem value="безболезненная">
+                            {t.painless}
+                          </SelectItem>
+                          <SelectItem value="незначительно болезненная">
+                            {t.slightlyPainful}
+                          </SelectItem>
+                          <SelectItem value="болезненная">
+                            {t.painful}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs">{t.additionalInfo}</Label>
-                      <Input placeholder={language === "ru" ? "акустическая тень, спайки..." : "akustik soya, bitishmalar..."} value={data.right_cyst_additional || ""} onChange={(e) => updateField("right_cyst_additional", e.target.value)} className="h-9" />
+                      <Input
+                        placeholder={
+                          language === "ru"
+                            ? "акустическая тень, спайки..."
+                            : "akustik soya, bitishmalar..."
+                        }
+                        value={data.right_cyst_additional || ""}
+                        onChange={(e) =>
+                          updateField("right_cyst_additional", e.target.value)
+                        }
+                        className="h-9"
+                      />
                     </div>
                   </div>
                 </div>
 
                 {/* Chap tuxumdon kistasi */}
                 <div className="p-3 border rounded-lg bg-purple-100/50">
-                  <h4 className="font-medium text-sm mb-3 text-purple-800">{t.leftOvaryCyst}</h4>
+                  <h4 className="font-medium text-sm mb-3 text-purple-800">
+                    {t.leftOvaryCyst}
+                  </h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <div className="space-y-2">
                       <Label className="text-xs">{t.cystType}</Label>
-                      <Select value={data.left_cyst_type || ""} onValueChange={(v) => updateField("left_cyst_type", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.left_cyst_type || ""}
+                        onValueChange={(v) => updateField("left_cyst_type", v)}
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="фолликулярная киста">{t.follicularCyst}</SelectItem>
-                          <SelectItem value="киста желтого тела">{t.corpusLuteumCyst}</SelectItem>
-                          <SelectItem value="эндометриоидная киста">{t.endometrioidCyst}</SelectItem>
-                          <SelectItem value="дермоидная киста">{t.dermoidCyst}</SelectItem>
-                          <SelectItem value="муцинозная кистома">{t.mucinousCystoma}</SelectItem>
-                          <SelectItem value="серозная кистома">{t.seromasCystoma}</SelectItem>
-                          <SelectItem value="параовариальная киста">{t.paraovarianCyst}</SelectItem>
-                          <SelectItem value="многокамерная киста">{t.multiChamber}</SelectItem>
+                          <SelectItem value="фолликулярная киста">
+                            {t.follicularCyst}
+                          </SelectItem>
+                          <SelectItem value="киста желтого тела">
+                            {t.corpusLuteumCyst}
+                          </SelectItem>
+                          <SelectItem value="эндометриоидная киста">
+                            {t.endometrioidCyst}
+                          </SelectItem>
+                          <SelectItem value="дермоидная киста">
+                            {t.dermoidCyst}
+                          </SelectItem>
+                          <SelectItem value="муцинозная кистома">
+                            {t.mucinousCystoma}
+                          </SelectItem>
+                          <SelectItem value="серозная кистома">
+                            {t.seromasCystoma}
+                          </SelectItem>
+                          <SelectItem value="параовариальная киста">
+                            {t.paraovarianCyst}
+                          </SelectItem>
+                          <SelectItem value="многокамерная киста">
+                            {t.multiChamber}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs">{t.size} ({t.mm})</Label>
-                      <Input placeholder="51.2x48.2x50.4" value={data.left_cyst_size || ""} onChange={(e) => updateField("left_cyst_size", e.target.value)} className="h-9" />
+                      <Label className="text-xs">
+                        {t.size} ({t.mm})
+                      </Label>
+                      <Input
+                        placeholder="51.2x48.2x50.4"
+                        value={data.left_cyst_size || ""}
+                        onChange={(e) =>
+                          updateField("left_cyst_size", e.target.value)
+                        }
+                        className="h-9"
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs">{t.contours}</Label>
-                      <Select value={data.left_cyst_contours || ""} onValueChange={(v) => updateField("left_cyst_contours", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.left_cyst_contours || ""}
+                        onValueChange={(v) =>
+                          updateField("left_cyst_contours", v)
+                        }
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="ровные, четкие">{t.smooth}</SelectItem>
+                          <SelectItem value="ровные, четкие">
+                            {t.smooth}
+                          </SelectItem>
                           <SelectItem value="неровные">{t.uneven}</SelectItem>
                           <SelectItem value="нечеткие">{t.unclear}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs">{t.wallThickness} ({t.mm})</Label>
-                      <Input type="number" placeholder="1.2" value={data.left_cyst_wall_thickness || ""} onChange={(e) => updateField("left_cyst_wall_thickness", e.target.value)} className="h-9" />
+                      <Label className="text-xs">
+                        {t.wallThickness} ({t.mm})
+                      </Label>
+                      <Input
+                        type="number"
+                        placeholder="1.2"
+                        value={data.left_cyst_wall_thickness || ""}
+                        onChange={(e) =>
+                          updateField(
+                            "left_cyst_wall_thickness",
+                            e.target.value,
+                          )
+                        }
+                        className="h-9"
+                      />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
                     <div className="space-y-2">
                       <Label className="text-xs">{t.cystWall}</Label>
-                      <Select value={data.left_cyst_wall || ""} onValueChange={(v) => updateField("left_cyst_wall", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.left_cyst_wall || ""}
+                        onValueChange={(v) => updateField("left_cyst_wall", v)}
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="тонкостенная">{t.thinWalled}</SelectItem>
-                          <SelectItem value="утолщена гиперэхогенно">{t.thickWalled} {t.hyperechoicWall}</SelectItem>
+                          <SelectItem value="тонкостенная">
+                            {t.thinWalled}
+                          </SelectItem>
+                          <SelectItem value="утолщена гиперэхогенно">
+                            {t.thickWalled} {t.hyperechoicWall}
+                          </SelectItem>
                           <SelectItem value="гладкая">гладкая</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs">{t.massContent}</Label>
-                      <Select value={data.left_cyst_content || ""} onValueChange={(v) => updateField("left_cyst_content", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.left_cyst_content || ""}
+                        onValueChange={(v) =>
+                          updateField("left_cyst_content", v)
+                        }
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="однородное">{t.homogeneousContent}</SelectItem>
-                          <SelectItem value="неоднородное">{t.heterogeneousContent}</SelectItem>
-                          <SelectItem value="с линейными эхоструктурами">{t.withLinearEchos}</SelectItem>
-                          <SelectItem value="с кровоизлиянием">{t.withBloodClots}</SelectItem>
-                          <SelectItem value="с сосочковыми разрастаниями">{t.withSolidPapillary}</SelectItem>
-                          <SelectItem value="с дисперсной взвесью">{t.withDisperseSuspension}</SelectItem>
-                          <SelectItem value="анэхогенное">{t.anechoicContent}</SelectItem>
+                          <SelectItem value="однородное">
+                            {t.homogeneousContent}
+                          </SelectItem>
+                          <SelectItem value="неоднородное">
+                            {t.heterogeneousContent}
+                          </SelectItem>
+                          <SelectItem value="с линейными эхоструктурами">
+                            {t.withLinearEchos}
+                          </SelectItem>
+                          <SelectItem value="с кровоизлиянием">
+                            {t.withBloodClots}
+                          </SelectItem>
+                          <SelectItem value="с сосочковыми разрастаниями">
+                            {t.withSolidPapillary}
+                          </SelectItem>
+                          <SelectItem value="с дисперсной взвесью">
+                            {t.withDisperseSuspension}
+                          </SelectItem>
+                          <SelectItem value="анэхогенное">
+                            {t.anechoicContent}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs">{t.vascularization}</Label>
-                      <Select value={data.left_cyst_vasc || ""} onValueChange={(v) => updateField("left_cyst_vasc", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.left_cyst_vasc || ""}
+                        onValueChange={(v) => updateField("left_cyst_vasc", v)}
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="кровоток не определяется">{t.noFlow}</SelectItem>
-                          <SelectItem value="единичные цветовые пятна">{t.singleColorSpots}</SelectItem>
-                          <SelectItem value="периферический кровоток">{t.peripheralFlow}</SelectItem>
-                          <SelectItem value="богатая васкуляризация">{t.richVascularization}</SelectItem>
+                          <SelectItem value="кровоток не определяется">
+                            {t.noFlow}
+                          </SelectItem>
+                          <SelectItem value="единичные цветовые пятна">
+                            {t.singleColorSpots}
+                          </SelectItem>
+                          <SelectItem value="периферический кровоток">
+                            {t.peripheralFlow}
+                          </SelectItem>
+                          <SelectItem value="богатая васкуляризация">
+                            {t.richVascularization}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -652,18 +1245,42 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                   <div className="grid grid-cols-2 gap-3 mt-3">
                     <div className="space-y-2">
                       <Label className="text-xs">{t.compression}</Label>
-                      <Select value={data.left_cyst_compression || ""} onValueChange={(v) => updateField("left_cyst_compression", v)}>
-                        <SelectTrigger className="h-9"><SelectValue placeholder={t.select} /></SelectTrigger>
+                      <Select
+                        value={data.left_cyst_compression || ""}
+                        onValueChange={(v) =>
+                          updateField("left_cyst_compression", v)
+                        }
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder={t.select} />
+                        </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="безболезненная">{t.painless}</SelectItem>
-                          <SelectItem value="незначительно болезненная">{t.slightlyPainful}</SelectItem>
-                          <SelectItem value="болезненная">{t.painful}</SelectItem>
+                          <SelectItem value="безболезненная">
+                            {t.painless}
+                          </SelectItem>
+                          <SelectItem value="незначительно болезненная">
+                            {t.slightlyPainful}
+                          </SelectItem>
+                          <SelectItem value="болезненная">
+                            {t.painful}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-xs">{t.additionalInfo}</Label>
-                      <Input placeholder={language === "ru" ? "акустическая тень, спайки..." : "akustik soya, bitishmalar..."} value={data.left_cyst_additional || ""} onChange={(e) => updateField("left_cyst_additional", e.target.value)} className="h-9" />
+                      <Input
+                        placeholder={
+                          language === "ru"
+                            ? "акустическая тень, спайки..."
+                            : "akustik soya, bitishmalar..."
+                        }
+                        value={data.left_cyst_additional || ""}
+                        onChange={(e) =>
+                          updateField("left_cyst_additional", e.target.value)
+                        }
+                        className="h-9"
+                      />
                     </div>
                   </div>
                 </div>
@@ -672,8 +1289,13 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label>{t.oradsClassification}</Label>
-                    <Select value={data.cyst_orads || ""} onValueChange={(v) => updateField("cyst_orads", v)}>
-                      <SelectTrigger><SelectValue placeholder={t.select} /></SelectTrigger>
+                    <Select
+                      value={data.cyst_orads || ""}
+                      onValueChange={(v) => updateField("cyst_orads", v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t.select} />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="O-RADS 1">{t.orads1}</SelectItem>
                         <SelectItem value="O-RADS 2">{t.orads2}</SelectItem>
@@ -686,10 +1308,16 @@ export function GynecologyForm({ data, onChange, templateType, language = "ru" }
                   </div>
                   <div className="space-y-2">
                     <Label>{t.cystDiagnosis}</Label>
-                    <Input 
-                      placeholder={language === "ru" ? "фолликулярная киста справа, киста желтого тела слева..." : "o'ngda follikulyar kista, chapda sariq tana kistasi..."} 
-                      value={data.cyst_diagnosis || ""} 
-                      onChange={(e) => updateField("cyst_diagnosis", e.target.value)} 
+                    <Input
+                      placeholder={
+                        language === "ru"
+                          ? "фолликулярная киста справа, киста желтого тела слева..."
+                          : "o'ngda follikulyar kista, chapda sariq tana kistasi..."
+                      }
+                      value={data.cyst_diagnosis || ""}
+                      onChange={(e) =>
+                        updateField("cyst_diagnosis", e.target.value)
+                      }
                     />
                   </div>
                 </div>

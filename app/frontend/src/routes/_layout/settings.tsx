@@ -21,13 +21,17 @@ export const Route = createFileRoute("/_layout/settings")({
 function UserSettings() {
   const { user: currentUser } = useAuth()
   const { t } = useLanguage()
-  
+
   const tabsConfig = [
     { value: "my-profile", titleKey: "my_profile", component: UserInformation },
-    { value: "password", titleKey: "change_password", component: ChangePassword },
+    {
+      value: "password",
+      titleKey: "change_password",
+      component: ChangePassword,
+    },
     { value: "danger-zone", titleKey: "danger_zone", component: DeleteAccount },
   ]
-  
+
   const finalTabs = currentUser?.is_superuser
     ? tabsConfig.slice(0, 3)
     : tabsConfig
@@ -39,10 +43,10 @@ function UserSettings() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t("user_settings")}</h1>
-        <p className="text-muted-foreground">
-          {t("manage_account_settings")}
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t("user_settings")}
+        </h1>
+        <p className="text-muted-foreground">{t("manage_account_settings")}</p>
       </div>
 
       <Tabs defaultValue="my-profile">

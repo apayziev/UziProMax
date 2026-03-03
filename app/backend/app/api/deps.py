@@ -20,10 +20,10 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
     if token_data is None:
         raise UnauthorizedException("User not authenticated.")
 
-    if "@" in token_data.username_or_email:
-        user = await crud_users.get_by_email(db=db, email=token_data.username_or_email, is_deleted=False)
-    else:
-        user = await crud_users.get_by_username(db=db, username=token_data.username_or_email, is_deleted=False)
+    # Try to find user by username or phone
+    user = await crud_users.get_by_username(db=db, username=token_data.username_or_email, is_deleted=False)
+    if not user:
+        user = await crud_users.get_by_phone(db=db, phone=token_data.username_or_email, is_deleted=False)
 
     if not user:
         raise UnauthorizedException("User not found.")

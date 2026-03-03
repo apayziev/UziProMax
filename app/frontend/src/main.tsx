@@ -9,8 +9,8 @@ import { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
 import { ApiError, OpenAPI } from "./client"
 import { ThemeProvider } from "./components/theme-provider"
-import { LanguageProvider } from "./hooks/useLanguage"
 import { Toaster } from "./components/ui/sonner"
+import { LanguageProvider } from "./hooks/useLanguage"
 import "./index.css"
 import { routeTree } from "./routeTree.gen"
 
@@ -24,7 +24,11 @@ const handleApiError = (error: Error) => {
   if (error instanceof ApiError) {
     const basePath = import.meta.env.BASE_URL || "/"
     const loginPath = `${basePath}login`.replace("//", "/")
-    if (error.status === 401 && !error.url.includes("/login/access-token") && !window.location.pathname.includes("/login")) {
+    if (
+      error.status === 401 &&
+      !error.url.includes("/login/access-token") &&
+      !window.location.pathname.includes("/login")
+    ) {
       localStorage.removeItem("access_token")
       window.location.href = loginPath
     }
@@ -42,7 +46,7 @@ const queryClient = new QueryClient({
 // GitHub Pages uchun basepath
 const basePath = import.meta.env.BASE_URL || "/"
 
-const router = createRouter({ 
+const router = createRouter({
   routeTree,
   basepath: basePath,
 })
@@ -57,18 +61,18 @@ async function enableMocking() {
   // GitHub Pages yoki VITE_ENABLE_MOCK=true bo'lganda mock yoqiladi
   const isGitHubPages = window.location.hostname.includes("github.io")
   const isMockEnabled = import.meta.env.VITE_ENABLE_MOCK === "true"
-  
+
   if (!isGitHubPages && !isMockEnabled) {
     return
   }
 
   console.log("🔶 Mock API enabled")
   const { worker } = await import("./mocks/browser")
-  
+
   // GitHub Pages uchun service worker path va scope
   const basePath = import.meta.env.BASE_URL || "/"
   const serviceWorkerUrl = `${basePath}mockServiceWorker.js`
-  
+
   return worker.start({
     onUnhandledRequest: "bypass",
     serviceWorker: {

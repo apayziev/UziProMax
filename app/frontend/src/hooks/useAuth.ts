@@ -4,7 +4,6 @@ import { useNavigate } from "@tanstack/react-router"
 import {
   type Body_login_access_token as AccessToken,
   LoginService,
-
   type UserRead,
   UsersService,
 } from "@/client"
@@ -25,8 +24,6 @@ const useAuth = () => {
     queryFn: UsersService.readUserMe,
     enabled: isLoggedIn(),
   })
-
-
 
   const login = async (data: AccessToken) => {
     const response = await LoginService.loginAccessToken({
@@ -49,7 +46,6 @@ const useAuth = () => {
   }
 
   return {
-
     loginMutation,
     logout,
     user,

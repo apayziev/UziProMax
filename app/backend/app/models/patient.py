@@ -23,18 +23,18 @@ class Patient(BaseModel):
     middle_name: Mapped[str | None] = mapped_column(String(50), nullable=True, kw_only=True)  # Otasining ismi
     birth_date: Mapped[date | None] = mapped_column(Date, nullable=True, kw_only=True)  # Tug'ilgan sana
     gender: Mapped[str] = mapped_column(String(10), kw_only=True)  # Jins: male/female
-    
+
     # Aloqa ma'lumotlari - Contact information
     phone: Mapped[str | None] = mapped_column(String(20), nullable=True, kw_only=True)  # Telefon
     address: Mapped[str | None] = mapped_column(Text, nullable=True, kw_only=True)  # Manzil
-    
+
     # Qo'shimcha ma'lumotlar - Additional info
     notes: Mapped[str | None] = mapped_column(Text, nullable=True, kw_only=True)  # Izohlar
 
     # Relationships
     examinations: Mapped[list["Examination"]] = relationship(
-        "Examination", 
-        back_populates="patient", 
-        cascade="all, delete-orphan", 
+        "Examination",
+        back_populates="patient",
+        cascade="all, delete-orphan",
         init=False
     )

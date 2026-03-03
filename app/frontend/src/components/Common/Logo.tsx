@@ -40,7 +40,10 @@ export function Logo({
       <img
         src={logoSrc}
         alt="UziProMax"
-        className={cn(variant === "full" ? "h-10 w-auto rounded" : "size-8 rounded", className)}
+        className={cn(
+          variant === "full" ? "h-10 w-auto rounded" : "size-8 rounded",
+          className,
+        )}
       />
     )
 

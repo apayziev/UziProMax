@@ -1,25 +1,29 @@
-import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router"
-import { useState, useEffect } from "react"
-import { useQuery, useMutation } from "@tanstack/react-query"
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  Save, 
-  User, 
-  Search, 
-  Plus,
+import { useMutation, useQuery } from "@tanstack/react-query"
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  useSearch,
+} from "@tanstack/react-router"
+import {
+  ArrowLeft,
+  ArrowRight,
   Check,
-  FileText,
-  Stethoscope,
+  CheckCircle2,
   ClipboardList,
-  CheckCircle2
+  FileText,
+  Plus,
+  Save,
+  Search,
+  Stethoscope,
+  User,
 } from "lucide-react"
-import { Link } from "@tanstack/react-router"
-
+import { useEffect, useState } from "react"
+// Import form components
+import { ExaminationFormRenderer } from "@/components/ExaminationForms"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent } from "@/components/ui/card"
+import { DatePicker } from "@/components/ui/date-picker"
 import {
   Dialog,
   DialogContent,
@@ -28,24 +32,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useLanguage } from "@/hooks/useLanguage"
 import { cn } from "@/lib/utils"
-import { DatePicker } from "@/components/ui/date-picker"
-
-import { 
-  TEMPLATE_TYPES, 
-  TEMPLATE_CATEGORIES,
-  type Patient, 
-  type PatientCreate,
+import {
   type ExaminationCreate,
-  type PatientListResponse 
+  type Patient,
+  type PatientCreate,
+  type PatientListResponse,
+  TEMPLATE_CATEGORIES,
+  TEMPLATE_TYPES,
 } from "@/types/medical"
-
-// Import form components
-import { ExaminationFormRenderer } from "@/components/ExaminationForms"
 
 // Helper to format patient name
 const formatPatientName = (patient: Patient | null | undefined) => {
@@ -67,7 +68,9 @@ export const Route = createFileRoute("/_layout/examinations/new")({
 async function searchPatients(query: string): Promise<PatientListResponse> {
   const params = new URLSearchParams({ query, per_page: "10" })
   const response = await fetch(`/api/v1/patients?${params}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
   })
   if (!response.ok) throw new Error("Failed to search patients")
   return response.json()
@@ -75,7 +78,9 @@ async function searchPatients(query: string): Promise<PatientListResponse> {
 
 async function getPatient(id: number): Promise<Patient> {
   const response = await fetch(`/api/v1/patients/${id}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
   })
   if (!response.ok) throw new Error("Failed to fetch patient")
   return response.json()
@@ -129,12 +134,14 @@ function NewExaminationPage() {
 
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1)
-  
+
   // Form state
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   const [patientSearchQuery, setPatientSearchQuery] = useState("")
   const [templateType, setTemplateType] = useState<string>("")
-  const [examinationData, setExaminationData] = useState<Record<string, any>>({})
+  const [examinationData, setExaminationData] = useState<Record<string, any>>(
+    {},
+  )
   const [conclusion, setConclusion] = useState("")
   const [recommendations, setRecommendations] = useState("")
 
@@ -152,10 +159,12 @@ function NewExaminationPage() {
   // Load patient from URL if provided
   useEffect(() => {
     if (search.patient_id) {
-      getPatient(search.patient_id).then((patient) => {
-        setSelectedPatient(patient)
-        if (patient) setCurrentStep(1) // Start from template selection
-      }).catch(console.error)
+      getPatient(search.patient_id)
+        .then((patient) => {
+          setSelectedPatient(patient)
+          if (patient) setCurrentStep(1) // Start from template selection
+        })
+        .catch(console.error)
     }
   }, [search.patient_id])
 
@@ -172,12 +181,12 @@ function NewExaminationPage() {
     onSuccess: (patient) => {
       setSelectedPatient(patient)
       setNewPatientOpen(false)
-      setNewPatient({ 
+      setNewPatient({
         last_name: "",
         first_name: "",
         middle_name: "",
-        gender: "female", 
-        phone: "+998", 
+        gender: "female",
+        phone: "+998",
         birth_date: "",
       })
       toast({ title: t("success"), description: t("patient_added") })
@@ -185,7 +194,11 @@ function NewExaminationPage() {
       setCurrentStep(3)
     },
     onError: (error: Error) => {
-      toast({ title: t("error"), description: error.message, variant: "destructive" })
+      toast({
+        title: t("error"),
+        description: error.message,
+        variant: "destructive",
+      })
     },
   })
 
@@ -197,7 +210,11 @@ function NewExaminationPage() {
       navigate({ to: `/examinations/${data.id}` })
     },
     onError: (error: Error) => {
-      toast({ title: t("error"), description: error.message, variant: "destructive" })
+      toast({
+        title: t("error"),
+        description: error.message,
+        variant: "destructive",
+      })
     },
   })
 
@@ -215,7 +232,11 @@ function NewExaminationPage() {
 
   const handleCreatePatient = () => {
     if (!newPatient.last_name?.trim() || !newPatient.first_name?.trim()) {
-      toast({ title: t("error"), description: t("name_required"), variant: "destructive" })
+      toast({
+        title: t("error"),
+        description: t("name_required"),
+        variant: "destructive",
+      })
       return
     }
     createPatientMutation.mutate({
@@ -227,11 +248,16 @@ function NewExaminationPage() {
   // Navigation
   const canGoNext = () => {
     switch (currentStep) {
-      case 1: return !!templateType
-      case 2: return !!selectedPatient
-      case 3: return true // Measurements are optional
-      case 4: return true
-      default: return false
+      case 1:
+        return !!templateType
+      case 2:
+        return !!selectedPatient
+      case 3:
+        return true // Measurements are optional
+      case 4:
+        return true
+      default:
+        return false
     }
   }
 
@@ -248,11 +274,17 @@ function NewExaminationPage() {
   }
 
   // Template categories grouped
-  const templatesByCategory = Object.entries(TEMPLATE_TYPES).reduce((acc, [key, value]) => {
-    if (!acc[value.category]) acc[value.category] = []
-    acc[value.category].push({ key, ...value })
-    return acc
-  }, {} as Record<string, Array<{ key: string; name: string; name_ru: string; category: string }>>)
+  const templatesByCategory = Object.entries(TEMPLATE_TYPES).reduce(
+    (acc, [key, value]) => {
+      if (!acc[value.category]) acc[value.category] = []
+      acc[value.category].push({ key, ...value })
+      return acc
+    },
+    {} as Record<
+      string,
+      Array<{ key: string; name: string; name_ru: string; category: string }>
+    >,
+  )
 
   // Render form based on template type - now using shared component
 
@@ -274,7 +306,9 @@ function NewExaminationPage() {
           </Button>
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold tracking-tight">{t("new_examination")}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t("new_examination")}
+          </h1>
         </div>
       </div>
 
@@ -284,13 +318,13 @@ function NewExaminationPage() {
           const Icon = step.icon
           const isCompleted = currentStep > step.id
           const isCurrent = currentStep === step.id
-          
+
           return (
             <div key={step.id} className="flex items-center">
               <button
                 onClick={() => {
                   // Allow going back to completed steps
-                  if (step.id < currentStep || (step.id === currentStep)) {
+                  if (step.id < currentStep || step.id === currentStep) {
                     setCurrentStep(step.id)
                   }
                 }}
@@ -298,8 +332,10 @@ function NewExaminationPage() {
                   "flex items-center gap-2 px-4 py-2 rounded-full transition-all",
                   isCompleted && "bg-primary/10 text-primary cursor-pointer",
                   isCurrent && "bg-primary text-primary-foreground",
-                  !isCompleted && !isCurrent && "bg-muted text-muted-foreground",
-                  step.id < currentStep && "cursor-pointer hover:bg-primary/20"
+                  !isCompleted &&
+                    !isCurrent &&
+                    "bg-muted text-muted-foreground",
+                  step.id < currentStep && "cursor-pointer hover:bg-primary/20",
                 )}
               >
                 {isCompleted ? (
@@ -308,15 +344,19 @@ function NewExaminationPage() {
                   <Icon className="h-4 w-4" />
                 )}
                 <span className="text-sm font-medium hidden sm:inline">
-                  {language === "ru" ? stepTitles[step.title].ru : stepTitles[step.title].uz}
+                  {language === "ru"
+                    ? stepTitles[step.title].ru
+                    : stepTitles[step.title].uz}
                 </span>
                 <span className="text-sm font-medium sm:hidden">{step.id}</span>
               </button>
               {index < STEPS.length - 1 && (
-                <div className={cn(
-                  "w-8 h-0.5 mx-1",
-                  currentStep > step.id ? "bg-primary" : "bg-muted"
-                )} />
+                <div
+                  className={cn(
+                    "w-8 h-0.5 mx-1",
+                    currentStep > step.id ? "bg-primary" : "bg-muted",
+                  )}
+                />
               )}
             </div>
           )
@@ -331,43 +371,55 @@ function NewExaminationPage() {
             <div className="space-y-4">
               <div className="text-center mb-4">
                 <h2 className="text-lg font-semibold mb-1">
-                  {language === "ru" ? "Выберите тип исследования" : "Tekshiruv turini tanlang"}
+                  {language === "ru"
+                    ? "Выберите тип исследования"
+                    : "Tekshiruv turini tanlang"}
                 </h2>
                 <p className="text-muted-foreground text-sm">
-                  {language === "ru" ? "Нажмите на карточку для выбора" : "Tanlash uchun kartochkani bosing"}
+                  {language === "ru"
+                    ? "Нажмите на карточку для выбора"
+                    : "Tanlash uchun kartochkani bosing"}
                 </p>
               </div>
 
-              {Object.entries(templatesByCategory).map(([category, templates]) => (
-                <div key={category} className="space-y-2">
-                  <h3 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-                    {language === "ru" 
-                      ? TEMPLATE_CATEGORIES[category as keyof typeof TEMPLATE_CATEGORIES]?.name_ru 
-                      : TEMPLATE_CATEGORIES[category as keyof typeof TEMPLATE_CATEGORIES]?.name}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {templates.map((template) => (
-                      <button
-                        key={template.key}
-                        onClick={() => setTemplateType(template.key)}
-                        className={cn(
-                          "relative px-3 py-2 rounded-md border text-left transition-all hover:border-primary/50",
-                          templateType === template.key
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border"
-                        )}
-                      >
-                        <span className="text-sm font-medium flex items-center gap-2">
-                          {language === "ru" ? template.name_ru : template.name}
-                          {templateType === template.key && (
-                            <Check className="h-3.5 w-3.5" />
+              {Object.entries(templatesByCategory).map(
+                ([category, templates]) => (
+                  <div key={category} className="space-y-2">
+                    <h3 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                      {language === "ru"
+                        ? TEMPLATE_CATEGORIES[
+                            category as keyof typeof TEMPLATE_CATEGORIES
+                          ]?.name_ru
+                        : TEMPLATE_CATEGORIES[
+                            category as keyof typeof TEMPLATE_CATEGORIES
+                          ]?.name}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {templates.map((template) => (
+                        <button
+                          key={template.key}
+                          onClick={() => setTemplateType(template.key)}
+                          className={cn(
+                            "relative px-3 py-2 rounded-md border text-left transition-all hover:border-primary/50",
+                            templateType === template.key
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border",
                           )}
-                        </span>
-                      </button>
-                    ))}
+                        >
+                          <span className="text-sm font-medium flex items-center gap-2">
+                            {language === "ru"
+                              ? template.name_ru
+                              : template.name}
+                            {templateType === template.key && (
+                              <Check className="h-3.5 w-3.5" />
+                            )}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ),
+              )}
             </div>
           )}
 
@@ -379,8 +431,8 @@ function NewExaminationPage() {
                   {language === "ru" ? "Выберите пациента" : "Bemorni tanlang"}
                 </h2>
                 <p className="text-muted-foreground text-sm">
-                  {language === "ru" 
-                    ? "Найдите существующего или добавьте нового" 
+                  {language === "ru"
+                    ? "Найдите существующего или добавьте нового"
                     : "Mavjud bemorni toping yoki yangi qo'shing"}
                 </p>
               </div>
@@ -394,15 +446,24 @@ function NewExaminationPage() {
                           <User className="h-6 w-6 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-lg break-words">{formatPatientName(selectedPatient)}</p>
+                          <p className="font-semibold text-lg break-words">
+                            {formatPatientName(selectedPatient)}
+                          </p>
                           <p className="text-muted-foreground">
-                            {selectedPatient.gender === "female" 
-                              ? (language === "ru" ? "Женский" : "Ayol") 
-                              : (language === "ru" ? "Мужской" : "Erkak")}
-                            {selectedPatient.birth_date && ` • ${selectedPatient.birth_date}`}
+                            {selectedPatient.gender === "female"
+                              ? language === "ru"
+                                ? "Женский"
+                                : "Ayol"
+                              : language === "ru"
+                                ? "Мужской"
+                                : "Erkak"}
+                            {selectedPatient.birth_date &&
+                              ` • ${selectedPatient.birth_date}`}
                           </p>
                           {selectedPatient.phone && (
-                            <p className="text-muted-foreground">{selectedPatient.phone}</p>
+                            <p className="text-muted-foreground">
+                              {selectedPatient.phone}
+                            </p>
                           )}
                         </div>
                         <CheckCircle2 className="h-6 w-6 text-primary" />
@@ -412,7 +473,9 @@ function NewExaminationPage() {
                         className="w-full mt-4"
                         onClick={() => setSelectedPatient(null)}
                       >
-                        {language === "ru" ? "Выбрать другого" : "Boshqa bemor tanlash"}
+                        {language === "ru"
+                          ? "Выбрать другого"
+                          : "Boshqa bemor tanlash"}
                       </Button>
                     </CardContent>
                   </Card>
@@ -424,7 +487,11 @@ function NewExaminationPage() {
                     <div className="relative flex-1">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder={language === "ru" ? "Введите имя или телефон..." : "Ism yoki telefon kiriting..."}
+                        placeholder={
+                          language === "ru"
+                            ? "Введите имя или телефон..."
+                            : "Ism yoki telefon kiriting..."
+                        }
                         value={patientSearchQuery}
                         onChange={(e) => setPatientSearchQuery(e.target.value)}
                         className="pl-10 h-11"
@@ -445,28 +512,41 @@ function NewExaminationPage() {
                     <div className="border rounded-lg divide-y max-h-[250px] overflow-auto">
                       {searchResults?.items.length === 0 ? (
                         <div className="p-4 text-center text-muted-foreground">
-                          <p>{language === "ru" ? "Пациент не найден" : "Bemor topilmadi"}</p>
+                          <p>
+                            {language === "ru"
+                              ? "Пациент не найден"
+                              : "Bemor topilmadi"}
+                          </p>
                           <Button
                             variant="link"
                             className="mt-1 text-primary"
                             onClick={() => setNewPatientOpen(true)}
                           >
                             <Plus className="h-4 w-4 mr-1" />
-                            {language === "ru" ? "Добавить нового" : "Yangi qo'shish"}
+                            {language === "ru"
+                              ? "Добавить нового"
+                              : "Yangi qo'shish"}
                           </Button>
                         </div>
                       ) : (
                         searchResults?.items.map((patient) => {
                           // Calculate age
-                          const age = patient.birth_date ? (() => {
-                            const today = new Date()
-                            const birth = new Date(patient.birth_date)
-                            let years = today.getFullYear() - birth.getFullYear()
-                            const m = today.getMonth() - birth.getMonth()
-                            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) years--
-                            return years
-                          })() : null
-                          
+                          const age = patient.birth_date
+                            ? (() => {
+                                const today = new Date()
+                                const birth = new Date(patient.birth_date)
+                                let years =
+                                  today.getFullYear() - birth.getFullYear()
+                                const m = today.getMonth() - birth.getMonth()
+                                if (
+                                  m < 0 ||
+                                  (m === 0 && today.getDate() < birth.getDate())
+                                )
+                                  years--
+                                return years
+                              })()
+                            : null
+
                           return (
                             <button
                               key={patient.id}
@@ -480,22 +560,32 @@ function NewExaminationPage() {
                                 <User className="h-5 w-5 text-primary" />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="font-medium truncate">{formatPatientName(patient)}</p>
+                                <p className="font-medium truncate">
+                                  {formatPatientName(patient)}
+                                </p>
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                   {age !== null && (
-                                    <span>{age} {language === "ru" ? "лет" : "yosh"}</span>
+                                    <span>
+                                      {age} {language === "ru" ? "лет" : "yosh"}
+                                    </span>
                                   )}
-                                  {age !== null && patient.phone && <span>•</span>}
-                                  {patient.phone && <span>{patient.phone}</span>}
+                                  {age !== null && patient.phone && (
+                                    <span>•</span>
+                                  )}
+                                  {patient.phone && (
+                                    <span>{patient.phone}</span>
+                                  )}
                                 </div>
                               </div>
-                              {patient.examination_count !== undefined && patient.examination_count > 0 && (
-                                <div className="text-right shrink-0">
-                                  <span className="text-xs bg-muted px-2 py-1 rounded">
-                                    {patient.examination_count} {language === "ru" ? "иссл." : "teksh."}
-                                  </span>
-                                </div>
-                              )}
+                              {patient.examination_count !== undefined &&
+                                patient.examination_count > 0 && (
+                                  <div className="text-right shrink-0">
+                                    <span className="text-xs bg-muted px-2 py-1 rounded">
+                                      {patient.examination_count}{" "}
+                                      {language === "ru" ? "иссл." : "teksh."}
+                                    </span>
+                                  </div>
+                                )}
                             </button>
                           )
                         })
@@ -513,19 +603,23 @@ function NewExaminationPage() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-semibold">
-                    {language === "ru" 
-                      ? TEMPLATE_TYPES[templateType]?.name_ru 
+                    {language === "ru"
+                      ? TEMPLATE_TYPES[templateType]?.name_ru
                       : TEMPLATE_TYPES[templateType]?.name}
                   </h2>
                   <p className="text-muted-foreground">
-                    {language === "ru" ? "Введите результаты измерений" : "O'lchov natijalarini kiriting"}
+                    {language === "ru"
+                      ? "Введите результаты измерений"
+                      : "O'lchov natijalarini kiriting"}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-muted-foreground">
                     {language === "ru" ? "Пациент" : "Bemor"}
                   </p>
-                  <p className="font-medium">{formatPatientName(selectedPatient)}</p>
+                  <p className="font-medium">
+                    {formatPatientName(selectedPatient)}
+                  </p>
                 </div>
               </div>
 
@@ -544,11 +638,13 @@ function NewExaminationPage() {
             <div className="space-y-6">
               <div className="text-center mb-6">
                 <h2 className="text-xl font-semibold mb-2">
-                  {language === "ru" ? "Заключение и рекомендации" : "Xulosa va tavsiyalar"}
+                  {language === "ru"
+                    ? "Заключение и рекомендации"
+                    : "Xulosa va tavsiyalar"}
                 </h2>
                 <p className="text-muted-foreground">
-                  {language === "ru" 
-                    ? "Напишите заключение по результатам исследования" 
+                  {language === "ru"
+                    ? "Напишите заключение по результатам исследования"
                     : "Tekshiruv natijalari bo'yicha xulosa yozing"}
                 </p>
               </div>
@@ -560,8 +656,8 @@ function NewExaminationPage() {
                     {language === "ru" ? "Тип исследования" : "Tekshiruv turi"}
                   </p>
                   <p className="font-medium">
-                    {language === "ru" 
-                      ? TEMPLATE_TYPES[templateType]?.name_ru 
+                    {language === "ru"
+                      ? TEMPLATE_TYPES[templateType]?.name_ru
                       : TEMPLATE_TYPES[templateType]?.name}
                   </p>
                 </div>
@@ -569,25 +665,35 @@ function NewExaminationPage() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ru" ? "Пациент" : "Bemor"}
                   </p>
-                  <p className="font-medium">{formatPatientName(selectedPatient)}</p>
+                  <p className="font-medium">
+                    {formatPatientName(selectedPatient)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {language === "ru" ? "Дата" : "Sana"}
                   </p>
-                  <p className="font-medium">{new Date().toLocaleDateString(language === "ru" ? "ru-RU" : "uz-UZ")}</p>
+                  <p className="font-medium">
+                    {new Date().toLocaleDateString(
+                      language === "ru" ? "ru-RU" : "uz-UZ",
+                    )}
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label className="text-base">
-                    {language === "ru" ? "Заключение (ЗАКЛЮЧЕНИЕ)" : "Xulosa (ЗАКЛЮЧЕНИЕ)"}
+                    {language === "ru"
+                      ? "Заключение (ЗАКЛЮЧЕНИЕ)"
+                      : "Xulosa (ЗАКЛЮЧЕНИЕ)"}
                   </Label>
                   <Textarea
-                    placeholder={language === "ru" 
-                      ? "Напишите заключение по результатам исследования..." 
-                      : "Tekshiruv xulosasini yozing..."}
+                    placeholder={
+                      language === "ru"
+                        ? "Напишите заключение по результатам исследования..."
+                        : "Tekshiruv xulosasini yozing..."
+                    }
                     value={conclusion}
                     onChange={(e) => setConclusion(e.target.value)}
                     rows={5}
@@ -596,12 +702,16 @@ function NewExaminationPage() {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-base">
-                    {language === "ru" ? "Рекомендации (РЕКОМЕНДАЦИИ)" : "Tavsiyalar (РЕКОМЕНДАЦИИ)"}
+                    {language === "ru"
+                      ? "Рекомендации (РЕКОМЕНДАЦИИ)"
+                      : "Tavsiyalar (РЕКОМЕНДАЦИИ)"}
                   </Label>
                   <Textarea
-                    placeholder={language === "ru" 
-                      ? "Напишите рекомендации..." 
-                      : "Tavsiyalarni yozing..."}
+                    placeholder={
+                      language === "ru"
+                        ? "Напишите рекомендации..."
+                        : "Tavsiyalarni yozing..."
+                    }
                     value={recommendations}
                     onChange={(e) => setRecommendations(e.target.value)}
                     rows={4}
@@ -616,11 +726,7 @@ function NewExaminationPage() {
 
       {/* Navigation Buttons */}
       <div className="flex items-center justify-between">
-        <Button
-          variant="outline"
-          onClick={goBack}
-          disabled={currentStep === 1}
-        >
+        <Button variant="outline" onClick={goBack} disabled={currentStep === 1}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           {language === "ru" ? "Назад" : "Orqaga"}
         </Button>
@@ -644,10 +750,7 @@ function NewExaminationPage() {
               </Button>
             </>
           ) : (
-            <Button
-              onClick={goNext}
-              disabled={!canGoNext()}
-            >
+            <Button onClick={goNext} disabled={!canGoNext()}>
               {language === "ru" ? "Далее" : "Keyingi"}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -663,8 +766,8 @@ function NewExaminationPage() {
               {language === "ru" ? "Новый пациент" : "Yangi bemor"}
             </DialogTitle>
             <DialogDescription>
-              {language === "ru" 
-                ? "Введите данные пациента" 
+              {language === "ru"
+                ? "Введите данные пациента"
                 : "Bemor ma'lumotlarini kiriting"}
             </DialogDescription>
           </DialogHeader>
@@ -675,7 +778,9 @@ function NewExaminationPage() {
                 <Input
                   placeholder={language === "ru" ? "Иванов" : "Aliyev"}
                   value={newPatient.last_name || ""}
-                  onChange={(e) => setNewPatient({ ...newPatient, last_name: e.target.value })}
+                  onChange={(e) =>
+                    setNewPatient({ ...newPatient, last_name: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -683,7 +788,9 @@ function NewExaminationPage() {
                 <Input
                   placeholder={language === "ru" ? "Иван" : "Ali"}
                   value={newPatient.first_name || ""}
-                  onChange={(e) => setNewPatient({ ...newPatient, first_name: e.target.value })}
+                  onChange={(e) =>
+                    setNewPatient({ ...newPatient, first_name: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -692,7 +799,9 @@ function NewExaminationPage() {
               <Input
                 placeholder={language === "ru" ? "Иванович" : "Valiyevich"}
                 value={newPatient.middle_name || ""}
-                onChange={(e) => setNewPatient({ ...newPatient, middle_name: e.target.value })}
+                onChange={(e) =>
+                  setNewPatient({ ...newPatient, middle_name: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -723,14 +832,14 @@ function NewExaminationPage() {
                   variant="outline"
                   className="w-full"
                 >
-                  <ToggleGroupItem 
-                    value="female" 
+                  <ToggleGroupItem
+                    value="female"
                     className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                   >
                     {language === "ru" ? "Женский" : "Ayol"}
                   </ToggleGroupItem>
-                  <ToggleGroupItem 
-                    value="male" 
+                  <ToggleGroupItem
+                    value="male"
                     className="flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
                   >
                     {language === "ru" ? "Мужской" : "Erkak"}
@@ -747,7 +856,11 @@ function NewExaminationPage() {
                         const birth = new Date(newPatient.birth_date)
                         let age = today.getFullYear() - birth.getFullYear()
                         const m = today.getMonth() - birth.getMonth()
-                        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+                        if (
+                          m < 0 ||
+                          (m === 0 && today.getDate() < birth.getDate())
+                        )
+                          age--
                         return age
                       })()} {language === "ru" ? "лет" : "yosh"})
                     </span>
@@ -755,12 +868,14 @@ function NewExaminationPage() {
                 </Label>
                 <DatePicker
                   value={newPatient.birth_date}
-                  onChange={(date) => setNewPatient({ 
-                    ...newPatient, 
-                    birth_date: date 
-                      ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-                      : null 
-                  })}
+                  onChange={(date) =>
+                    setNewPatient({
+                      ...newPatient,
+                      birth_date: date
+                        ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+                        : null,
+                    })
+                  }
                   language={language as "uz" | "ru"}
                 />
               </div>
@@ -770,12 +885,18 @@ function NewExaminationPage() {
             <Button variant="outline" onClick={() => setNewPatientOpen(false)}>
               {t("cancel")}
             </Button>
-            <Button 
+            <Button
               onClick={handleCreatePatient}
-              disabled={createPatientMutation.isPending || !newPatient.last_name?.trim() || !newPatient.first_name?.trim()}
+              disabled={
+                createPatientMutation.isPending ||
+                !newPatient.last_name?.trim() ||
+                !newPatient.first_name?.trim()
+              }
             >
-              {createPatientMutation.isPending 
-                ? (language === "ru" ? "Сохранение..." : "Saqlanmoqda...") 
+              {createPatientMutation.isPending
+                ? language === "ru"
+                  ? "Сохранение..."
+                  : "Saqlanmoqda..."
                 : t("save")}
             </Button>
           </DialogFooter>

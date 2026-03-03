@@ -77,7 +77,10 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: FormData) =>
-      UsersService.updateUser({ userId: Number.parseInt(user.id), requestBody: data }),
+      UsersService.updateUser({
+        userId: Number.parseInt(user.id, 10),
+        requestBody: data,
+      }),
     onSuccess: () => {
       showSuccessToast("User updated successfully")
       setIsOpen(false)
@@ -166,7 +169,12 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
                   <FormItem>
                     <FormLabel>Otasining ismi</FormLabel>
                     <FormControl>
-                      <Input placeholder="Otasining ismi" type="text" {...field} value={field.value ?? ""} />
+                      <Input
+                        placeholder="Otasining ismi"
+                        type="text"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
