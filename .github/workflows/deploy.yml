@@ -1,0 +1,83 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "app/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+env:
+  DEPLOY_PATH: /opt/uzipromax
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          ssh $SSH_USER@$SSH_HOST << 'ENDSSH'
+            set -e
+            
+            # Create deploy directory if not exists
+            mkdir -p ${{ env.DEPLOY_PATH }}
+            cd ${{ env.DEPLOY_PATH }}
+            
+            # Clone or pull repository
+            if [ -d ".git" ]; then
+              echo "Pulling latest changes..."
+              git fetch origin main
+              git reset --hard origin/main
+            else
+              echo "Cloning repository..."
+              cd /opt
+              rm -rf uzipromax
+              git clone https://github.com/${{ github.repository }}.git uzipromax
+              cd uzipromax
+            fi
+            
+            # Navigate to app directory
+            cd ${{ env.DEPLOY_PATH }}/app
+            
+            # Create .env file from secrets
+            cat > .env << 'EOF'
+          ${{ secrets.ENV_FILE }}
+          EOF
+            
+            # Pull latest images and restart
+            docker compose pull || true
+            docker compose up -d --build --remove-orphans
+            
+            # Cleanup old images
+            docker image prune -f
+            
+            echo "Deployment completed successfully!"
+          ENDSSH
+
+      - name: Health check
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          sleep 30
+          ssh $SSH_USER@$SSH_HOST << 'ENDSSH'
+            curl -f http://localhost/api/v1/health || exit 1
+            echo "Health check passed!"
+          ENDSSH
