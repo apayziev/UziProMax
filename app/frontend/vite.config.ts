@@ -12,6 +12,9 @@ export default defineConfig(() => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    cssMinify: "esbuild", // Use esbuild instead of lightningcss to avoid warnings
+  },
   server: {
     proxy: {
       "/api": {
