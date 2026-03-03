@@ -68,6 +68,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set lowercase repo name
+        run: echo "REPO_LC=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -85,8 +88,8 @@ jobs:
           file: ./app/backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/api:latest
-            ghcr.io/${{ github.repository }}/api:${{ github.sha }}
+            ghcr.io/${{ env.REPO_LC }}/api:latest
+            ghcr.io/${{ env.REPO_LC }}/api:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -97,8 +100,8 @@ jobs:
           file: ./app/frontend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/frontend:latest
-            ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+            ghcr.io/${{ env.REPO_LC }}/frontend:latest
+            ghcr.io/${{ env.REPO_LC }}/frontend:${{ github.sha }}
           build-args: |
             VITE_API_URL=
           cache-from: type=gha
