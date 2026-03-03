@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Annotated, Self
 
 from pydantic import (
@@ -32,7 +31,7 @@ class UserBase(BaseModel):
 
 
 class User(TimestampSchema, UserBase, PersistentDeletion):
-    profile_image_url: Annotated[str, Field(default="https://www.profileimageurl.com")]
+    profile_image_url: Annotated[str, Field(default="")]
     hashed_password: str
     is_superuser: bool = False
     is_active: bool = True
@@ -68,10 +67,6 @@ class UserCreate(UserBase):
         return self
 
 
-class UserCreateInternal(UserBase):
-    hashed_password: str
-
-
 class UserUpdate(BaseModel):
     model_config = ConfigDict(extra="ignore", populate_by_name=True)
 
@@ -98,21 +93,6 @@ class UserUpdate(BaseModel):
             if self.password != self.confirm_password:
                 raise ValueError("Passwords do not match")
         return self
-
-
-class UserUpdateInternal(UserUpdate):
-    updated_at: datetime
-
-
-class UserDelete(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    is_deleted: bool
-    deleted_at: datetime
-
-
-class UserRestoreDeleted(BaseModel):
-    is_deleted: bool
 
 
 class UpdatePassword(BaseModel):

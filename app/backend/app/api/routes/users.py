@@ -1,12 +1,11 @@
 import re
-from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter
 from pydantic import BaseModel
 
 from app.api.deps import CurrentUser, SessionDep, SuperUserDep
 from app.core.exceptions import DuplicateValueException, ForbiddenException, NotFoundException
-from app.core.security import get_password_hash, oauth2_scheme, verify_password
+from app.core.security import get_password_hash, verify_password
 from app.crud import crud_users
 from app.schemas.users import UpdatePassword, UserCreate, UserRead, UserUpdate
 
@@ -20,7 +19,6 @@ class PaginatedResponse(BaseModel):
 
 @router.post("/", response_model=UserRead, status_code=201, operation_id="create_user")
 async def write_user(
-    request: Request,
     user: UserCreate,
     current_user: SuperUserDep,
     db: SessionDep,
@@ -33,7 +31,7 @@ async def write_user(
     if user.username:
         username_exists = await crud_users.exists(db=db, username=user.username)
         if username_exists:
-            raise DuplicateValueException("Username mavjud emas")
+            raise DuplicateValueException("Username allaqachon mavjud")
     else:
         # Generate username from first_name and last_name
         base_username = f"{user.first_name.lower()}{user.last_name.lower()}"
@@ -125,7 +123,6 @@ async def update_password_me(
 async def delete_user_me(
     current_user: CurrentUser,
     db: SessionDep,
-    token: Annotated[str, Depends(oauth2_scheme)],
 ) -> dict[str, str]:
     """Delete own user account."""
     if current_user.is_superuser:
@@ -183,7 +180,6 @@ async def erase_user(
     user_id: int,
     current_user: CurrentUser,
     db: SessionDep,
-    token: Annotated[str, Depends(oauth2_scheme)],
 ) -> dict[str, str]:
     """Delete a user profile (Self or Superuser)."""
     db_user = await crud_users.get(db=db, id=user_id)
@@ -202,7 +198,6 @@ async def erase_db_user(
     username: str,
     current_user: SuperUserDep,
     db: SessionDep,
-    token: Annotated[str, Depends(oauth2_scheme)],
 ) -> dict[str, str]:
     """Permanently delete a user from the database (Superuser only)."""
     user_exists = await crud_users.exists(db=db, username=username)

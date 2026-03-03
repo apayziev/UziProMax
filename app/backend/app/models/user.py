@@ -14,6 +14,6 @@ class User(BaseModel):
     phone: Mapped[str] = mapped_column(String(20), unique=True, index=True, kw_only=True)
     hashed_password: Mapped[str] = mapped_column(String, kw_only=True)
 
-    profile_image_url: Mapped[str] = mapped_column(String, default="https://profileimageurl.com", kw_only=True)
+    profile_image_url: Mapped[str] = mapped_column(String, default="", kw_only=True)
     is_active: Mapped[bool] = mapped_column(default=True, kw_only=True)
     is_superuser: Mapped[bool] = mapped_column(default=False, kw_only=True)
