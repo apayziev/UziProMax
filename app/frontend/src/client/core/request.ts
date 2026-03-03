@@ -37,7 +37,7 @@ export const base64 = (str: string): string => {
   try {
     return btoa(str)
   } catch (_err) {
-    // @ts-expect-error
+    // @ts-ignore - Buffer may not exist in browser
     return Buffer.from(str).toString("base64")
   }
 }

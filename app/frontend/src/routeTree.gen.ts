@@ -72,14 +72,14 @@ const LayoutExaminationsEditIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof LayoutIndexRoute
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
   '/patients': typeof LayoutPatientsRoute
   '/settings': typeof LayoutSettingsRoute
+  '/': typeof LayoutIndexRoute
   '/examinations/$id': typeof LayoutExaminationsIdRoute
   '/examinations/new': typeof LayoutExaminationsNewRoute
-  '/examinations/': typeof LayoutExaminationsIndexRoute
+  '/examinations': typeof LayoutExaminationsIndexRoute
   '/examinations/edit/$id': typeof LayoutExaminationsEditIdRoute
 }
 export interface FileRoutesByTo {
@@ -109,14 +109,14 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/login'
     | '/admin'
     | '/patients'
     | '/settings'
+    | '/'
     | '/examinations/$id'
     | '/examinations/new'
-    | '/examinations/'
+    | '/examinations'
     | '/examinations/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -160,7 +160,7 @@ declare module '@tanstack/react-router' {
     '/_layout': {
       id: '/_layout'
       path: ''
-      fullPath: '/'
+      fullPath: ''
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -195,7 +195,7 @@ declare module '@tanstack/react-router' {
     '/_layout/examinations/': {
       id: '/_layout/examinations/'
       path: '/examinations'
-      fullPath: '/examinations/'
+      fullPath: '/examinations'
       preLoaderRoute: typeof LayoutExaminationsIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
