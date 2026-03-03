@@ -5,9 +5,8 @@ import react from "@vitejs/plugin-react-swc"
 import { defineConfig } from "vite"
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  // GitHub Pages uchun base URL
-  base: mode === "production" ? "/UziProMax/" : "/",
+export default defineConfig(() => ({
+  base: "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
